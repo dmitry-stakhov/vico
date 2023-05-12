@@ -16,8 +16,6 @@
 
 package com.patrykandpatrick.vico.core.chart.edges
 
-import android.animation.TimeInterpolator
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -48,7 +46,7 @@ public open class FadingEdges(
     public var startEdgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
     public var endEdgeWidthDp: Float = startEdgeWidthDp,
     public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-    public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+//    public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
 
     private val paint: Paint = Paint()
@@ -66,12 +64,12 @@ public open class FadingEdges(
     public constructor(
         edgeWidthDp: Float = FADING_EDGE_WIDTH_DP,
         visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-        visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+//        visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     ) : this(
         startEdgeWidthDp = edgeWidthDp,
         endEdgeWidthDp = edgeWidthDp,
         visibilityThresholdDp = visibilityThresholdDp,
-        visibilityInterpolator = visibilityInterpolator,
+//        visibilityInterpolator = visibilityInterpolator,
     )
 
     init {
@@ -104,7 +102,8 @@ public open class FadingEdges(
                 right = bounds.left + startEdgeWidthDp.pixels,
                 bottom = bounds.bottom,
                 direction = -1,
-                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                alpha = (FULL_ALPHA).toInt(),
+//                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
             )
         }
 
@@ -117,7 +116,8 @@ public open class FadingEdges(
                 right = bounds.right,
                 bottom = bounds.bottom,
                 direction = 1,
-                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                alpha = (FULL_ALPHA).toInt(),
+//                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
             )
         }
     }

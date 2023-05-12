@@ -18,6 +18,8 @@ package com.patrykandpatrick.vico.core.chart.column
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -321,11 +323,11 @@ public open class ColumnChart(
                 value = dataLabelValue,
                 chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             )
-            val dataLabelWidth = textComponent.getWidth(
-                context = this,
-                text = text,
-                rotationDegrees = dataLabelRotationDegrees,
-            ).coerceAtMost(maximumValue = maxWidth)
+            val dataLabelWidth = 0f // textComponent.getWidth(
+//                context = this,
+//                text = text,
+//                rotationDegrees = dataLabelRotationDegrees,
+//            ).coerceAtMost(maximumValue = maxWidth)
 
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
@@ -335,12 +337,12 @@ public open class ColumnChart(
             val verticalPosition = labelVerticalPosition.inBounds(
                 y = y,
                 bounds = bounds,
-                componentHeight = textComponent.getHeight(
-                    context = this,
-                    text = text,
-                    width = maxWidth.toInt(),
-                    rotationDegrees = dataLabelRotationDegrees,
-                ),
+                componentHeight = 0f // textComponent.getHeight(
+//                    context = this,
+//                    text = text,
+//                    width = maxWidth.toInt(),
+//                    rotationDegrees = dataLabelRotationDegrees,
+//                ),
             )
             textComponent.drawText(
                 context = this,
@@ -366,7 +368,7 @@ public open class ColumnChart(
                 x = columnCenterX,
                 y = columnTop.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
-                color = column.color,
+                color = Color.Companion.Black.toArgb(), // column.color,
                 index = index,
             )
         }

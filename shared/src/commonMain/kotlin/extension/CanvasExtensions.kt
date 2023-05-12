@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-import android.os.Build
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 
@@ -47,7 +46,8 @@ public inline fun Canvas.inClip(
     val clipRestoreCount = save()
     clipRect(left, top, right, bottom)
     block()
-    restoreToCount(clipRestoreCount)
+    restore()
+//    restoreToCount(clipRestoreCount)
 }
 
 /**

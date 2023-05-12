@@ -334,22 +334,23 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
-                val labelHeight = label?.let { label ->
-                    getLabelsToMeasure().maxOf { labelText ->
-                        label.getHeight(
-                            context = this,
-                            text = labelText,
-                            width = labelWidth,
-                            rotationDegrees = labelRotationDegrees,
-                        ).orZero
-                    }
-                }.orZero
+                val labelHeight = 0 // label?.let { label ->
+//                    getLabelsToMeasure().maxOf { labelText ->
+//                        label.getHeight(
+//                            context = this,
+//                            text = labelText,
+//                            width = labelWidth,
+//                            rotationDegrees = labelRotationDegrees,
+//                        ).orZero
+//                    }
+//                }.orZero
                 val titleComponentHeight = title?.let { title ->
-                    titleComponent?.getHeight(
-                        context = context,
-                        width = bounds.width.toInt(),
-                        text = title,
-                    )
+                    0
+//                    titleComponent?.getHeight(
+//                        context = context,
+//                        width = bounds.width.toInt(),
+//                        text = title,
+//                    )
                 }.orZero
                 (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
                     .coerceAtMost(maximumValue = canvasBounds.height / MAX_HEIGHT_DIVISOR)
@@ -357,12 +358,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.height * constraint.fraction
-            is SizeConstraint.TextWidth -> label?.getHeight(
-                context = this,
-                text = constraint.text,
-                width = labelWidth,
-                rotationDegrees = labelRotationDegrees,
-            ).orZero
+            is SizeConstraint.TextWidth -> 0f // label?.getHeight(
+//                context = this,
+//                text = constraint.text,
+//                width = labelWidth,
+//                rotationDegrees = labelRotationDegrees,
+//            ).orZero
         }
     }
 

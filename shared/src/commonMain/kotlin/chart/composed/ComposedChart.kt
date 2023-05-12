@@ -74,7 +74,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     override var maxX: Float? by childChartsValue { maxX = it }
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
-        this.bounds.set(left, top, right, bottom)
+//        this.bounds.set(left, top, right, bottom)
         charts.forEach { chart -> chart.setBounds(left, top, right, bottom) }
     }
 

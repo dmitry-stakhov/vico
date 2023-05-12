@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.component.marker
 
-import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -120,7 +119,7 @@ public open class MarkerComponent(
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
+        val labelBounds = Rect.Zero // label.getTextBounds(context, text, outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width.half
         val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
         this[MarkerCorneredShape.tickXKey] = entryX
@@ -167,6 +166,6 @@ public open class MarkerComponent(
         outInsets: Insets,
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
-        outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
+        outInsets.top = 0f /* label.getHeight(context) */+ label.tickSizeDp.pixels
     }
 }

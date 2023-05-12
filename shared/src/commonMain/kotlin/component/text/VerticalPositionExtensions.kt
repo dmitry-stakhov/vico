@@ -16,11 +16,11 @@
 
 package com.patrykandpatrick.vico.core.component.text
 
-import android.graphics.RectF
+import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.core.extension.half
 
 internal fun VerticalPosition.inBounds(
-    bounds: RectF,
+    bounds: Rect,
     distanceFromPoint: Float = 0f,
     componentHeight: Float,
     y: Float,

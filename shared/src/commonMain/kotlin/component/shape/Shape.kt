@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
-import android.graphics.Paint
-import android.graphics.Path
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.context.DrawContext
 

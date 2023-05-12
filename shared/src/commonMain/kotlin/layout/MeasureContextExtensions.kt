@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.layout
 
-import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Rect

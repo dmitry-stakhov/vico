@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.extension.pixelSize
 import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
@@ -39,6 +38,7 @@ import com.patrykandpatrick.vico.core.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.chartShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
@@ -95,7 +95,7 @@ public fun lineComponent(
 ): LineComponent = lineComponent(
     color = color,
     thickness = thickness,
-    shape = shape.chartShape(),
+//    shape = shape.chartShape(),
     dynamicShader = dynamicShader,
     margins = margins,
     strokeWidth = strokeWidth,
@@ -143,7 +143,7 @@ public fun shapeComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent = shapeComponent(
-    shape = shape.chartShape(),
+//    shape = shape.chartShape(),
     color = color,
     dynamicShader = dynamicShader,
     margins = margins,
@@ -246,32 +246,32 @@ public fun textComponent(
     color: Color = Color.Black,
     textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
     background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+//    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = DEF_LABEL_LINE_COUNT,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
-    textAlign: Paint.Align = Paint.Align.LEFT,
+//    textAlign: Paint.Align = Paint.Align.LEFT,
 ): TextComponent = remember(
     color,
     textSize,
     background,
-    ellipsize,
+//    ellipsize,
     lineCount,
     padding,
     margins,
     typeface,
-    textAlign,
+//    textAlign,
 ) {
     textComponent {
         this.color = color.toArgb()
         textSizeSp = textSize.pixelSize()
-        this.ellipsize = ellipsize
+//        this.ellipsize = ellipsize
         this.lineCount = lineCount
         this.background = background
         this.padding = padding
         this.margins = margins
         this.typeface = typeface
-        this.textAlign = textAlign
+//        this.textAlign = textAlign
     }
 }

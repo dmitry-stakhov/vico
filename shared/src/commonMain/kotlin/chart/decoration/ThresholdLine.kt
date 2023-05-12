@@ -137,11 +137,11 @@ public data class ThresholdLine(
             horizontalPosition = labelHorizontalPosition.position,
             verticalPosition = labelVerticalPosition.position.inBounds(
                 bounds = bounds,
-                componentHeight = labelComponent.getHeight(
-                    context = context,
-                    text = "", // thresholdLabel,
-                    rotationDegrees = labelRotationDegrees,
-                ),
+                componentHeight = 0f, //labelComponent.getHeight(
+//                    context = context,
+//                    text = "", // thresholdLabel,
+//                    rotationDegrees = labelRotationDegrees,
+//                ),
                 y = textY,
             ),
             rotationDegrees = labelRotationDegrees,

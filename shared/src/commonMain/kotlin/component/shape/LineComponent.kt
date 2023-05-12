@@ -16,17 +16,21 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.ChartShape
+import com.patrykandpatrick.vico.compose.component.ChartShape
 import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
@@ -47,7 +51,7 @@ private const val RADII_ARRAY_SIZE = 8
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.core.component.shape.Shape].
  */
-public fun androidx.compose.ui.graphics.Shape.chartShape(): Shape = object : Shape {
+public fun Shape.chartShape(): Shape = object : Shape {
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
@@ -60,61 +64,57 @@ public fun androidx.compose.ui.graphics.Shape.chartShape(): Shape = object : Sha
         right: Float,
         bottom: Float,
     ) {
-        val outline = createOutline(
-            size = Size(
-                width = right - left,
-                height = bottom - top,
-            ),
-            layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
-            density = Density(context.density, context.fontScale),
-        )
-        when (outline) {
-            is Outline.Rectangle -> path.addRect(
-                left,
-                top,
-                right,
-                bottom,
-                Path.Direction.CCW,
-            )
-
-            is Outline.Rounded -> path.addRoundRect(
-                left = left,
-                top = top,
-                right = right,
-                bottom = bottom,
-                rect = outline.roundRect,
-                radii = radii,
-            )
-
-            is Outline.Generic -> {
-                matrix.setTranslate(left, top)
-                path.addPath(outline.path, matrix)
-            }
-        }
-        context.canvas.drawPath(path, paint)
+//        val outline = createOutline(
+//            size = Size(
+//                width = right - left,
+//                height = bottom - top,
+//            ),
+//            layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
+//            density = Density(context.density, context.fontScale),
+//        )
+//        when (outline) {
+//            is Outline.Rectangle -> path.addRect(Rect(left,
+//                top,
+//                right,
+//                bottom)
+//            )
+//            is Outline.Rounded -> path.addRoundRect(
+//                left = left,
+//                top = top,
+//                right = right,
+//                bottom = bottom,
+//                rect = outline.roundRect,
+//                radii = radii,
+//            )
+//
+//            is Outline.Generic -> {
+////                matrix.setTranslate(left, top)
+////                path.addPath(outline.path, matrix)
+//            }
+//        }
+//        context.canvas.drawPath(path, paint)
     }
 }
 
 /**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
-public fun CorneredShape.composeShape(): androidx.compose.ui.graphics.Shape = object :
-    androidx.compose.ui.graphics.Shape {
-
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val path = Path()
-
-        createPath(
-            density = density.density,
-            path = path,
-            left = 0f,
-            top = 0f,
-            right = size.width,
-            bottom = size.height,
-        )
-        return Outline.Generic(path)
-    }
-}
+//public fun CorneredShape.composeShape(): Shape = object : Shape {
+//
+//    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+//        val path = Path()
+//
+//        createPath(
+//            density = density.density,
+//            path = path,
+//            left = 0f,
+//            top = 0f,
+//            right = size.width,
+//            bottom = size.height,
+//        )
+//        return Outline.Generic(path)
+//    }
+//}
 
 /**
  * Adds a rounded rectangle to the receiver [Path].
@@ -144,7 +144,7 @@ public fun Path.addRoundRect(
     radii[5] = rect.bottomRightCornerRadius.y
     radii[6] = rect.bottomLeftCornerRadius.x
     radii[7] = rect.bottomLeftCornerRadius.y
-    addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
+    addRoundRect(RoundRect(left, top, right, bottom, CornerRadius.Companion.Zero))
 }
 
 /**
@@ -266,17 +266,17 @@ public fun Shapes.markerCorneredShape(
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
-public fun Shapes.dashedShape(
-    shape: androidx.compose.ui.graphics.Shape,
-    dashLength: Dp,
-    gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape.chartShape(),
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-)
+//public fun Shapes.dashedShape(
+//    shape: Shape,
+//    dashLength: Dp,
+//    gapLength: Dp,
+//    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+//): DashedShape = DashedShape(
+//    shape = shape.chartShape(),
+//    dashLengthDp = dashLength.value,
+//    gapLengthDp = gapLength.value,
+//    fitStrategy = fitStrategy,
+//)
 
 /**
  * Creates a [DashedShape].
@@ -315,7 +315,7 @@ public open class LineComponent(
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidthDp: Float = 0f,
-    strokeColor: Int = Color.TRANSPARENT,
+    strokeColor: Int = Color.Transparent.toArgb(),
 ) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidthDp, strokeColor) {
 
     private val MeasureContext.thickness: Float
@@ -349,15 +349,18 @@ public open class LineComponent(
         left: Float,
         right: Float,
         centerY: Float,
-        boundingBox: RectF,
+        boundingBox: Rect,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        boundingBox.contains(
-            left,
-            centerY - thickness * thicknessScale / 2,
-            right,
-            centerY + thickness * thicknessScale / 2,
-        )
+        false
+//        boundingBox.contains(
+//            Rect(
+//                left,
+//                centerY - thickness * thicknessScale / 2,
+//                right,
+//                centerY + thickness * thicknessScale / 2,
+//            )
+//        )
     }
 
     /**
@@ -387,15 +390,16 @@ public open class LineComponent(
         top: Float,
         bottom: Float,
         centerX: Float,
-        boundingBox: RectF,
+        boundingBox: Rect,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        boundingBox.contains(
-            centerX - thickness * thicknessScale / 2,
-            top,
-            centerX + thickness * thicknessScale / 2,
-            bottom,
-        )
+        false
+//        boundingBox.contains(
+//            centerX - thickness * thicknessScale / 2,
+//            top,
+//            centerX + thickness * thicknessScale / 2,
+//            bottom,
+//        )
     }
 
     /**
@@ -406,14 +410,15 @@ public open class LineComponent(
         top: Float,
         bottom: Float,
         centerX: Float,
-        boundingBox: RectF,
+        boundingBox: Rect,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        boundingBox.intersects(
-            centerX - thickness * thicknessScale / 2,
-            top,
-            centerX + thickness * thicknessScale / 2,
-            bottom,
-        )
+        false
+//        boundingBox.intersects(
+//            centerX - thickness * thicknessScale / 2,
+//            top,
+//            centerX + thickness * thicknessScale / 2,
+//            bottom,
+//        )
     }
 }

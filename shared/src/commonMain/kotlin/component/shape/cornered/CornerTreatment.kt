@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.cornered
 
-import android.graphics.Path
+import androidx.compose.ui.graphics.Path
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 
 /**

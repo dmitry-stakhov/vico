@@ -59,19 +59,19 @@ public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
     textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
     background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+//    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
     verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
     horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
     verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlign: Paint.Align = currentChartStyle.axis.axisLabelTextAlign,
+//    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
+//    textAlign: Paint.Align = currentChartStyle.axis.axisLabelTextAlign,
 ): TextComponent = textComponent(
     color = color,
     textSize = textSize,
     background = background,
-    ellipsize = ellipsize,
+//    ellipsize = ellipsize,
     lineCount = lineCount,
     padding = dimensionsOf(
         vertical = verticalPadding,
@@ -81,8 +81,8 @@ public fun axisLabelComponent(
         vertical = verticalMargin,
         horizontal = horizontalMargin,
     ),
-    typeface = typeface,
-    textAlign = textAlign,
+//    typeface = typeface,
+//    textAlign = textAlign,
 )
 
 /**
@@ -194,7 +194,7 @@ public fun axisTickComponent(
     color = color,
     thickness = thickness,
     dynamicShader = brush?.let(::BrushShader),
-    shape = shape.chartShape(),
+//    shape = shape.chartShape(),
     strokeWidth = strokeWidth,
     strokeColor = strokeColor,
 )

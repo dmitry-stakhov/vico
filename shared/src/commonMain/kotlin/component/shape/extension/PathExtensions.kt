@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.extension
 
-import android.graphics.Path
+import androidx.compose.ui.graphics.Path
 
 /**
  * A convenience function for [Path.cubicTo] that helps with adding a cubic curve with a certain [curvature].

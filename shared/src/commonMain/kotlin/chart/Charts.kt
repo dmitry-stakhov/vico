@@ -38,10 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
 import com.patrykandpatrick.vico.compose.chart.entry.defaultDiffAnimationSpec
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
@@ -282,7 +280,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 interactionSource = interactionSource,
             ),
     ) {
-        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+//        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
         chart.updateChartValues(measureContext.chartValuesManager, model)
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)

@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.shader
 
-import android.graphics.Shader
+import androidx.compose.ui.graphics.Shader
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**

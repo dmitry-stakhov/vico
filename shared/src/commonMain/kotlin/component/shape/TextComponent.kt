@@ -16,9 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.component.shape
 
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.text.TextUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
@@ -49,20 +46,20 @@ public fun textComponent(
     color: Color = Color.Black,
     textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
     background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+//    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = DEF_LABEL_LINE_COUNT,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
-    typeface: Typeface? = null,
-    textAlign: Paint.Align = Paint.Align.LEFT,
+//    typeface: Typeface? = null,
+//    textAlign: Paint.Align = Paint.Align.LEFT,
 ): TextComponent = com.patrykandpatrick.vico.compose.component.textComponent(
     color = color,
     textSize = textSize,
     background = background,
-    ellipsize = ellipsize,
+//    ellipsize = ellipsize,
     lineCount = lineCount,
     padding = padding,
     margins = margins,
-    typeface = typeface,
-    textAlign = textAlign,
+//    typeface = typeface,
+//    textAlign = textAlign,
 )

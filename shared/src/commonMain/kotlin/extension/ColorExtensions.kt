@@ -54,9 +54,9 @@ public fun Int.copyColor(
 /**
  * The hex code for this color.
  */
-@Suppress("MagicNumber", "ImplicitDefaultLocale")
-public val Int.colorHex: String
-    get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())
+//@Suppress("MagicNumber", "ImplicitDefaultLocale")
+//public val Int.colorHex: String
+//    get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())
 
 /**
  * The value of the alpha channel of this color.

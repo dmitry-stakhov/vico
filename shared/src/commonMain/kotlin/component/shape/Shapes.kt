@@ -16,18 +16,13 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.Drawable
-import android.os.Build
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
 import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
 import com.patrykandpatrick.vico.core.component.shape.cornered.CorneredShape
 import com.patrykandpatrick.vico.core.component.shape.cornered.CutCornerTreatment
 import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.extension.setBounds
 
 /**
  * Houses utilities for creating [Shape]s.
@@ -117,6 +112,7 @@ public object Shapes {
         Corner.Relative(bottomRightPercent, CutCornerTreatment),
         Corner.Relative(bottomLeftPercent, CutCornerTreatment),
     )
+}
 
     /**
      * Creates a [Shape] out of a [Drawable].
@@ -125,80 +121,80 @@ public object Shapes {
      * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic size.
      * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire bounds.
      */
-    public fun drawableShape(
-        drawable: Drawable,
-        tintDrawable: Boolean = true,
-        keepAspectRatio: Boolean = false,
-        otherShape: Shape? = rectShape,
-    ): Shape = object : Shape {
+//    public fun drawableShape(
+//        drawable: Drawable,
+//        tintDrawable: Boolean = true,
+//        keepAspectRatio: Boolean = false,
+//        otherShape: Shape? = rectShape,
+//    ): Shape = object : Shape {
 
-        private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
-            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
+//        private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
+//            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
-        override fun drawShape(
-            context: DrawContext,
-            paint: Paint,
-            path: Path,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ) {
-            if (bottom - top == 0f || left - right == 0f) return
-            val width = right - left
-            val height = bottom - top
+//        override fun drawShape(
+//            context: DrawContext,
+//            paint: Paint,
+//            path: Path,
+//            left: Float,
+//            top: Float,
+//            right: Float,
+//            bottom: Float,
+//        ) {
+//            if (bottom - top == 0f || left - right == 0f) return
+//            val width = right - left
+//            val height = bottom - top
+//
+//            var otherComponentLeft = left
+//            var otherComponentTop = top
+//
+////            if (tintDrawable) drawable.setTintCompat(paint.color)
+//
+//            if (height > width) {
+////                val drawableHeight = if (keepAspectRatio) width / ratio else height
+////                val topWithoutClipping = minOf(top, bottom - drawableHeight)
+////                drawable.setBounds(
+////                    left = left,
+////                    top = topWithoutClipping,
+////                    right = right,
+////                    bottom = topWithoutClipping + drawableHeight,
+////                )
+//
+////                otherComponentTop = topWithoutClipping + drawableHeight
+//            } else {
+////                val drawableWidth = if (keepAspectRatio) height * ratio else width
+////                val leftWithoutClipping = minOf(left, right - drawableWidth)
+////                drawable.setBounds(
+////                    left = leftWithoutClipping,
+////                    top = top,
+////                    right = leftWithoutClipping + drawableWidth,
+////                    bottom = bottom,
+////                )
+//
+////                otherComponentLeft = leftWithoutClipping + drawableWidth
+//            }
+//
+////            drawable.draw(context.canvas)
+//            otherShape ?: return
+//
+//            if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
+//                otherShape.drawShape(
+//                    context = context,
+//                    paint = paint,
+//                    path = path,
+//                    left = otherComponentLeft,
+//                    top = otherComponentTop,
+//                    right = right,
+//                    bottom = bottom,
+//                )
+//            }
+//        }
+//    }
+//}
 
-            var otherComponentLeft = left
-            var otherComponentTop = top
-
-            if (tintDrawable) drawable.setTintCompat(paint.color)
-
-            if (height > width) {
-                val drawableHeight = if (keepAspectRatio) width / ratio else height
-                val topWithoutClipping = minOf(top, bottom - drawableHeight)
-                drawable.setBounds(
-                    left = left,
-                    top = topWithoutClipping,
-                    right = right,
-                    bottom = topWithoutClipping + drawableHeight,
-                )
-
-                otherComponentTop = topWithoutClipping + drawableHeight
-            } else {
-                val drawableWidth = if (keepAspectRatio) height * ratio else width
-                val leftWithoutClipping = minOf(left, right - drawableWidth)
-                drawable.setBounds(
-                    left = leftWithoutClipping,
-                    top = top,
-                    right = leftWithoutClipping + drawableWidth,
-                    bottom = bottom,
-                )
-
-                otherComponentLeft = leftWithoutClipping + drawableWidth
-            }
-
-            drawable.draw(context.canvas)
-            otherShape ?: return
-
-            if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
-                otherShape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = otherComponentLeft,
-                    top = otherComponentTop,
-                    right = right,
-                    bottom = bottom,
-                )
-            }
-        }
-    }
-}
-
-private fun Drawable.setTintCompat(tint: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        setTint(tint)
-    } else {
-        colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
-    }
-}
+//private fun Drawable.setTintCompat(tint: Int) {
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//        setTint(tint)
+//    } else {
+//        colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
+//    }
+//}

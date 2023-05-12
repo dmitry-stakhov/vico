@@ -102,11 +102,12 @@ public open class VerticalLegend(
         context: MeasureContext,
         availableWidth: Float,
     ): Float = with(context) {
-        label.getHeight(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
+        0f
+//        label.getHeight(
+//            context = context,
+//            text = labelText,
+//            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
+//        )
     }
 
     /**

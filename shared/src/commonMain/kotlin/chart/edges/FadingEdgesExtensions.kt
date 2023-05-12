@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.chart.edges
 
-import android.animation.TimeInterpolator
+//import android.animation.TimeInterpolator
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.runtime.Composable
@@ -46,7 +46,7 @@ public fun FadingEdges(
     startEdgeWidthDp = startEdgeWidth.value,
     endEdgeWidthDp = endEdgeWidth.value,
     visibilityThresholdDp = visibilityThreshold.value,
-) { input -> visibilityEasing.transform(input) }
+) // { input -> visibilityEasing.transform(input) }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
@@ -70,7 +70,7 @@ public fun rememberFadingEdges(
         startEdgeWidthDp = startEdgeWidth.value
         endEdgeWidthDp = endEdgeWidth.value
         visibilityThresholdDp = visibilityThreshold.value
-        this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
+//        this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
     }
 
 /**

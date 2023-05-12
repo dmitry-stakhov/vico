@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.component.shape.cornered
 
-import android.graphics.Path
-import android.graphics.RectF
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Path
 import com.patrykandpatrick.vico.core.extension.piRad
 
 /**
@@ -71,7 +71,7 @@ public object CutCornerTreatment : CornerTreatment {
  */
 public object RoundedCornerTreatment : CornerTreatment {
 
-    private val tempRect = RectF()
+    private val tempRect = Rect.Zero
 
     override fun createCorner(
         x1: Float,
@@ -85,21 +85,21 @@ public object RoundedCornerTreatment : CornerTreatment {
         when (cornerLocation) {
             CornerLocation.TopLeft -> {
                 startAngle = 1f.piRad
-                tempRect.set(x1, y2, x2 * 2 - x1, y1 * 2 - y2)
+//                tempRect.set(x1, y2, x2 * 2 - x1, y1 * 2 - y2)
             }
             CornerLocation.TopRight -> {
                 startAngle = 1.5f.piRad
-                tempRect.set(x1 * 2 - x2, y1, x2, y2 * 2 - y1)
+//                tempRect.set(x1 * 2 - x2, y1, x2, y2 * 2 - y1)
             }
             CornerLocation.BottomRight -> {
                 startAngle = 0f
-                tempRect.set(x2 * 2 - x1, y1 * 2 - y2, x1, y2)
+//                tempRect.set(x2 * 2 - x1, y1 * 2 - y2, x1, y2)
             }
             CornerLocation.BottomLeft -> {
                 startAngle = 0.5f.piRad
-                tempRect.set(x2, y2 * 2 - y1, x1 * 2 - x2, y1)
+//                tempRect.set(x2, y2 * 2 - y1, x1 * 2 - x2, y1)
             }
         }
-        path.arcTo(tempRect, startAngle, 0.5f.piRad)
+        path.arcTo(tempRect, startAngle, 0.5f, false) // 0.5f.piRad)
     }
 }

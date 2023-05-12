@@ -47,7 +47,7 @@ public fun drawContext(
     isLtr: Boolean = true,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
-    override val canvasBounds: Rect = Rect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
+    override val canvasBounds: Rect = Rect(0f, 0f, Float.MAX_VALUE, Float.MAX_VALUE)
     override val elevationOverlayColor: Long = elevationOverlayColor
     override var canvas: Canvas = canvas
     override val density: Float = density

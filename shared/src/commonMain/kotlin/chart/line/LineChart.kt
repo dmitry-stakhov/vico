@@ -513,12 +513,12 @@ public open class LineChart(
                 val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
                     bounds = bounds,
                     distanceFromPoint = distanceFromLine,
-                    componentHeight = textComponent.getHeight(
-                        context = this,
-                        text = text,
-                        width = segmentWidth,
-                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
-                    ),
+                    componentHeight = 0f, // textComponent.getHeight(
+//                        context = this,
+//                        text = text,
+//                        width = segmentWidth,
+//                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
+//                    ),
                     y = y,
                 )
                 val dataLabelY = y + when (verticalPosition) {
