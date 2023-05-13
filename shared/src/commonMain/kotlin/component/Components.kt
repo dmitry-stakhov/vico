@@ -24,7 +24,9 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Typeface
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -241,6 +243,7 @@ public fun overlayingComponent(
  * @param typeface the [Typeface] for the text.
  * @param textAlign the text alignment.
  */
+@OptIn(ExperimentalTextApi::class)
 @Composable
 public fun textComponent(
     color: Color = Color.Black,
@@ -252,26 +255,31 @@ public fun textComponent(
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
 //    textAlign: Paint.Align = Paint.Align.LEFT,
-): TextComponent = remember(
-    color,
-    textSize,
-    background,
+): TextComponent {
+    val textMeasurer = rememberTextMeasurer()
+    return remember(
+        color,
+        textSize,
+        background,
 //    ellipsize,
-    lineCount,
-    padding,
-    margins,
-    typeface,
+        lineCount,
+        padding,
+        margins,
+        typeface,
 //    textAlign,
-) {
-    textComponent {
-        this.color = color.toArgb()
-        textSizeSp = textSize.pixelSize()
+        textMeasurer
+    ) {
+        textComponent {
+            this.color = color.toArgb()
+            textSizeSp = textSize.pixelSize()
 //        this.ellipsize = ellipsize
-        this.lineCount = lineCount
-        this.background = background
-        this.padding = padding
-        this.margins = margins
-        this.typeface = typeface
+            this.lineCount = lineCount
+            this.background = background
+            this.padding = padding
+            this.margins = margins
+            this.typeface = typeface
 //        this.textAlign = textAlign
+            this.textMeasurer = textMeasurer
+        }
     }
 }

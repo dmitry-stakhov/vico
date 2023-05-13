@@ -50,6 +50,7 @@ import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
+import kotlin.math.roundToInt
 
 private const val LABELS_KEY = "labels"
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
@@ -275,13 +276,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         labelX: Float,
         tickCenterY: Float,
     ) {
-        val textBounds = Rect.Zero
-//            label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).let {
-//            it.translate(
-//                translateX = labelX,
-//                translateY = tickCenterY - it.center.y,
-//            )
-//        }
+        val textBounds = label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).let {
+            it.translate(
+                translateX = labelX,
+                translateY = tickCenterY - it.center.y,
+            )
+        }
 
         if (
             horizontalLabelPosition == Outside ||
@@ -320,12 +320,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             val chartValues = chartValuesManager.getChartValues(position)
 
-            fun getLabelHeight(value: Float): Float = 0f
-//                label.getHeight(
-//                    context = this,
-//                    text = valueFormatter.formatValue(value, chartValues),
-//                    rotationDegrees = labelRotationDegrees,
-//                )
+            fun getLabelHeight(value: Float): Float =
+                label.getHeight(
+                    context = this,
+                    // TODO Fix
+                    text = value.roundToInt().toString(), //  valueFormatter.formatValue(value, chartValues),
+                    rotationDegrees = labelRotationDegrees,
+                )
 
             val avgHeight = arrayOf(
                 getLabelHeight(chartValues.minY),
@@ -401,30 +402,30 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
-                val titleComponentWidth = 0f // title?.let { title ->
-//                    titleComponent?.getWidth(
-//                        context = this,
-//                        text = title,
-//                        rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-//                        height = bounds.height.toInt(),
-//                    )
-//                }.orZero
+                val titleComponentWidth = title?.let { title ->
+                    titleComponent?.getWidth(
+                        context = this,
+                        text = title,
+                        rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                        height = bounds.height.toInt(),
+                    )
+                }.orZero
                 (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
                     .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.width * constraint.fraction
-            is SizeConstraint.TextWidth -> 0f //label?.getWidth(
-//                context = this,
-//                text = constraint.text,
-//                rotationDegrees = labelRotationDegrees,
-//            ).orZero + tickLength + axisThickness.half
+            is SizeConstraint.TextWidth -> label?.getWidth(
+                context = this,
+                text = constraint.text,
+                rotationDegrees = labelRotationDegrees,
+            ).orZero + tickLength + axisThickness.half
         }
     }
 
     private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
         Outside -> label?.let { label ->
-            labels.maxOfOrNull { 0f } // label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
         }.orZero
         Inside -> 0f
     }

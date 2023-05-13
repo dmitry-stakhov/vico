@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.shadow
 
-import android.graphics.Paint
+import androidx.compose.ui.graphics.Paint
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.applyElevationOverlayToColor
 
@@ -61,19 +61,19 @@ public data class ComponentShadow(
         backgroundColor: Int,
     ) {
         if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
-            paint.clearShadowLayer()
+//            paint.clearShadowLayer()
         } else {
-            paint.color = if (applyElevationOverlay) {
-                applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
-            } else {
-                backgroundColor
-            }
-            paint.setShadowLayer(
-                radius.pixels,
-                dx.pixels,
-                dy.pixels,
-                color,
-            )
+//            paint.color = if (applyElevationOverlay) {
+//                applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
+//            } else {
+//                backgroundColor
+//            }
+//            paint.setShadowLayer(
+//                radius.pixels,
+//                dx.pixels,
+//                dy.pixels,
+//                color,
+//            )
         }
     }
 

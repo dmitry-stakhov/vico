@@ -50,7 +50,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     public fun drawAboveChart(context: ChartDrawContext)
 
     /**
-     * The bounds ([RectF]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
+     * The bounds ([Rect]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
      */
     public fun setRestrictedBounds(vararg bounds: Rect?)
 }

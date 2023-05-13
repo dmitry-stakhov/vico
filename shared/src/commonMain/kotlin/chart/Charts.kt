@@ -233,7 +233,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     val axisManager = remember { AxisManager() }
-    val bounds = remember { Rect.Zero }
+    var bounds = remember { Rect.Zero }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds)
@@ -280,7 +280,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 interactionSource = interactionSource,
             ),
     ) {
-//        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
+        bounds = Rect(left = 0f, top = 0f, right = size.width, bottom = size.height)
         chart.updateChartValues(measureContext.chartValuesManager, model)
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
@@ -52,8 +53,8 @@ public open class ShapeComponent(
     strokeColor: Int = Color.Transparent.toArgb(),
 ) : Component() {
 
-//    private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-//    private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val paint: Paint = Paint().apply { isAntiAlias = true }
+    private val strokePaint: Paint = Paint().apply { isAntiAlias = true }
     private val shadowProperties: ComponentShadow = ComponentShadow()
 
     protected val path: Path = Path()
@@ -61,20 +62,20 @@ public open class ShapeComponent(
     /**
      * The color of the shape.
      */
-//    public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
+    public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = Color(value) }
 
     /**
      * The color of the stroke.
      */
-//    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
+    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = Color(value) }
 
     init {
-//        paint.color = color
-//
-//        with(strokePaint) {
-//            this.color = strokeColor
-//            style = Paint.Style.STROKE
-//        }
+        paint.color = Color(color)
+
+        with(strokePaint) {
+            this.color = Color(strokeColor)
+            style = PaintingStyle.Stroke
+        }
 
         setMargins(margins)
     }
@@ -87,14 +88,14 @@ public open class ShapeComponent(
         bottom: Float,
     ): Unit = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-//        path.rewind()
+        path.reset() // rewind
         applyShader(context, left, top, right, bottom)
         val centerX = (left + right).half
         val centerY = (top + bottom).half
-//        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
 
         val strokeWidth = strokeWidthDp.pixels
-//        strokePaint.strokeWidth = strokeWidth
+        strokePaint.strokeWidth = strokeWidth
 
         fun drawShape(paint: Paint) {
             shape.drawShape(
@@ -108,8 +109,8 @@ public open class ShapeComponent(
             )
         }
 
-//        drawShape(paint)
-//        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+        drawShape(paint)
+        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
 
         DebugHelper.drawDebugBounds(
             context = context,

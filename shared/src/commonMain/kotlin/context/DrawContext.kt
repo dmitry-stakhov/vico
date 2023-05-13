@@ -82,6 +82,7 @@ public interface DrawContext : MeasureContext {
      * @see Canvas.restoreToCount
      */
     public fun restoreCanvasToCount(count: Int) {
+        // TODO
 //        canvas.restoreToCount(count)
     }
 
