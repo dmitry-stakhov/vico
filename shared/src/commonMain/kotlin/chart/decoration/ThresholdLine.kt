@@ -18,8 +18,10 @@ package com.patrykandpatrick.vico.core.chart.decoration
 
 import DecimalFormat
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -96,6 +98,7 @@ public data class ThresholdLine(
     )
 
     override fun onDrawAboveChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         bounds: Rect,
     ): Unit = with(context) {
@@ -126,6 +129,7 @@ public data class ThresholdLine(
             bottom = bottomY,
         )
         labelComponent.drawText(
+            drawScope = drawScope,
             context = context,
             text = "", // thresholdLabel,
             maxTextWidth = bounds.width.toInt(),

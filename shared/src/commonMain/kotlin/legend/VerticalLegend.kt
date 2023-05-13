@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.legend
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
@@ -57,7 +58,7 @@ public open class VerticalLegend(
         } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
     }
 
-    override fun draw(context: ChartDrawContext): Unit = with(context) {
+    override fun draw(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
         var currentTop = bounds.top + padding.topDp.pixels
 
         items.forEach { item ->
@@ -85,6 +86,7 @@ public open class VerticalLegend(
             }
 
             item.label.drawText(
+                drawScope = drawScope,
                 context = context,
                 text = item.labelText,
                 textX = startX,
@@ -102,12 +104,11 @@ public open class VerticalLegend(
         context: MeasureContext,
         availableWidth: Float,
     ): Float = with(context) {
-        0f
-//        label.getHeight(
-//            context = context,
-//            text = labelText,
-//            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-//        )
+        label.getHeight(
+            context = context,
+            text = labelText,
+            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
+        )
     }
 
     /**

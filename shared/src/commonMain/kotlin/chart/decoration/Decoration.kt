@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.decoration
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 
@@ -43,5 +44,5 @@ public interface Decoration {
      * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
-    public fun onDrawAboveChart(context: ChartDrawContext, bounds: Rect): Unit = Unit
+    public fun onDrawAboveChart(drawScope: DrawScope, context: ChartDrawContext, bounds: Rect): Unit = Unit
 }

@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
@@ -202,9 +203,9 @@ public open class AxisManager {
      *
      * @see Axis.drawBehindChart
      */
-    public fun drawBehindChart(context: ChartDrawContext) {
+    public fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawBehindChart(context)
+            axis.drawBehindChart(drawScope, context)
         }
     }
 
@@ -216,9 +217,9 @@ public open class AxisManager {
      *
      * @see Axis.drawAboveChart
      */
-    public fun drawAboveChart(context: ChartDrawContext) {
+    public fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawAboveChart(context)
+            axis.drawAboveChart(drawScope, context)
         }
     }
 

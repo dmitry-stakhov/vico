@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.axis.vertical
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.axis.axisGuidelineComponent
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
@@ -189,6 +190,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
     override fun drawBehindChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
     ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
@@ -222,7 +224,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(bounds.height.toInt())
 
@@ -249,6 +251,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             label ?: return@forEach
             val labelText = labels.getOrNull(index) ?: return@forEach
             drawLabel(
+                drawScope = drawScope,
                 label = label,
                 labelText = labelText,
                 labelX = labelX,
@@ -258,6 +261,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         title?.let { title ->
             titleComponent?.drawText(
+                drawScope = drawScope,
                 context = this,
                 text = title,
                 textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
@@ -271,6 +275,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun ChartDrawContext.drawLabel(
+        drawScope: DrawScope,
         label: TextComponent,
         labelText: CharSequence,
         labelX: Float,
@@ -293,6 +298,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
         ) {
             label.drawText(
+                drawScope = drawScope,
                 context = this,
                 text = labelText,
                 textX = labelX,

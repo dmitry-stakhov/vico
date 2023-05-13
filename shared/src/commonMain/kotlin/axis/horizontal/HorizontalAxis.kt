@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.axis.horizontal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.axis.axisGuidelineComponent
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
@@ -148,24 +149,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
-    @Deprecated(
-        message = "The tick type is now defined by `tickPosition`.",
-        replaceWith = ReplaceWith("tickPosition"),
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("DEPRECATION")
-    public var tickType: TickType? = null
-        set(value) {
-            field = value
-            if (value != null) tickPosition = TickPosition.fromTickType(value)
-        }
-
-    /**
-     * Defines the tick placement.
-     */
     public var tickPosition: TickPosition = TickPosition.Edge
 
-    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
+    override fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
         val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
@@ -223,6 +209,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             label
                 .takeIf { shouldDrawLabel }
                 ?.drawText(
+                    drawScope = drawScope,
                     context = context,
                     text = valueFormatter.formatValue(x, chartValues),
                     textX = textCenter,
@@ -251,6 +238,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         title?.let { title ->
             titleComponent?.drawText(
+                drawScope = drawScope,
                 context = context,
                 textX = bounds.center.x,
                 textY = if (position.isTop) bounds.top else bounds.bottom,
@@ -264,7 +252,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 //        canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
+    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = Unit
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width / segmentWidth).toInt() + 1
@@ -334,23 +322,22 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
-                val labelHeight = 0 // label?.let { label ->
-//                    getLabelsToMeasure().maxOf { labelText ->
-//                        label.getHeight(
-//                            context = this,
-//                            text = labelText,
-//                            width = labelWidth,
-//                            rotationDegrees = labelRotationDegrees,
-//                        ).orZero
-//                    }
-//                }.orZero
+                val labelHeight = label?.let { label ->
+                    getLabelsToMeasure().maxOf { labelText ->
+                        label.getHeight(
+                            context = this,
+                            text = labelText,
+                            width = labelWidth,
+                            rotationDegrees = labelRotationDegrees,
+                        ).orZero
+                    }
+                }.orZero
                 val titleComponentHeight = title?.let { title ->
-                    0
-//                    titleComponent?.getHeight(
-//                        context = context,
-//                        width = bounds.width.toInt(),
-//                        text = title,
-//                    )
+                    titleComponent?.getHeight(
+                        context = context,
+                        width = bounds.width.toInt(),
+                        text = title,
+                    )
                 }.orZero
                 (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
                     .coerceAtMost(maximumValue = canvasBounds.height / MAX_HEIGHT_DIVISOR)
@@ -358,12 +345,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.height * constraint.fraction
-            is SizeConstraint.TextWidth -> 0f // label?.getHeight(
-//                context = this,
-//                text = constraint.text,
-//                width = labelWidth,
-//                rotationDegrees = labelRotationDegrees,
-//            ).orZero
+            is SizeConstraint.TextWidth ->  label?.getHeight(
+                context = this,
+                text = constraint.text,
+                width = labelWidth,
+                rotationDegrees = labelRotationDegrees,
+            ).orZero
         }
     }
 
@@ -375,60 +362,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             (chartValues.maxX - chartValues.minX).half,
             chartValues.maxX,
         ).map { x -> valueFormatter.formatValue(value = x, chartValues = chartValues) }
-    }
-
-    /**
-     * Defines the tick placement.
-     */
-    @Deprecated(
-        message = "`TickType` has been replaced with `TickPosition`, which uses better naming and has more features.",
-        replaceWith = ReplaceWith(
-            expression = "TickPosition",
-            imports = arrayOf(
-                "com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
-            ),
-        ),
-    )
-    public enum class TickType {
-        /**
-         * A tick will be drawn at either edge of each chart segment.
-         *
-         * ```
-         * —————————————
-         * |   |   |   |
-         *   1   2   3
-         * ```
-         */
-        @Deprecated(
-            message = """`TickType` has been replaced with `TickPosition`, which uses better naming and has more
-                features.""",
-            replaceWith = ReplaceWith(
-                expression = "TickPosition.Edge",
-                imports = arrayOf(
-                    "com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
-                ),
-            ),
-        )
-        Minor,
-
-        /**
-         * A tick will be drawn at the center of each chart segment.
-         *
-         * ```
-         * —————————————
-         *   |   |   |
-         *   1   2   3
-         * ```
-         */
-        @Deprecated(
-            message = """`TickType` has been replaced with `TickPosition`, which uses better naming and has more
-                features.""",
-            replaceWith = ReplaceWith(
-                expression = "TickPosition.Center()",
-                imports = arrayOf("com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis.TickPosition"),
-            ),
-        )
-        Major,
     }
 
     /**
@@ -519,18 +452,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
             override fun getTickInset(tickThickness: Float): Float = 0f
         }
-
-        public companion object {
-
-            /**
-             * Returns the [TickPosition] corresponding to the given [TickType].
-             */
-            @Suppress("DEPRECATION")
-            public fun fromTickType(type: TickType): TickPosition = when (type) {
-                TickType.Minor -> Edge
-                TickType.Major -> Center()
-            }
-        }
     }
 
     /**
@@ -539,17 +460,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public class Builder<Position : AxisPosition.Horizontal>(
         builder: Axis.Builder<Position>? = null,
     ) : Axis.Builder<Position>(builder) {
-
-        /**
-         * Defines the tick placement.
-         */
-        @Deprecated(
-            message = "The tick type is now defined by `tickPosition`.",
-            replaceWith = ReplaceWith("tickPosition"),
-            level = DeprecationLevel.ERROR,
-        )
-        @Suppress("DEPRECATION")
-        public var tickType: TickType? = null
 
         /**
          * Defines the tick placement.

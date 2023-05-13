@@ -316,20 +316,21 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
-        axisManager.drawBehindChart(chartDrawContext)
-        chart.drawScrollableContent(chartDrawContext, model)
+        axisManager.drawBehindChart(this, chartDrawContext)
+        chart.drawScrollableContent(this, chartDrawContext, model)
 
         fadingEdges?.apply {
             applyFadingEdges(chartDrawContext, chart.bounds)
             chartDrawContext.restoreCanvasToCount(count)
         }
 
-        axisManager.drawAboveChart(chartDrawContext)
-        chart.drawNonScrollableContent(chartDrawContext, model)
-        legend?.draw(chartDrawContext)
+        axisManager.drawAboveChart(this, chartDrawContext)
+        chart.drawNonScrollableContent(this, chartDrawContext, model)
+        legend?.draw(this, chartDrawContext)
 
         if (marker != null) {
             chartDrawContext.drawMarker(
+                drawScope = this,
                 marker = marker,
                 markerTouchPoint = markerTouchPoint.value,
                 chart = chart,

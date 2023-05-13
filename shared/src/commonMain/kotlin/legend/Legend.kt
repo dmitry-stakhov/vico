@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.legend
 
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
@@ -33,5 +34,5 @@ public interface Legend : BoundsAware {
     /**
      * Draws the legend.
      */
-    public fun draw(context: ChartDrawContext)
+    public fun draw(drawScope: DrawScope, context: ChartDrawContext)
 }

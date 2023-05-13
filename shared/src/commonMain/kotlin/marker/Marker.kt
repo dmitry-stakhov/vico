@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.marker
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
@@ -54,6 +55,7 @@ public interface Marker : ChartInsetter {
      */
     @Suppress("DEPRECATION")
     public fun draw(
+        drawScope: DrawScope,
         context: DrawContext,
         bounds: Rect,
         markedEntries: List<EntryModel>,

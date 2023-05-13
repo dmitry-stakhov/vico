@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -393,6 +394,7 @@ public open class LineChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
@@ -474,6 +476,7 @@ public open class LineChart(
             component.drawLine(context, linePath)
 
             drawPointsAndDataLabels(
+                drawScope = drawScope,
                 lineSpec = component,
                 entries = entries,
                 drawingStart = drawingStart,
@@ -485,6 +488,7 @@ public open class LineChart(
      * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
      */
     protected open fun ChartDrawContext.drawPointsAndDataLabels(
+        drawScope: DrawScope,
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
@@ -527,6 +531,7 @@ public open class LineChart(
                     VerticalPosition.Bottom -> distanceFromLine
                 }
                 textComponent.drawText(
+                    drawScope = drawScope,
                     context = this,
                     textX = x,
                     textY = dataLabelY,

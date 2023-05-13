@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.chart.column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -171,11 +172,13 @@ public open class ColumnChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         entryLocationMap.clear()
         drawChartInternal(
+            drawScope = drawScope,
             chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
             cellWidth = segmentProperties.cellWidth,
@@ -185,6 +188,7 @@ public open class ColumnChart(
     }
 
     protected open fun ChartDrawContext.drawChartInternal(
+        drawScope: DrawScope,
         chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,
@@ -262,10 +266,11 @@ public open class ColumnChart(
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
-                    drawDataLabel(model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
+                    drawDataLabel(drawScope, model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
                 } else if (entryIndex == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
+                        drawScope,
                         model.entries.size,
                         column.thicknessDp,
                         yValues?.first,
@@ -281,6 +286,7 @@ public open class ColumnChart(
 
     @LongParameterListDrawFunction
     protected open fun ChartDrawContext.drawStackedDataLabel(
+        drawScope: DrawScope,
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         negativeY: Float?,
@@ -291,16 +297,17 @@ public open class ColumnChart(
     ) {
         if (positiveY != null && positiveY > 0f) {
             val y = zeroLinePosition - positiveY * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y)
+            drawDataLabel(drawScope, modelEntriesSize, columnThicknessDp, positiveY, x, y)
         }
         if (negativeY != null && negativeY < 0f) {
             val y = zeroLinePosition + abs(negativeY) * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y)
+            drawDataLabel(drawScope, modelEntriesSize, columnThicknessDp, negativeY, x, y)
         }
     }
 
     @LongParameterListDrawFunction
     protected open fun ChartDrawContext.drawDataLabel(
+        drawScope: DrawScope,
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         dataLabelValue: Float,
@@ -337,14 +344,15 @@ public open class ColumnChart(
             val verticalPosition = labelVerticalPosition.inBounds(
                 y = y,
                 bounds = bounds,
-                componentHeight = 0f // textComponent.getHeight(
-//                    context = this,
-//                    text = text,
-//                    width = maxWidth.toInt(),
-//                    rotationDegrees = dataLabelRotationDegrees,
-//                ),
+                componentHeight = textComponent.getHeight(
+                    context = this,
+                    text = text,
+                    width = maxWidth.toInt(),
+                    rotationDegrees = dataLabelRotationDegrees,
+                ),
             )
             textComponent.drawText(
+                drawScope = drawScope,
                 context = this,
                 text = text,
                 textX = x,

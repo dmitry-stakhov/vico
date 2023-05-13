@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
@@ -84,15 +85,17 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     }
 
     override fun drawScrollableContent(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
         insets.clear()
         getInsets(this, insets, segmentProperties)
-        drawChartInternal(context, model)
+        drawChartInternal(drawScope, context, model)
     }
 
     override fun drawNonScrollableContent(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
@@ -102,11 +105,12 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
             right = bounds.right,
             bottom = Float.MAX_VALUE, //context.canvas.height.toFloat(),
         ) {
-            drawDecorationAboveChart(context)
+            drawDecorationAboveChart(drawScope, context)
         }
         persistentMarkers.forEach { (x, marker) ->
             entryLocationMap.getEntryModel(x)?.also { markerModel ->
                 marker.draw(
+                    drawScope = drawScope,
                     context = context,
                     bounds = bounds,
                     markedEntries = markerModel,
@@ -120,6 +124,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
      * An internal function that draws both [Decoration]s behind the chart and the chart itself in the clip bounds.
      */
     protected open fun drawChartInternal(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
@@ -131,12 +136,13 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         ) {
             drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
-                drawChart(context, model)
+                drawChart(drawScope, context, model)
             }
         }
     }
 
     protected abstract fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     )
@@ -145,7 +151,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         decorations.forEach { line -> line.onDrawBehindChart(context, bounds) }
     }
 
-    protected fun drawDecorationAboveChart(context: ChartDrawContext) {
-        decorations.forEach { line -> line.onDrawAboveChart(context, bounds) }
+    protected fun drawDecorationAboveChart(drawScope: DrawScope, context: ChartDrawContext) {
+        decorations.forEach { line -> line.onDrawAboveChart(drawScope, context, bounds) }
     }
 }

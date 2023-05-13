@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.component.marker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
@@ -90,6 +91,7 @@ public open class MarkerComponent(
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
     override fun draw(
+        drawScope: DrawScope,
         context: DrawContext,
         bounds: Rect,
         markedEntries: List<Marker.EntryModel>,
@@ -108,10 +110,11 @@ public open class MarkerComponent(
                 model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
+        drawLabel(drawScope, context, bounds, markedEntries, chartValuesProvider.getChartValues())
     }
 
     private fun drawLabel(
+        drawScope: DrawScope,
         context: DrawContext,
         bounds: Rect,
         markedEntries: List<Marker.EntryModel>,
@@ -125,6 +128,7 @@ public open class MarkerComponent(
         this[MarkerCorneredShape.tickXKey] = entryX
 
         label.drawText(
+            drawScope = drawScope,
             context = context,
             text = text,
             textX = x,

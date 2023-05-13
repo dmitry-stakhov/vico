@@ -16,16 +16,17 @@
 
 package com.patrykandpatrick.vico.core.component.text
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.Typeface
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
 import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
@@ -123,8 +124,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      */
     override var margins: MutableDimensions = emptyDimensions()
 
-    @OptIn(ExperimentalTextApi::class)
-    private var layout: TextLayoutResult = textMeasurer!!.measure("")
+    private var layout: TextLayoutResult? = null
 
     /**
      * Uses [Canvas] to draw this [TextComponent].
@@ -139,7 +139,9 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * @param maxTextHeight the maximum height available for the text (in pixels).
      * @param rotationDegrees the rotation of the text (in degrees).
      */
+    @OptIn(ExperimentalTextApi::class)
     public fun drawText(
+        drawScope: DrawScope,
         context: DrawContext,
         text: CharSequence,
         textX: Float,
@@ -220,6 +222,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //            )
 //
 //            layout.draw(this)
+            drawScope.drawText(textMeasurer!!, text.toString(), Offset(textX, textY))
             restore()
         }
     }
@@ -383,6 +386,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * @see textComponent
      */
     public class Builder {
+
+        public var drawScope: DrawScope? = null
 
         @OptIn(ExperimentalTextApi::class)
         public var textMeasurer: TextMeasurer? = null

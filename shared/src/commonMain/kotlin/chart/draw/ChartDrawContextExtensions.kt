@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
@@ -101,6 +102,7 @@ internal inline val ChartDrawContext.segmentWidth: Int
  */
 @LongParameterListDrawFunction
 public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
+    drawScope: DrawScope,
     marker: Marker,
     markerTouchPoint: Point?,
     chart: Chart<Model>,
@@ -115,6 +117,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
         ?.let { markerEntryModels ->
             chartValuesManager.getChartValues()
             marker.draw(
+                drawScope = drawScope,
                 context = this,
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,

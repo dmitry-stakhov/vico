@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
@@ -40,14 +41,14 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      *
      * @see drawAboveChart
      */
-    public fun drawBehindChart(context: ChartDrawContext)
+    public fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext)
 
     /**
      * Called after the [Chart] is drawn. Implementations can use this function to draw content above the [Chart].
      *
      * @param context holds the information needed to draw the axis.
      */
-    public fun drawAboveChart(context: ChartDrawContext)
+    public fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext)
 
     /**
      * The bounds ([Rect]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
