@@ -19,28 +19,30 @@ package com.patrykandpatrick.vico.core.debug
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
-import com.patrykandpatrick.vico.core.context.DrawContext
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlin.native.concurrent.ThreadLocal
 
 @ThreadLocal
 internal object DebugHelper {
     public var enabled: Boolean = false
 
-    public var strokeWidthDp: Float = 1f
+    public var strokeWidth: Dp = 1.dp
     public var debugPaint = Paint().apply {
         style = PaintingStyle.Stroke
         color = Color.Magenta
     }
 
     public fun drawDebugBounds(
-        context: DrawContext,
+        context: DrawScope,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
     ): Unit = with(context) {
         if (!enabled) return@with
-        debugPaint.strokeWidth = strokeWidthDp.pixels
-        canvas.drawRect(left, top, right, bottom, debugPaint)
+        debugPaint.strokeWidth = with(context) { strokeWidth.toPx() }
+        context.drawContext.canvas.drawRect(left, top, right, bottom, debugPaint)
     }
 }
