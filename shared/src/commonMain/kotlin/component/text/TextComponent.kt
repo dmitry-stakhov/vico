@@ -28,7 +28,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.Typeface
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
 import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
@@ -163,21 +163,22 @@ public open class TextComponent protected constructor() : Padding, Margins {
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
-//        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, 0f) // layout.widestLineWidth)
-//        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, 0f) // layout.height.toFloat())
+        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout!!.size.width.toFloat())
+        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout!!.size.height.toFloat())
 
         with(context.canvas) {
             save()
 
-//            val bounds = layout.getBounds(tempMeasureBounds)
-//            val textAlignCorrection = textAlign.getXCorrection(width = bounds.width())
+            var bounds = layout!!.size
+            val textAlignCorrection = horizontalPosition.getXCorrection(width = bounds.width.toFloat())
 
-//            with(receiver = bounds) {
-//                left -= padding.getLeftDp(isLtr).pixels
-//                top -= padding.topDp.pixels
-//                right += padding.getRightDp(isLtr).pixels
-//                bottom += padding.bottomDp.pixels
-//            }
+            val rect = bounds.toIntRect()
+            bounds = rect.copy(
+                left = rect.left - padding.getLeftDp(isLtr).pixels.toInt(),
+                top = rect.top - padding.topDp.pixels.toInt(),
+                right = rect.right + padding.getRightDp(isLtr).pixels.toInt(),
+                bottom = rect.bottom +  padding.bottomDp.pixels.toInt()
+            ).size
 
             var xCorrection = 0f
             var yCorrection = 0f
@@ -200,10 +201,10 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //                }
             }
 
-//            bounds.translate(
-//                x = textStartPosition + xCorrection,
-//                y = textTopPosition + yCorrection,
-//            )
+            bounds = bounds.toIntRect().toRect().translate(
+                textStartPosition + xCorrection,
+                textTopPosition + yCorrection,
+            ).roundToIntRect().size
 
 //            if (shouldRotate) {
 //                rotate(rotationDegrees, bounds.center.x, bounds.centerY())
@@ -222,8 +223,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //                bounds.top + padding.topDp.pixels,
 //            )
 //
-//            layout.draw(this)
-            drawScope.drawText(textMeasurer!!, text.toString(), Offset(textX, textY))
+            drawScope.drawText(textMeasurer!!, text.toString(), Offset(textStartPosition, textTopPosition))
             restore()
         }
     }
@@ -252,11 +252,12 @@ public open class TextComponent protected constructor() : Padding, Margins {
         width: Float,
     ): Float = baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
 
-//    private fun Paint.Align.getXCorrection(width: Float): Float = when (this) {
-//        Paint.Align.LEFT -> 0f
-//        Paint.Align.CENTER -> width.half
-//        Paint.Align.RIGHT -> width
-//    }
+    private fun Alignment.Horizontal.getXCorrection(width: Float): Float = when (this) {
+        Alignment.Start -> 0f
+        Alignment.CenterHorizontally -> width.half
+        Alignment.End -> width
+        else -> error("")
+    }
 
     @JvmName("getTextTopPositionExt")
     private fun Alignment.Vertical.getTextTopPosition(
@@ -266,7 +267,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = with(context) {
         textY + when (this@getTextTopPosition) {
             Alignment.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
-            Alignment.Center -> -layoutHeight.half
+            Alignment.CenterVertically, Alignment.Center -> -layoutHeight.half
             Alignment.Bottom -> padding.topDp.pixels + margins.topDp.pixels
             else -> error("")
         }
