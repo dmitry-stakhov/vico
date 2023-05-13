@@ -75,7 +75,7 @@ public class OverlayingComponent(
         inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
 
         DebugHelper.drawDebugBounds(
-            context = context,
+            context = context.drawScope,
             left = left,
             top = top,
             right = right,

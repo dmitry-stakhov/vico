@@ -23,7 +23,7 @@ import kotlin.random.Random
 
 @Composable
 public fun App() {
-    DebugHelper.enabled = true
+    DebugHelper.enabled = false
     MaterialTheme {
         val myColor = remember {
             Color.hsv(Random.nextInt(360).toFloat(), 0.75f, 0.75f)

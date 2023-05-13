@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -112,9 +113,11 @@ public open class ShapeComponent(
                             minOf(top + margins.topDp.pixels + strokeWidth.half, centerY)
                 ),
                 LayoutDirection.Ltr,
-                Density(1f)
+                context.drawScope
             )
-            context.drawScope.drawOutline(outline, paint.color)
+            context.drawScope.withTransform({this.translate(left, top) }) {
+                drawOutline(outline, paint.color)
+            }
         }
 
         drawShape(paint)

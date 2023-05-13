@@ -200,7 +200,7 @@ public open class LineComponent(
         boundingBox: Rect,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        false
+        true
 //        boundingBox.contains(
 //            Rect(
 //                left,
@@ -241,7 +241,7 @@ public open class LineComponent(
         boundingBox: Rect,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        false
+        true
 //        boundingBox.contains(
 //            centerX - thickness * thicknessScale / 2,
 //            top,
