@@ -108,10 +108,3 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     }
     return model
 }
-
-/**
- * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
- */
-@Deprecated("Use `com.patrykandpatrick.vico.core.entry.composed.plus` instead.")
-public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
-    ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))

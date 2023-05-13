@@ -105,7 +105,6 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @see ChartDrawContext
      */
     public fun drawScrollableContent(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     )
@@ -119,7 +118,6 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @see ChartDrawContext
      */
     public fun drawNonScrollableContent(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     )

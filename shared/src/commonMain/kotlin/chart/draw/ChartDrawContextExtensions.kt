@@ -50,7 +50,7 @@ import com.patrykandpatrick.vico.core.model.Point
  */
 @LongParameterListDrawFunction
 public fun chartDrawContext(
-    canvas: Canvas,
+    drawScope: DrawScope,
     elevationOverlayColor: Int,
     measureContext: MeasureContext,
     markerTouchPoint: Point?,
@@ -62,9 +62,11 @@ public fun chartDrawContext(
 
     override val chartBounds: Rect = chartBounds
 
-    override var canvas: Canvas = canvas
+    override var canvas: Canvas = drawScope.drawContext.canvas
 
     override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
+
+    override val drawScope: DrawScope = drawScope
 
     override val markerTouchPoint: Point? = markerTouchPoint
 

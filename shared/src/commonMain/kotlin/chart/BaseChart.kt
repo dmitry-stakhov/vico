@@ -85,17 +85,15 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     }
 
     override fun drawScrollableContent(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
         insets.clear()
         getInsets(this, insets, segmentProperties)
-        drawChartInternal(drawScope, context, model)
+        drawChartInternal(context, model)
     }
 
     override fun drawNonScrollableContent(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
@@ -124,7 +122,6 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
      * An internal function that draws both [Decoration]s behind the chart and the chart itself in the clip bounds.
      */
     protected open fun drawChartInternal(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
@@ -136,13 +133,12 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         ) {
             drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
-                drawChart(drawScope, context, model)
+                drawChart(context, model)
             }
         }
     }
 
     protected abstract fun drawChart(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     )

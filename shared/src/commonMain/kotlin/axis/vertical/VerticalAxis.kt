@@ -189,10 +189,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(
-        drawScope: DrawScope,
-        context: ChartDrawContext,
-    ): Unit = with(context) {
+    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
 
         val axisStep = bounds.height / (drawLabelCount - 1)
@@ -224,7 +221,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(bounds.height.toInt())
 

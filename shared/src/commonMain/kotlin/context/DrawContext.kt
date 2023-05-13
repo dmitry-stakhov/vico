@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.context
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.extension.saveLayer
 
@@ -31,6 +32,8 @@ public interface DrawContext : MeasureContext {
      * The elevation overlay color, applied to [ShapeComponent]s that cast shadows.
      */
     public val elevationOverlayColor: Long
+
+    public val drawScope: DrawScope
 
     /**
      * The canvas to draw the chart on.

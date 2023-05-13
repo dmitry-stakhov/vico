@@ -203,9 +203,9 @@ public open class AxisManager {
      *
      * @see Axis.drawBehindChart
      */
-    public fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext) {
+    public fun drawBehindChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawBehindChart(drawScope, context)
+            axis.drawBehindChart(context)
         }
     }
 
@@ -217,9 +217,9 @@ public open class AxisManager {
      *
      * @see Axis.drawAboveChart
      */
-    public fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext) {
+    public fun drawAboveChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawAboveChart(drawScope, context)
+            axis.drawAboveChart(context)
         }
     }
 

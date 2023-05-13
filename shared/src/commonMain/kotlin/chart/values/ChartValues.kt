@@ -49,13 +49,6 @@ public interface ChartValues {
     public val xStep: Float
 
     /**
-     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
-     */
-    @Deprecated("Use `xStep` instead.", ReplaceWith("xStep"))
-    public val stepX: Float
-        get() = xStep
-
-    /**
      * The minimum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.minY] (the
      * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
      * value.

@@ -151,7 +151,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var tickPosition: TickPosition = TickPosition.Edge
 
-    override fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
+    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
         val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
@@ -252,7 +252,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 //        canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = Unit
+    override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width / segmentWidth).toInt() + 1

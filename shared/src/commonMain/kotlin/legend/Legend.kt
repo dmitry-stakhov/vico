@@ -34,5 +34,5 @@ public interface Legend : BoundsAware {
     /**
      * Draws the legend.
      */
-    public fun draw(drawScope: DrawScope, context: ChartDrawContext)
+    public fun draw(context: ChartDrawContext)
 }

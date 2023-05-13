@@ -172,13 +172,11 @@ public open class ColumnChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         entryLocationMap.clear()
         drawChartInternal(
-            drawScope = drawScope,
             chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
             cellWidth = segmentProperties.cellWidth,
@@ -188,7 +186,6 @@ public open class ColumnChart(
     }
 
     protected open fun ChartDrawContext.drawChartInternal(
-        drawScope: DrawScope,
         chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,

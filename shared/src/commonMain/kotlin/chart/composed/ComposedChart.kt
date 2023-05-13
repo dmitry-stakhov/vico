@@ -80,21 +80,20 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun drawChart(
-        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ComposedChartEntryModel<Model>,
     ) {
         entryLocationMap.clear()
         model.forEachModelWithChart { item, chart ->
-            chart.drawScrollableContent(drawScope, context, item)
+            chart.drawScrollableContent(context, item)
             entryLocationMap.updateAll(chart.entryLocationMap)
         }
     }
 
-    override fun drawChartInternal(drawScope: DrawScope, context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+    override fun drawChartInternal(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
         drawDecorationBehindChart(context)
         if (model.entries.isNotEmpty()) {
-            drawChart(drawScope, context, model)
+            drawChart(context, model)
         }
     }
 

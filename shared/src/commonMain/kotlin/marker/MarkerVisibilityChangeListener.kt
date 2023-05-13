@@ -31,10 +31,7 @@ public interface MarkerVisibilityChangeListener {
     public fun onMarkerShown(
         marker: Marker,
         markerEntryModels: List<Marker.EntryModel>,
-    ) {
-        @Suppress("DEPRECATION")
-        onMarkerVisibilityChanged(isVisible = true, marker = marker)
-    }
+    ) = Unit
 
     /**
      * Called when the linked [Marker] moves (that is, when there’s a change in which chart entries it highlights).
@@ -53,20 +50,5 @@ public interface MarkerVisibilityChangeListener {
      *
      * @param marker the linked [Marker], which has been hidden.
      */
-    public fun onMarkerHidden(marker: Marker) {
-        @Suppress("DEPRECATION")
-        onMarkerVisibilityChanged(isVisible = false, marker = marker)
-    }
-
-    /**
-     * Called when the linked [Marker]ʼs visibility changes.
-     *
-     * @param isVisible whether the linked [Marker] is visible.
-     * @param marker the linked [Marker], whose visibility has changed.
-     */
-    @Deprecated("Use `onMarkerShown` and `onMarkerHidden` instead.")
-    public fun onMarkerVisibilityChanged(
-        isVisible: Boolean,
-        marker: Marker,
-    ): Unit = Unit
+    public fun onMarkerHidden(marker: Marker) = Unit
 }

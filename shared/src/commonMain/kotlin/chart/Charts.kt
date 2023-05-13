@@ -304,7 +304,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val chartDrawContext = chartDrawContext(
-            canvas = drawContext.canvas,
+            drawScope = this,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
@@ -316,17 +316,17 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
-        axisManager.drawBehindChart(this, chartDrawContext)
-        chart.drawScrollableContent(this, chartDrawContext, model)
+        axisManager.drawBehindChart(chartDrawContext)
+        chart.drawScrollableContent(chartDrawContext, model)
 
         fadingEdges?.apply {
             applyFadingEdges(chartDrawContext, chart.bounds)
             chartDrawContext.restoreCanvasToCount(count)
         }
 
-        axisManager.drawAboveChart(this, chartDrawContext)
-        chart.drawNonScrollableContent(this, chartDrawContext, model)
-        legend?.draw(this, chartDrawContext)
+        axisManager.drawAboveChart(chartDrawContext)
+        chart.drawNonScrollableContent(chartDrawContext, model)
+        legend?.draw(chartDrawContext)
 
         if (marker != null) {
             chartDrawContext.drawMarker(
