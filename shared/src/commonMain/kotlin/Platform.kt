@@ -1,3 +1,3 @@
-expect class DecimalFormat(pattern: String) {
-    fun formatValue(value: Float): String
+public expect class DecimalFormat(pattern: String) {
+    public fun formatValue(value: Float): String
 }

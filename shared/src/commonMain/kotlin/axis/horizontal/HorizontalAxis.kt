@@ -152,7 +152,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public var tickPosition: TickPosition = TickPosition.Edge
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
-        val clipRestoreCount = canvas.save()
+        canvas.save()
         val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val chartValues = chartValuesManager.getChartValues()
@@ -249,7 +249,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
 
         canvas.restore()
-//        canvas.restoreToCount(clipRestoreCount)
     }
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit

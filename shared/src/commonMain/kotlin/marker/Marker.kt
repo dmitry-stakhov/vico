@@ -43,7 +43,7 @@ public interface Marker : ChartInsetter {
         bounds: Rect,
         markedEntries: List<EntryModel>,
         chartValuesProvider: ChartValuesProvider,
-    ) = Unit
+    ): Unit = Unit
 
     /**
      * Contains information on a single chart entry to which a chart marker refers.

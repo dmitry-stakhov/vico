@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.draw
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.DefaultExtras
@@ -41,7 +42,7 @@ public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
  * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
  */
 public fun drawContext(
-    canvas: Canvas,
+    drawScope: DrawScope,
     density: Float = 1f,
     fontScale: Float = 1f,
     isLtr: Boolean = true,
@@ -49,7 +50,8 @@ public fun drawContext(
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
     override val canvasBounds: Rect = Rect(0f, 0f, Float.MAX_VALUE, Float.MAX_VALUE)
     override val elevationOverlayColor: Long = elevationOverlayColor
-    override var canvas: Canvas = canvas
+    override val drawScope: DrawScope = drawScope
+    override var canvas: Canvas = drawScope.drawContext.canvas
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr

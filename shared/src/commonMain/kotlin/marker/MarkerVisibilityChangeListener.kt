@@ -31,7 +31,7 @@ public interface MarkerVisibilityChangeListener {
     public fun onMarkerShown(
         marker: Marker,
         markerEntryModels: List<Marker.EntryModel>,
-    ) = Unit
+    ): Unit = Unit
 
     /**
      * Called when the linked [Marker] moves (that is, when there’s a change in which chart entries it highlights).
@@ -50,5 +50,5 @@ public interface MarkerVisibilityChangeListener {
      *
      * @param marker the linked [Marker], which has been hidden.
      */
-    public fun onMarkerHidden(marker: Marker) = Unit
+    public fun onMarkerHidden(marker: Marker): Unit = Unit
 }
