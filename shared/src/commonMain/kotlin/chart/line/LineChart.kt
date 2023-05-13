@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart.line
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -59,7 +60,6 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -142,7 +142,7 @@ public fun lineSpec(
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
@@ -215,7 +215,7 @@ public open class LineChart(
         public var point: Component? = null,
         public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
         public var dataLabel: TextComponent? = null,
-        public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+        public var dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
         public var pointConnector: PointConnector = DefaultPointConnector(),
@@ -461,9 +461,10 @@ public open class LineChart(
                     y = y,
                 )
                 val dataLabelY = y + when (verticalPosition) {
-                    VerticalPosition.Top -> -distanceFromLine
-                    VerticalPosition.Center -> 0f
-                    VerticalPosition.Bottom -> distanceFromLine
+                    Alignment.Top -> -distanceFromLine
+                    Alignment.Center -> 0f
+                    Alignment.Bottom -> distanceFromLine
+                    else -> error("")
                 }
                 textComponent.drawText(
                     drawScope = drawScope,

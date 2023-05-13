@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart.column
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
@@ -42,8 +43,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
+import com.patrykandpatrick.vico.core.component.text.negative
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
@@ -89,7 +90,7 @@ public fun columnChart(
     persistentMarkers: Map<Float, Marker>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
     dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
-    dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
+    dataLabelVerticalPosition: Alignment.Vertical = currentChartStyle.columnChart.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
     axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
@@ -132,7 +133,7 @@ public open class ColumnChart(
     public var mergeMode: MergeMode = MergeMode.Grouped,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
-    public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    public var dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
     public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     public var dataLabelRotationDegrees: Float = 0f,
 ) : BaseChart<ChartEntryModel>() {

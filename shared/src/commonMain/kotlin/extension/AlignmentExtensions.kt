@@ -16,26 +16,35 @@
 
 package com.patrykandpatrick.vico.core.component.text
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import com.patrykandpatrick.vico.core.extension.half
 
-internal fun VerticalPosition.inBounds(
+public fun Alignment.Vertical.negative(): Alignment.Vertical = when (this) {
+    Alignment.Top -> Alignment.Bottom
+    Alignment.CenterVertically -> Alignment.CenterVertically
+    Alignment.Bottom -> Alignment.Top
+    else -> error("Not Supported")
+}
+
+internal fun Alignment.Vertical.inBounds(
     bounds: Rect,
     distanceFromPoint: Float = 0f,
     componentHeight: Float,
     y: Float,
-): VerticalPosition {
+): Alignment.Vertical {
     val topFits = y - distanceFromPoint - componentHeight >= bounds.top
     val centerFits = y - componentHeight.half >= bounds.top && y + componentHeight.half <= bounds.bottom
     val bottomFits = y + distanceFromPoint + componentHeight <= bounds.bottom
 
     return when (this) {
-        VerticalPosition.Top -> if (topFits) this else VerticalPosition.Bottom
-        VerticalPosition.Bottom -> if (bottomFits) this else VerticalPosition.Top
-        VerticalPosition.Center -> when {
+        Alignment.Top -> if (topFits) this else Alignment.Bottom
+        Alignment.Bottom -> if (bottomFits) this else Alignment.Top
+        Alignment.Center -> when {
             centerFits -> this
-            topFits -> VerticalPosition.Top
-            else -> VerticalPosition.Bottom
+            topFits -> Alignment.Top
+            else -> Alignment.Bottom
         }
+        else -> error("Not supported")
     }
 }

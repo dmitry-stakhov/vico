@@ -16,11 +16,11 @@
 
 package com.patrykandpatrick.vico.compose.component.shape.shader
 
-import android.graphics.Matrix
-import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Shader
 import com.patrykandpatrick.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -52,9 +52,9 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
             alpha = 1f,
         )
         return requireNotNull(tempPaint.shader).apply {
-            matrix.postTranslate(left, top)
-            setLocalMatrix(matrix)
-            matrix.reset()
+//            matrix.postTranslate(left, top)
+//            setLocalMatrix(matrix)
+//            matrix.reset()
         }
     }
 }

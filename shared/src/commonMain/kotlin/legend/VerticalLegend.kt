@@ -16,12 +16,11 @@
 
 package com.patrykandpatrick.vico.core.legend
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
-import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
@@ -91,7 +90,7 @@ public open class VerticalLegend(
                 text = item.labelText,
                 textX = startX,
                 textY = centerY,
-                horizontalPosition = HorizontalPosition.End,
+                horizontalPosition = Alignment.End,
                 maxTextWidth = (chartBounds.width - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
                     .toInt(),
             )

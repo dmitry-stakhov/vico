@@ -26,13 +26,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
 
 /**
- * Calls the specified function block with [DrawContext.canvas] as its receiver.
- */
-public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
-    canvas.block()
-}
-
-/**
  * Creates an anonymous implementation of [DrawContext].
  *
  * @param canvas the canvas to draw the chart on.

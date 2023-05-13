@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
@@ -39,48 +38,12 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.chartShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
-
-public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
-
-/**
- * Creates a [LineComponent] with the specified properties.
- */
-@Composable
-public fun lineComponent(
-    color: Color = Color.Black,
-    thickness: Dp,
-    shape: ChartShape,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-): LineComponent = remember(
-    color,
-    thickness,
-    shape,
-    dynamicShader,
-    margins,
-    strokeWidth,
-    strokeColor,
-) {
-    LineComponent(
-        color = color.toArgb(),
-        thicknessDp = thickness.value,
-        shape = shape,
-        dynamicShader = dynamicShader,
-        margins = margins,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-    )
-}
 
 /**
  * Creates a [LineComponent] with the specified properties.
@@ -94,14 +57,14 @@ public fun lineComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-//    shape = shape.chartShape(),
+): LineComponent = LineComponent(
+    color = color.toArgb(),
+    thicknessDp = thickness.value,
+    shape = shape,
     dynamicShader = dynamicShader,
     margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 /**
@@ -109,48 +72,19 @@ public fun lineComponent(
  */
 @Composable
 public fun shapeComponent(
-    shape: ChartShape = Shapes.rectShape,
+    shape: Shape = RectangleShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): ShapeComponent = remember(
-    shape,
-    color,
-    dynamicShader,
-    margins,
-    strokeWidth,
-    strokeColor,
-) {
-    ShapeComponent(
-        shape = shape,
-        color = color.toArgb(),
-        dynamicShader = dynamicShader,
-        margins = margins,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-    )
-}
-
-/**
- * Creates a [ShapeComponent] with the specified properties.
- */
-@Composable
-public fun shapeComponent(
-    shape: Shape,
-    color: Color = Color.Black,
-    dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
-    strokeWidth: Dp = 0.dp,
-    strokeColor: Color = Color.Transparent,
-): ShapeComponent = shapeComponent(
-//    shape = shape.chartShape(),
-    color = color,
+): ShapeComponent = ShapeComponent(
+    shape = shape,
+    color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 /**
@@ -158,7 +92,7 @@ public fun shapeComponent(
  */
 @Composable
 public fun shapeComponent(
-    shape: ChartShape = Shapes.rectShape,
+    shape: Shape = RectangleShape,
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = emptyDimensions(),

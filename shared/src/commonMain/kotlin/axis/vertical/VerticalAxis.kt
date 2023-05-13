@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis.vertical
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
@@ -41,9 +42,7 @@ import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.extension.getEnd
@@ -166,8 +165,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         get() = horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
             horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
-    private val textHorizontalPosition: HorizontalPosition
-        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
+    private val textHorizontalPosition: Alignment.Horizontal
+        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) Alignment.Start else Alignment.End
 
     /**
      * The maximum label count.
@@ -263,8 +262,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 text = title,
                 textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
                 textY = bounds.center.y,
-                horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
-                verticalPosition = VerticalPosition.Center,
+                horizontalPosition = if (position.isStart) Alignment.End else Alignment.Start,
+                verticalPosition = Alignment.CenterVertically,
                 rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
                 maxTextHeight = bounds.height.toInt(),
             )
@@ -447,10 +446,10 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      *
      * @see VerticalPosition
      */
-    public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
-        Center(VerticalPosition.Center),
-        Top(VerticalPosition.Top),
-        Bottom(VerticalPosition.Bottom),
+    public enum class VerticalLabelPosition(public val textPosition: Alignment.Vertical) {
+        Center(Alignment.CenterVertically),
+        Top(Alignment.Top),
+        Bottom(Alignment.Bottom),
     }
 
     /**

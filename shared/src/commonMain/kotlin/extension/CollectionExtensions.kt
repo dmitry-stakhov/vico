@@ -16,13 +16,14 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-import com.patrykandpatrick.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
 import kotlin.math.abs
 
 internal fun <T> List<T>.getRepeating(index: Int): T {
     if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
     return get(index % size.coerceAtLeast(1))
 }
+
+internal const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
 
 /**
  * Replaces all of the elements of this [MutableList] with the elements of the provided collection.

@@ -16,12 +16,19 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
-import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
+import kotlin.math.roundToInt
 
 /**
  * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.
@@ -32,7 +39,7 @@ import com.patrykandpatrick.vico.core.extension.ceil
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
-    public val shape: Shape = Shapes.rectShape,
+    public val shape: Shape = RectangleShape,
     public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
     public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
@@ -41,92 +48,49 @@ public class DashedShape(
     private var drawDashLength = dashLengthDp
     private var drawGapLength = gapLengthDp
 
-    override fun drawShape(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        if (right - left > bottom - top) {
-            drawHorizontalDashes(context, paint, path, left, top, right, bottom)
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        if (size.width > size.height) {
+            calculateDrawLengths(density, size.width)
         } else {
-            drawVerticalDashes(context, paint, path, left, top, right, bottom)
+            calculateDrawLengths(density, size.height)
         }
-    }
-
-    @LongParameterListDrawFunction
-    private fun drawHorizontalDashes(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        calculateDrawLengths(context, right - left)
-
-        var index = 0
-        var drawnLength = 0f
-        while (right - left - drawnLength > 0) {
-            drawnLength += if (index % 2 == 0) {
-                path.reset()
-                shape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = left + drawnLength,
-                    top = top,
-                    right = left + drawnLength + drawDashLength,
-                    bottom = bottom,
-                )
-                drawDashLength
+        return Outline.Generic(Path().apply {
+            val dashLengthPx = with(density) { Dp(dashLengthDp).toPx() }
+            val gapLengthPx = with(density) { Dp(gapLengthDp).toPx() }
+            val stepsCount = ((size.width + gapLengthPx) / (dashLengthPx + gapLengthPx)).roundToInt()
+            val actualStep = size.width / stepsCount
+            val dotSize = if (size.width > size.height) {
+                Size(width = dashLengthPx, height = size.height)
             } else {
-                drawGapLength
+                Size(width = size.width, height = dashLengthPx)
             }
-            index++
-        }
+            for (i in 0 until stepsCount) {
+                if (size.width > size.height) {
+                    addRect(
+                        Rect(
+                            offset = Offset(x = i * actualStep, y = 0f),
+                            size = dotSize
+                        )
+                    )
+                } else {
+                    addRect(
+                        Rect(
+                            offset = Offset(x = 0f, y = i * actualStep),
+                            size = dotSize
+                        )
+                    )
+                }
+            }
+            close()
+        })
     }
 
-    @LongParameterListDrawFunction
-    private fun drawVerticalDashes(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        calculateDrawLengths(context, bottom - top)
-
-        var index = 0
-        var drawnLength = 0f
-        while (bottom - top - drawnLength > 0) {
-            drawnLength += if (index % 2 == 0) {
-                path.reset()
-                shape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = left,
-                    top = top + drawnLength,
-                    right = right,
-                    bottom = top + drawnLength + drawDashLength,
-                )
-                drawDashLength
-            } else {
-                drawGapLength
-            }
-            index++
-        }
-    }
-
-    private fun calculateDrawLengths(context: DrawContext, length: Float): Unit = with(context) {
-        calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
+    private fun calculateDrawLengths(density: Density, length: Float): Unit = with(density) {
+        calculateDrawLengths(Dp(dashLengthDp).toPx(), Dp(gapLengthDp).toPx(), length)
     }
 
     private fun calculateDrawLengths(

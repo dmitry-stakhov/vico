@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis.horizontal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
@@ -36,7 +37,6 @@ import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.doubled
@@ -143,8 +143,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
 
-    private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
-        get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
+    private val AxisPosition.Horizontal.textVerticalPosition: Alignment.Vertical
+        get() = if (isBottom) Alignment.Bottom else Alignment.Top
 
     /**
      * Defines the tick placement.
@@ -242,7 +242,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 context = context,
                 textX = bounds.center.x,
                 textY = if (position.isTop) bounds.top else bounds.bottom,
-                verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
+                verticalPosition = if (position.isTop) Alignment.Bottom else Alignment.Top,
                 maxTextWidth = bounds.width.toInt(),
                 text = title,
             )

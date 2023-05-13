@@ -17,15 +17,18 @@
 package com.patrykandpatrick.vico.compose.style
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -39,15 +42,12 @@ import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.dashedShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 
@@ -109,17 +109,17 @@ public data class ChartStyle(
         val axisLabelTextAlign: TextAlign = TextAlign.Start,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
-        val axisGuidelineShape: Shape = Shapes.dashedShape(
-            shape = Shapes.rectShape,
-            dashLength = DefaultDimens.DASH_LENGTH.dp,
-            gapLength = DefaultDimens.DASH_GAP.dp,
+        val axisGuidelineShape: Shape = DashedShape(
+            shape = RectangleShape,
+            dashLengthDp = DefaultDimens.DASH_LENGTH,
+            gapLengthDp = DefaultDimens.DASH_GAP,
         ),
         val axisLineColor: Color,
         val axisLineWidth: Dp = DefaultDimens.AXIS_LINE_WIDTH.dp,
-        val axisLineShape: Shape = Shapes.rectShape,
+        val axisLineShape: Shape = RectangleShape,
         val axisTickColor: Color = axisLineColor,
         val axisTickWidth: Dp = axisLineWidth,
-        val axisTickShape: Shape = Shapes.rectShape,
+        val axisTickShape: Shape = RectangleShape,
         val axisTickLength: Dp = DefaultDimens.AXIS_TICK_LENGTH.dp,
         val axisValueFormatter: AxisValueFormatter<AxisPosition> = DecimalFormatAxisValueFormatter(),
     )
@@ -145,7 +145,7 @@ public data class ChartStyle(
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
         val mergeMode: MergeMode = MergeMode.Grouped,
         val dataLabel: TextComponent? = null,
-        val dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+        val dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
         val dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         val dataLabelRotationDegrees: Float = 0f,
     )
@@ -199,7 +199,7 @@ public data class ChartStyle(
                     LineComponent(
                         color = entityColor.toArgb(),
                         thicknessDp = DefaultDimens.COLUMN_WIDTH,
-                        shape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
+                        shape = RoundedCornerShape(percent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
                     )
                 },
             ),

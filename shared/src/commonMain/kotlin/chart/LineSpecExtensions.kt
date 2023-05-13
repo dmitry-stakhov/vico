@@ -16,12 +16,12 @@
 
 package com.patrykandpatrick.vico.core.chart
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.StrokeCap
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 
 /**
@@ -35,7 +35,7 @@ public fun LineChart.LineSpec.copy(
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
     dataLabel: TextComponent? = this.dataLabel,
-    dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
+    dataLabelVerticalPosition: Alignment.Vertical = this.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,

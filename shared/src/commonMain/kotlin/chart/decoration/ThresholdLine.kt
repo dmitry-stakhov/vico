@@ -17,15 +17,13 @@
 package com.patrykandpatrick.vico.core.chart.decoration
 
 import DecimalFormat
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.extension.ceil
@@ -157,9 +155,9 @@ public data class ThresholdLine(
      *
      * @property position the label position.
      */
-    public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
-        Start(HorizontalPosition.End),
-        End(HorizontalPosition.Start),
+    public enum class LabelHorizontalPosition(public val position: Alignment.Horizontal) {
+        Start(Alignment.End),
+        End(Alignment.Start),
     }
 
     /**
@@ -167,9 +165,9 @@ public data class ThresholdLine(
      *
      * @property position the label position.
      */
-    public enum class LabelVerticalPosition(public val position: VerticalPosition) {
-        Top(VerticalPosition.Top),
-        Bottom(VerticalPosition.Bottom),
+    public enum class LabelVerticalPosition(public val position: Alignment.Vertical) {
+        Top(Alignment.Top),
+        Bottom(Alignment.Bottom),
     }
 
     private companion object {

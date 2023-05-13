@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.text
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.Typeface
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
 import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
@@ -39,7 +41,6 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
-import com.patrykandpatrick.vico.core.draw.withCanvas
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.piRad
 import kotlin.jvm.JvmName
@@ -146,8 +147,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         text: CharSequence,
         textX: Float,
         textY: Float,
-        horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
-        verticalPosition: VerticalPosition = VerticalPosition.Center,
+        horizontalPosition: Alignment.Horizontal = Alignment.CenterHorizontally,
+        verticalPosition: Alignment.Vertical = Alignment.CenterVertically,
         maxTextWidth: Int = Int.MAX_VALUE,
         maxTextHeight: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
@@ -162,10 +163,10 @@ public open class TextComponent protected constructor() : Padding, Margins {
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
-        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, 0f) // layout.widestLineWidth)
-        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, 0f) // layout.height.toFloat())
+//        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, 0f) // layout.widestLineWidth)
+//        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, 0f) // layout.height.toFloat())
 
-        context.withCanvas {
+        with(context.canvas) {
             save()
 
 //            val bounds = layout.getBounds(tempMeasureBounds)
@@ -227,18 +228,19 @@ public open class TextComponent protected constructor() : Padding, Margins {
         }
     }
 
-    private fun HorizontalPosition.getTextStartPosition(
+    private fun Alignment.Horizontal.getTextStartPosition(
         context: MeasureContext,
         baseXPosition: Float,
         width: Float,
     ): Float = with(context) {
         when (this@getTextStartPosition) {
-            HorizontalPosition.Start ->
+            Alignment.Start ->
                 if (isLtr) getTextRightPosition(baseXPosition, width) else getTextLeftPosition(baseXPosition)
-            HorizontalPosition.Center ->
+            Alignment.Center ->
                 baseXPosition - width.half
-            HorizontalPosition.End ->
+            Alignment.End ->
                 if (isLtr) getTextLeftPosition(baseXPosition) else getTextRightPosition(baseXPosition, width)
+            else -> error("Not Supported")
         }
     }
 
@@ -257,15 +259,16 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //    }
 
     @JvmName("getTextTopPositionExt")
-    private fun VerticalPosition.getTextTopPosition(
+    private fun Alignment.Vertical.getTextTopPosition(
         context: MeasureContext,
         textY: Float,
         layoutHeight: Float,
     ): Float = with(context) {
         textY + when (this@getTextTopPosition) {
-            VerticalPosition.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
-            VerticalPosition.Center -> -layoutHeight.half
-            VerticalPosition.Bottom -> padding.topDp.pixels + margins.topDp.pixels
+            Alignment.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
+            Alignment.Center -> -layoutHeight.half
+            Alignment.Bottom -> padding.topDp.pixels + margins.topDp.pixels
+            else -> error("")
         }
     }
 

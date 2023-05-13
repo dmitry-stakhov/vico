@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.ChartShape
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
 import com.patrykandpatrick.vico.compose.component.textComponent
@@ -33,7 +32,6 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.shape.chartShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
@@ -100,7 +98,7 @@ public fun axisLabelComponent(
 public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisLineShape,
+    shape: Shape = currentChartStyle.axis.axisLineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -159,7 +157,7 @@ public fun axisLineComponent(
 public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    shape: Shape = currentChartStyle.axis.axisTickShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -214,7 +212,7 @@ public fun axisTickComponent(
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,

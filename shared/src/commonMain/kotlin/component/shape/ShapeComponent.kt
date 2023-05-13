@@ -16,11 +16,17 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.setMargins
@@ -45,7 +51,7 @@ import kotlin.properties.Delegates
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
-    public val shape: Shape = Shapes.rectShape,
+    public val shape: Shape = RectangleShape,
     color: Int = Color.Black.toArgb(),
     public val dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -98,15 +104,17 @@ public open class ShapeComponent(
         strokePaint.strokeWidth = strokeWidth
 
         fun drawShape(paint: Paint) {
-            shape.drawShape(
-                context = context,
-                paint = paint,
-                path = path,
-                left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
-                top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
-                right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
-                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY),
+            val outline = shape.createOutline(
+                size = Size(
+                    width = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX) -
+                            minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
+                    height = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY) -
+                            minOf(top + margins.topDp.pixels + strokeWidth.half, centerY)
+                ),
+                LayoutDirection.Ltr,
+                Density(1f)
             )
+            context.drawScope.drawOutline(outline, paint.color)
         }
 
         drawShape(paint)

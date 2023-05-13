@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.component.marker
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -26,9 +27,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
+import component.shape.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.averageOf
@@ -133,7 +133,7 @@ public open class MarkerComponent(
             text = text,
             textX = x,
             textY = bounds.top - labelBounds.height - label.tickSizeDp.pixels,
-            verticalPosition = VerticalPosition.Bottom,
+            verticalPosition = Alignment.Bottom,
         )
     }
 

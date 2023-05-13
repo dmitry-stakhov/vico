@@ -213,7 +213,6 @@ public fun <Model : ChartEntryModel> Chart(
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 internal fun <Model : ChartEntryModel> ChartImpl(
     chart: Chart<Model>,

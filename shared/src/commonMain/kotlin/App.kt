@@ -15,6 +15,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.line.lineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
+import com.patrykandpatrick.vico.core.debug.DebugHelper
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.legend.VerticalLegend
@@ -22,6 +23,7 @@ import kotlin.random.Random
 
 @Composable
 public fun App() {
+    DebugHelper.enabled = true
     MaterialTheme {
         val myColor = remember {
             Color.hsv(Random.nextInt(360).toFloat(), 0.75f, 0.75f)
