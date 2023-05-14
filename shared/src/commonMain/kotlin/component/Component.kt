@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component
 
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.component.dimension.DefaultMargins
 import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -30,10 +31,25 @@ public abstract class Component : Margins by DefaultMargins() {
      * Instructs the [Component] to draw itself at the given coordinates.
      */
     public abstract fun draw(
-        context: DrawContext,
+        drawScope: DrawScope,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
     )
+
+    internal fun drawPoint(
+        context: DrawContext,
+        x: Float,
+        y: Float,
+        halfPointSize: Float,
+    ) {
+        draw(
+            drawScope = context.drawScope,
+            left = x - halfPointSize,
+            top = y - halfPointSize,
+            right = x + halfPointSize,
+            bottom = y + halfPointSize,
+        )
+    }
 }

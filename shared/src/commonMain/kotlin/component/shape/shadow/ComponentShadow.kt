@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.core.component.shape.shadow
 
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.applyElevationOverlayToColor
 
@@ -47,16 +49,16 @@ public data class ComponentShadow(
      * Checks whether the applied shadow layer needs to be updated.
      */
     public fun maybeUpdateShadowLayer(
-        context: DrawContext,
+        density: Density,
         paint: Paint,
         backgroundColor: Int,
-    ): Unit = with(context) {
+    ): Unit = with(density) {
         if (shouldUpdateShadowLayer()) {
             updateShadowLayer(paint, backgroundColor)
         }
     }
 
-    private fun DrawContext.updateShadowLayer(
+    private fun Density.updateShadowLayer(
         paint: Paint,
         backgroundColor: Int,
     ) {
@@ -77,7 +79,7 @@ public data class ComponentShadow(
         }
     }
 
-    private fun DrawContext.shouldUpdateShadowLayer(): Boolean =
+    private fun Density.shouldUpdateShadowLayer(): Boolean =
         if (
             radius != laRadius ||
             dx != laDx ||

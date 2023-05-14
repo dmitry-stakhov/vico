@@ -32,10 +32,10 @@ public fun <P : Padding> P.setPadding(
     bottom: Dp = 0.dp,
 ): P = apply {
     padding.set(
-        startDp = start.value,
-        topDp = top.value,
-        endDp = end.value,
-        bottomDp = bottom.value,
+        start = start,
+        top = top,
+        end = end,
+        bottom = bottom,
     )
 }
 
@@ -48,10 +48,10 @@ public fun <P : Padding> P.setPadding(
     vertical: Dp = 0.dp,
 ): P = apply {
     padding.set(
-        startDp = horizontal.value,
-        topDp = vertical.value,
-        endDp = horizontal.value,
-        bottomDp = vertical.value,
+        start = horizontal,
+        top= vertical,
+        end = horizontal,
+        bottom = vertical,
     )
 }
 
@@ -63,10 +63,10 @@ public fun <P : Padding> P.setPadding(
     all: Dp = 0.dp,
 ): P = apply {
     padding.set(
-        startDp = all.value,
-        topDp = all.value,
-        endDp = all.value,
-        bottomDp = all.value,
+        start = all,
+        top = all,
+        end = all,
+        bottom = all,
     )
 }
 
@@ -84,10 +84,10 @@ public interface Padding {
      * Updates the padding for each side individually.
      */
     public fun setPadding(
-        start: Float = 0f,
-        top: Float = 0f,
-        end: Float = 0f,
-        bottom: Float = 0f,
+        start: Dp = 0.dp,
+        top: Dp = 0.dp,
+        end: Dp = 0.dp,
+        bottom: Dp = 0.dp,
     ) {
         padding.set(start, top, end, bottom)
     }
@@ -96,8 +96,8 @@ public interface Padding {
      * Updates the horizontal and vertical padding.
      */
     public fun setPadding(
-        horizontal: Float = 0f,
-        vertical: Float = 0f,
+        horizontal: Dp = 0.dp,
+        vertical: Dp = 0.dp,
     ) {
         padding.set(horizontal, vertical, horizontal, vertical)
     }
@@ -106,7 +106,7 @@ public interface Padding {
      * Sets a common padding value for each side.
      */
     public fun setPadding(
-        all: Float = 0f,
+        all: Dp = 0.dp,
     ) {
         padding.set(all)
     }

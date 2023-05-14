@@ -18,10 +18,13 @@ package com.patrykandpatrick.vico.core.legend
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -48,30 +51,30 @@ public open class VerticalLegend(
 
     override var bounds: Rect = Rect.Zero
 
-    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
+    public override fun getHeight(density: Density, extras: Extras, availableWidth: Float): Float = with(density) {
         items.fold(0f) { sum, item ->
             sum + maxOf(
-                iconSizeDp.pixels,
-                item.getHeight(context, availableWidth),
+                iconSizeDp.dp.toPx(),
+                item.getHeight(density, extras, availableWidth),
             ).also { height -> heights[item] = height }
-        } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
+        } + (padding.vertical.toPx() + spacingDp * (items.size - 1)).dp.toPx()
     }
 
     override fun draw(context: ChartDrawContext): Unit = with(context) {
-        var currentTop = bounds.top + padding.topDp.pixels
+        var currentTop = bounds.top + with(context.drawScope) { padding.top.toPx() }
 
         items.forEach { item ->
 
-            val height = heights.getOrPut(item) { item.getHeight(this, chartBounds.width) }
+            val height = heights.getOrPut(item) { item.getHeight(drawScope, context, chartBounds.width) }
             val centerY = currentTop + height.half
             var startX = if (isLtr) {
-                chartBounds.left + padding.startDp.pixels
+                chartBounds.left + with(context.drawScope) { padding.start.toPx() }
             } else {
-                chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+                chartBounds.right - with(context.drawScope) { padding.start.toPx() } - iconSizeDp.pixels
             }
 
             item.icon.draw(
-                context = context,
+                drawScope = context.drawScope,
                 left = startX,
                 top = centerY - iconSizeDp.half.pixels,
                 right = startX + iconSizeDp.pixels,
@@ -86,12 +89,12 @@ public open class VerticalLegend(
 
             item.label.drawText(
                 drawScope = drawScope,
-                context = context,
+                extras = context,
                 text = item.labelText,
                 textX = startX,
                 textY = centerY,
                 horizontalPosition = Alignment.End,
-                maxTextWidth = (chartBounds.width - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
+                maxTextWidth = (chartBounds.width - (iconSizeDp + iconPaddingDp + padding.horizontal.value).pixels)
                     .toInt(),
             )
 
@@ -100,13 +103,15 @@ public open class VerticalLegend(
     }
 
     protected open fun Item.getHeight(
-        context: MeasureContext,
+        density: Density,
+        extras: Extras,
         availableWidth: Float,
-    ): Float = with(context) {
+    ): Float = with(density) {
         label.getHeight(
-            context = context,
+            density = density,
+            extras = extras,
             text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
+            width = (availableWidth - iconSizeDp.dp.toPx() - iconPaddingDp.dp.toPx()).toInt(),
         )
     }
 

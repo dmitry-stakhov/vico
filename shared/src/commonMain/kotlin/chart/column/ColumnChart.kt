@@ -22,11 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.BaseChart
@@ -56,66 +57,13 @@ import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
 import kotlin.math.abs
 
-
-/**
- * Creates a [ColumnChart].
- *
- * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
- * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
- * @param spacing the horizontal padding between the edges of chart segments and the columns they contain.
- * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
- * segments that contain a single column only.
- * @param mergeMode defines how columns should be drawn in multi-column segments.
- * @param decorations the list of [Decoration]s that will be added to the [ColumnChart].
- * @param persistentMarkers maps x-axis values to persistent [Marker]s.
- * @param dataLabel an optional [TextComponent] to use for data labels.
- * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
- * respective columns.
- * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
- * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
- * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
- * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
- *
- * @see Chart
- * @see ColumnChart
- */
-@Composable
-public fun columnChart(
-    columns: List<LineComponent> = currentChartStyle.columnChart.columns,
-    spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
-    innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
-    mergeMode: ColumnChart.MergeMode = currentChartStyle.columnChart.mergeMode,
-    decorations: List<Decoration>? = null,
-    persistentMarkers: Map<Float, Marker>? = null,
-    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
-    dataLabelVerticalPosition: Alignment.Vertical = currentChartStyle.columnChart.dataLabelVerticalPosition,
-    dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
-    dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
-    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
-): ColumnChart = remember { ColumnChart() }.apply {
-    this.columns = columns
-    this.spacingDp = spacing.value
-    this.innerSpacingDp = innerSpacing.value
-    this.mergeMode = mergeMode
-    this.dataLabel = dataLabel
-    this.dataLabelVerticalPosition = dataLabelVerticalPosition
-    this.dataLabelValueFormatter = dataLabelValueFormatter
-    this.dataLabelRotationDegrees = dataLabelRotationDegrees
-    this.axisValuesOverrider = axisValuesOverrider
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    decorations?.also(::setDecorations)
-    persistentMarkers?.also(::setPersistentMarkers)
-}
-
 /**
  * [ColumnChart] displays data as vertical bars. It can draw multiple columns per segment.
  *
  * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
  * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
- * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
- * @param innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
+ * @param spacing the horizontal padding between the edges of chart segments and the columns they contain.
+ * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
  * @param mergeMode defines how columns should be drawn in multi-column segments.
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
@@ -128,8 +76,8 @@ public fun columnChart(
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
-    public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
-    public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
+    public var spacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
+    public var innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
     public var mergeMode: MergeMode = MergeMode.Grouped,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
@@ -142,15 +90,15 @@ public open class ColumnChart(
      * Creates a [ColumnChart] with a common style for all columns.
      *
      * @param column a [LineComponent] defining the appearance of the columns.
-     * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+     * @param spacing the horizontal padding between the edges of chart segments and the columns they contain.
      * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
      * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
      */
     public constructor(
         column: LineComponent,
-        spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+        spacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(columns = listOf(column), spacingDp = spacingDp, targetVerticalAxisPosition = targetVerticalAxisPosition)
+    ) : this(columns = listOf(column), spacing = spacing, targetVerticalAxisPosition = targetVerticalAxisPosition)
 
     /**
      * Creates a [ColumnChart] instance with [columns] set to an empty list. The list must be populated before the chart
@@ -203,7 +151,7 @@ public open class ColumnChart(
         var columnBottom: Float
         val zeroLinePosition = bounds.bottom + chartValues.minY / yRange * bounds.height
 
-        val defCellWidth = getCellWidth(model.entries.size) * chartScale
+        val defCellWidth = Density(density).getCellWidth(model.entries.size) * chartScale
 
         model.entries.forEachIndexed { index, entryCollection ->
 
@@ -212,7 +160,7 @@ public open class ColumnChart(
                 entryCollectionIndex = index,
                 segmentCompensation = (cellWidth - defCellWidth) / 2,
                 spacing = spacing,
-                columnWidth = column.thicknessDp.pixels * chartScale,
+                columnWidth = with(drawScope) { column.thickness.toPx() } * chartScale,
             ) - horizontalScroll
 
             entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
@@ -244,7 +192,7 @@ public open class ColumnChart(
                     MergeMode.Grouped -> {
                         columnBottom = zeroLinePosition + if (entry.y < 0f) height else 0f
                         columnTop = columnBottom - height
-                        columnCenterX += layoutDirectionMultiplier * column.thicknessDp.pixels * chartScale
+                        columnCenterX += layoutDirectionMultiplier * with(drawScope) { column.thickness.toPx() } * chartScale
                     }
                 }
 
@@ -264,13 +212,13 @@ public open class ColumnChart(
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
-                    drawDataLabel(drawScope, model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
+                    drawDataLabel(drawScope, model.entries.size, column.thickness, entry.y, columnCenterX, columnSignificantY)
                 } else if (entryIndex == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
                         drawScope,
                         model.entries.size,
-                        column.thicknessDp,
+                        column.thickness,
                         yValues?.first,
                         yValues?.second,
                         columnCenterX,
@@ -282,11 +230,10 @@ public open class ColumnChart(
         }
     }
 
-    @LongParameterListDrawFunction
     protected open fun ChartDrawContext.drawStackedDataLabel(
         drawScope: DrawScope,
         modelEntriesSize: Int,
-        columnThicknessDp: Float,
+        columnThickness: Dp,
         negativeY: Float?,
         positiveY: Float?,
         x: Float,
@@ -295,19 +242,18 @@ public open class ColumnChart(
     ) {
         if (positiveY != null && positiveY > 0f) {
             val y = zeroLinePosition - positiveY * heightMultiplier
-            drawDataLabel(drawScope, modelEntriesSize, columnThicknessDp, positiveY, x, y)
+            drawDataLabel(drawScope, modelEntriesSize, columnThickness, positiveY, x, y)
         }
         if (negativeY != null && negativeY < 0f) {
             val y = zeroLinePosition + abs(negativeY) * heightMultiplier
-            drawDataLabel(drawScope, modelEntriesSize, columnThicknessDp, negativeY, x, y)
+            drawDataLabel(drawScope, modelEntriesSize, columnThickness, negativeY, x, y)
         }
     }
 
-    @LongParameterListDrawFunction
     protected open fun ChartDrawContext.drawDataLabel(
         drawScope: DrawScope,
         modelEntriesSize: Int,
-        columnThicknessDp: Float,
+        columnThickness: Dp,
         dataLabelValue: Float,
         x: Float,
         y: Float,
@@ -320,7 +266,7 @@ public open class ColumnChart(
             val maxWidth = when {
                 canUseSegmentWidth -> segmentWidth
                 mergeMode == MergeMode.Grouped ->
-                    (columnThicknessDp + 2 * minOf(spacingDp, innerSpacingDp.half)).wholePixels
+                    with(drawScope) { (columnThickness.value + 2 * minOf(spacing.value, innerSpacing.value.half)).dp.toPx().toInt() }
 
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             } * chartScale
@@ -343,7 +289,8 @@ public open class ColumnChart(
                 y = y,
                 bounds = bounds,
                 componentHeight = textComponent.getHeight(
-                    context = this,
+                    extras = this,
+                    density = Density(density),
                     text = text,
                     width = maxWidth.toInt(),
                     rotationDegrees = dataLabelRotationDegrees,
@@ -351,7 +298,7 @@ public open class ColumnChart(
             )
             textComponent.drawText(
                 drawScope = drawScope,
-                context = this,
+                extras = this,
                 text = text,
                 textX = x,
                 textY = y,
@@ -393,20 +340,20 @@ public open class ColumnChart(
     }
 
     override fun getSegmentProperties(
-        context: MeasureContext,
+        density: Density,
         model: ChartEntryModel,
-    ): SegmentProperties = with(context) {
-        segmentProperties.set(cellWidth = context.getCellWidth(model.entries.size), marginWidth = spacingDp.pixels)
+    ): SegmentProperties = with(density) {
+        segmentProperties.set(cellWidth = getCellWidth(model.entries.size), marginWidth = spacing.toPx())
     }
 
-    protected open fun MeasureContext.getCellWidth(
+    protected open fun Density.getCellWidth(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
-            columns.maxOf { it.thicknessDp.pixels }
+            columns.maxOf { it.thickness.toPx() }
 
         MergeMode.Grouped ->
-            getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
+            getCumulatedThickness(entryCollectionSize) + innerSpacing.toPx() * (entryCollectionSize - 1)
     }
 
     protected open fun MeasureContext.getDrawingStart(
@@ -420,17 +367,17 @@ public open class ColumnChart(
             MergeMode.Stack -> baseStart
             MergeMode.Grouped -> {
                 val offset = segmentCompensation - columnWidth.half +
-                    getCumulatedThickness(entryCollectionIndex) * chartScale +
-                    innerSpacingDp.pixels * chartScale * entryCollectionIndex
+                    Density(density).getCumulatedThickness(entryCollectionIndex) * chartScale +
+                    innerSpacing.value.pixels * chartScale * entryCollectionIndex
                 baseStart + layoutDirectionMultiplier * offset
             }
         }
     }
 
-    protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
+    protected open fun Density.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
         for (i in 0 until count) {
-            thickness += columns.getRepeating(i).thicknessDp * density
+            thickness += columns.getRepeating(i).thickness.value * this.density
         }
         return thickness
     }
@@ -468,4 +415,56 @@ public open class ColumnChart(
             Stack -> model.stackedPositiveY
         }
     }
+}
+
+/**
+ * Creates a [ColumnChart].
+ *
+ * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
+ * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
+ * @param spacing the horizontal padding between the edges of chart segments and the columns they contain.
+ * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
+ * segments that contain a single column only.
+ * @param mergeMode defines how columns should be drawn in multi-column segments.
+ * @param decorations the list of [Decoration]s that will be added to the [ColumnChart].
+ * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
+ * respective columns.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
+ * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
+ * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+ * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
+ *
+ * @see Chart
+ * @see ColumnChart
+ */
+@Composable
+public fun columnChart(
+    columns: List<LineComponent> = currentChartStyle.columnChart.columns,
+    spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
+    innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
+    mergeMode: ColumnChart.MergeMode = currentChartStyle.columnChart.mergeMode,
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
+    dataLabelVerticalPosition: Alignment.Vertical = currentChartStyle.columnChart.dataLabelVerticalPosition,
+    dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
+): ColumnChart = remember { ColumnChart() }.apply {
+    this.columns = columns
+    this.spacing = spacing
+    this.innerSpacing = innerSpacing
+    this.mergeMode = mergeMode
+    this.dataLabel = dataLabel
+    this.dataLabelVerticalPosition = dataLabelVerticalPosition
+    this.dataLabelValueFormatter = dataLabelValueFormatter
+    this.dataLabelRotationDegrees = dataLabelRotationDegrees
+    this.axisValuesOverrider = axisValuesOverrider
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
 }

@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.composed
 
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
@@ -98,12 +99,12 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun getSegmentProperties(
-        context: MeasureContext,
+        density: Density,
         model: ComposedChartEntryModel<Model>,
     ): SegmentProperties {
         segmentProperties.clear()
         model.forEachModelWithChart { item, chart ->
-            val chartSegmentProperties = chart.getSegmentProperties(context, item)
+            val chartSegmentProperties = chart.getSegmentProperties(density, item)
             segmentProperties.apply {
                 cellWidth = maxOf(cellWidth, chartSegmentProperties.cellWidth)
                 marginWidth = maxOf(marginWidth, chartSegmentProperties.marginWidth)

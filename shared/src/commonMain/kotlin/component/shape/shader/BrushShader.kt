@@ -36,7 +36,6 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
     private val matrix = Matrix()
 
     override fun createShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,

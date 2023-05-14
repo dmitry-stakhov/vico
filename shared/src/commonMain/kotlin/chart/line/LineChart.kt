@@ -28,13 +28,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
@@ -76,102 +76,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Creates a [LineChart].
- *
- * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
- * are lines.
- * @param decorations the list of [Decoration]s that will be added to the [LineChart].
- * @param persistentMarkers maps x-axis values to persistent [Marker]s.
- * @param pointPosition the horizontal position of each point in its corresponding segment.
- * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
- * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
- * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
- *
- * @see Chart
- * @see ColumnChart
- */
-@Composable
-public fun lineChart(
-    lines: List<LineSpec> = currentChartStyle.lineChart.lines,
-    spacing: Dp = currentChartStyle.lineChart.spacing,
-    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
-    decorations: List<Decoration>? = null,
-    persistentMarkers: Map<Float, Marker>? = null,
-    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
-    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-): LineChart = remember { LineChart() }.apply {
-    this.lines = lines
-    this.spacingDp = spacing.value
-    this.pointPosition = pointPosition
-    this.axisValuesOverrider = axisValuesOverrider
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    decorations?.also(::setDecorations)
-    persistentMarkers?.also(::setPersistentMarkers)
-}
-
-/**
- * Creates a [LineChart.LineSpec] for use in [LineChart]s.
- *
- * @param lineColor the color of the line.
- * @param lineThickness the thickness of the line.
- * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
- * @param lineCap the stroke cap for the line.
- * @param point an optional [Component] that can be drawn at a given point on the line.
- * @param pointSize the size of the [point].
- * @param dataLabel an optional [TextComponent] to use for data labels.
- * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
- * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels in degrees.
- * @param pointConnector the [LineSpec.PointConnector] for the line.
- *
- * @see LineChart
- * @see LineChart.LineSpec
- */
-public fun lineSpec(
-    lineColor: Color,
-    lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
-    lineBackgroundShader: DynamicShader? = DynamicShaders.fromBrush(
-        brush = Brush.verticalGradient(
-            listOf(
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-            ),
-        ),
-    ),
-    lineCap: StrokeCap = StrokeCap.Round,
-    point: Component? = null,
-    pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
-    dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
-    dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
-    dataLabelRotationDegrees: Float = 0f,
-    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
-): LineSpec = LineSpec(
-    lineColor = lineColor.toArgb(),
-    lineThicknessDp = lineThickness.value,
-    lineBackgroundShader = lineBackgroundShader,
-    lineCap = lineCap,
-    point = point,
-    pointSizeDp = pointSize.value,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-)
-
-/**
  * [LineChart] displays data as a continuous line.
  *
  * @param lines a [List] of [LineSpec]s defining the style of each line.
- * @param spacingDp the spacing between each [LineSpec.point] (in dp).
+ * @param spacing the spacing between each [LineSpec.point] (in dp).
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  * @param pointPosition the horizontal position of each point in its corresponding segment.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
-    public var spacingDp: Float = DefaultDimens.POINT_SPACING,
+    public var spacing: Dp = DefaultDimens.POINT_SPACING.dp,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
     public var pointPosition: PointPosition = PointPosition.Center,
 ) : BaseChart<ChartEntryModel>() {
@@ -180,27 +95,27 @@ public open class LineChart(
      * Creates a [LineChart] with a common style for all lines.
      *
      * @param line a [LineSpec] defining the style of each line.
-     * @param spacingDp the spacing between each [LineSpec.point] (in dp).
+     * @param spacing the spacing between each [LineSpec.point] (in dp).
      * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
      * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
      * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public constructor(
         line: LineSpec,
-        spacingDp: Float,
+        spacing: Dp,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
         pointPosition: PointPosition = PointPosition.Center,
-    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition, pointPosition)
+    ) : this(listOf(line), spacing, targetVerticalAxisPosition, pointPosition)
 
     /**
      * Defines the appearance of a line in a line chart.
      *
      * @param lineColor the color of the line.
-     * @param lineThicknessDp the thickness of the line (in dp).
+     * @param lineThickness the thickness of the line (in dp).
      * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
      * @param lineCap the stroke cap for the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
-     * @param pointSizeDp the size of the [point] (in dp).
+     * @param pointSize the size of the [point] (in dp).
      * @param dataLabel an optional [TextComponent] to use for data labels.
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
@@ -209,11 +124,11 @@ public open class LineChart(
      */
     public open class LineSpec(
         lineColor: Int = Color.LightGray.toArgb(),
-        public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+        public var lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
         public var lineBackgroundShader: DynamicShader? = null,
         public var lineCap: StrokeCap = StrokeCap.Round,
         public var point: Component? = null,
-        public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+        public var pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
@@ -261,16 +176,16 @@ public open class LineChart(
             context: DrawContext,
             x: Float,
             y: Float,
-        ): Unit = with(context) {
-            point?.drawPoint(context, x, y, pointSizeDp.pixels.half)
+        ): Unit = with(context.drawScope) {
+            point?.drawPoint(context, x, y, pointSize.toPx().half)
         }
 
         /**
          * Draws the line.
          */
-        public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
-            linePaint.strokeWidth = lineThicknessDp.pixels
-            canvas.drawPath(path, linePaint)
+        public fun drawLine(drawScope: DrawScope, path: Path): Unit = with(drawScope) {
+            linePaint.strokeWidth = lineThickness.toPx()
+            drawContext.canvas.drawPath(path, linePaint)
         }
 
         /**
@@ -279,7 +194,6 @@ public open class LineChart(
         public fun drawBackgroundLine(context: DrawContext, bounds: Rect, path: Path): Unit = with(context) {
             lineBackgroundPaint.shader = lineBackgroundShader
                 ?.provideShader(
-                    context = context,
                     left = bounds.left,
                     top = bounds.top,
                     right = bounds.right,
@@ -288,6 +202,9 @@ public open class LineChart(
 
             canvas.drawPath(path, lineBackgroundPaint)
         }
+
+        internal inline val pointSizeDpOrZero: Float
+            get() = if (point != null) pointSize.value else 0f
 
         /**
          * Defines the shape of a line in a line chart by specifying how points are to be connected.
@@ -299,7 +216,6 @@ public open class LineChart(
             /**
              * Draws a line between two points.
              */
-            @LongParameterListDrawFunction
             public fun connect(
                 path: Path,
                 prevX: Float,
@@ -408,7 +324,7 @@ public open class LineChart(
                 lineBackgroundPath.close()
                 component.drawBackgroundLine(context, bounds, lineBackgroundPath)
             }
-            component.drawLine(context, linePath)
+            component.drawLine(context.drawScope, linePath)
 
             drawPointsAndDataLabels(
                 drawScope = drawScope,
@@ -441,7 +357,7 @@ public open class LineChart(
             lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
 
                 val distanceFromLine = maxOf(
-                    a = lineSpec.lineThicknessDp,
+                    a = lineSpec.lineThickness.value,
                     b = lineSpec.pointSizeDpOrZero,
                 ).half.pixels
 
@@ -452,12 +368,13 @@ public open class LineChart(
                 val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
                     bounds = bounds,
                     distanceFromPoint = distanceFromLine,
-                    componentHeight = 0f, // textComponent.getHeight(
-//                        context = this,
-//                        text = text,
-//                        width = segmentWidth,
-//                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
-//                    ),
+                    componentHeight =  textComponent.getHeight(
+                        extras = this,
+                        density = Density(density),
+                        text = text,
+                        width = segmentWidth,
+                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
+                    ),
                     y = y,
                 )
                 val dataLabelY = y + when (verticalPosition) {
@@ -468,7 +385,7 @@ public open class LineChart(
                 }
                 textComponent.drawText(
                     drawScope = drawScope,
-                    context = this,
+                    extras = this,
                     textX = x,
                     textY = dataLabelY,
                     text = text,
@@ -552,12 +469,12 @@ public open class LineChart(
     }
 
     override fun getSegmentProperties(
-        context: MeasureContext,
+        density: Density,
         model: ChartEntryModel,
-    ): SegmentProperties = with(context) {
+    ): SegmentProperties = with(density) {
         segmentProperties.set(
-            cellWidth = lines.maxOf { it.pointSizeDp.pixels },
-            marginWidth = spacingDp.pixels,
+            cellWidth = lines.maxOf { it.pointSize.toPx() },
+            marginWidth = spacing.toPx(),
             labelPosition = pointPosition.labelPosition,
         )
     }
@@ -584,7 +501,7 @@ public open class LineChart(
     ): Unit = with(context) {
         outInsets.setVertical(
             value = lines.maxOf {
-                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
+                if (it.point != null) max(a = it.lineThickness.value, b = it.pointSize.value) else it.lineThickness.value
             }.pixels,
         )
     }
@@ -606,3 +523,88 @@ public open class LineChart(
         ),
     }
 }
+
+/**
+ * Creates a [LineChart].
+ *
+ * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
+ * are lines.
+ * @param decorations the list of [Decoration]s that will be added to the [LineChart].
+ * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
+ * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
+ * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+ * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
+ *
+ * @see Chart
+ * @see ColumnChart
+ */
+@Composable
+public fun lineChart(
+    lines: List<LineSpec> = currentChartStyle.lineChart.lines,
+    spacing: Dp = currentChartStyle.lineChart.spacing,
+    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+): LineChart = remember { LineChart() }.apply {
+    this.lines = lines
+    this.spacing = spacing
+    this.pointPosition = pointPosition
+    this.axisValuesOverrider = axisValuesOverrider
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
+}
+
+/**
+ * Creates a [LineChart.LineSpec] for use in [LineChart]s.
+ *
+ * @param lineColor the color of the line.
+ * @param lineThickness the thickness of the line.
+ * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+ * @param lineCap the stroke cap for the line.
+ * @param point an optional [Component] that can be drawn at a given point on the line.
+ * @param pointSize the size of the [point].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointConnector the [LineSpec.PointConnector] for the line.
+ *
+ * @see LineChart
+ * @see LineChart.LineSpec
+ */
+public fun lineSpec(
+    lineColor: Color,
+    lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
+    lineBackgroundShader: DynamicShader? = DynamicShaders.fromBrush(
+        brush = Brush.verticalGradient(
+            listOf(
+                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            ),
+        ),
+    ),
+    lineCap: StrokeCap = StrokeCap.Round,
+    point: Component? = null,
+    pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: Alignment.Vertical = Alignment.Top,
+    dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelRotationDegrees: Float = 0f,
+    pointConnector: PointConnector = DefaultPointConnector(),
+): LineSpec = LineSpec(
+    lineColor = lineColor.toArgb(),
+    lineThickness = lineThickness,
+    lineBackgroundShader = lineBackgroundShader,
+    lineCap = lineCap,
+    point = point,
+    pointSize = pointSize,
+    dataLabel = dataLabel,
+    dataLabelVerticalPosition = dataLabelVerticalPosition,
+    dataLabelValueFormatter = dataLabelValueFormatter,
+    dataLabelRotationDegrees = dataLabelRotationDegrees,
+    pointConnector = pointConnector,
+)

@@ -103,7 +103,7 @@ public open class MarkerComponent(
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
             indicator?.draw(
-                context,
+                drawScope,
                 model.location.x - halfIndicatorSize,
                 model.location.y - halfIndicatorSize,
                 model.location.x + halfIndicatorSize,
@@ -129,7 +129,7 @@ public open class MarkerComponent(
 
         label.drawText(
             drawScope = drawScope,
-            context = context,
+            extras = context,
             text = text,
             textX = x,
             textY = bounds.top - labelBounds.height - label.tickSizeDp.pixels,

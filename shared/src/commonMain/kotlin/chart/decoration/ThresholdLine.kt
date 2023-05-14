@@ -120,7 +120,7 @@ public data class ThresholdLine(
         }
 
         lineComponent.draw(
-            context = context,
+            drawScope = context.drawScope,
             left = bounds.left,
             right = bounds.right,
             top = topY,
@@ -128,7 +128,7 @@ public data class ThresholdLine(
         )
         labelComponent.drawText(
             drawScope = drawScope,
-            context = context,
+            extras = context,
             text = "", // thresholdLabel,
             maxTextWidth = bounds.width.toInt(),
             textX = when (labelHorizontalPosition) {

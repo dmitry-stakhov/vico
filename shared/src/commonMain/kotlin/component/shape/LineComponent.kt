@@ -24,15 +24,16 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import component.shape.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
 /**
@@ -46,7 +47,6 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  * @param radii used to store the corner radii. This array must be mutable.
  */
 @Suppress("MagicNumber")
-@LongParameterListDrawFunction
 public fun Path.addRoundRect(
     left: Float,
     top: Float,
@@ -73,37 +73,37 @@ public fun Path.addRoundRect(
  * @param topRight the size and look of the top-right corner.
  * @param bottomRight the size and look of the bottom-right corner.
  * @param bottomLeft the size and look of the bottom-left corner.
- * @param tickSizeDp the tick size.
+ * @param tickSize the tick size.
  */
 public fun Shape.markerCorneredShape(
     topLeft: Float,
     topRight: Float,
     bottomRight: Float,
     bottomLeft: Float,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSize: Dp = DEF_MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape = MarkerCorneredShape(
     topLeft = topLeft,
     topRight = topRight,
     bottomRight = bottomRight,
     bottomLeft = bottomLeft,
-    tickSizeDp = tickSizeDp.value,
+    tickSizeDp = tickSize.value,
 )
 
 /**
  * Creates a [MarkerCorneredShape].
  *
  * @param all the size and look of all corners.
- * @param tickSizeDp the tick size.
+ * @param tickSize the tick size.
  */
 public fun Shape.markerCorneredShape(
     all: Float,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSize: Dp = DEF_MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape = MarkerCorneredShape(
     topLeft = all,
     topRight = all,
     bottomRight = all,
     bottomLeft = all,
-    tickSizeDp = tickSizeDp.value,
+    tickSizeDp = tickSize.value,
 )
 
 /**
@@ -141,33 +141,30 @@ public fun Shape.dashedShape(
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape = DashedShape(
     shape = shape,
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
+    dashLength = dashLength,
+    gapLength = gapLength,
     fitStrategy = fitStrategy,
 )
 
 /**
  * Draws a line.
  * @property color the background color.
- * @property thicknessDp the thickness of the line.
+ * @property thickness the thickness of the line.
  * @property shape the [Shape] to use for the line.
  * @property dynamicShader an optional [DynamicShader] to apply to the line.
  * @property margins the margins of the line.
- * @property strokeWidthDp the stroke width.
+ * @property strokeWidth the stroke width.
  * @property strokeColor the stroke color.
  */
 public open class LineComponent(
     color: Int,
-    public var thicknessDp: Float = 2f,
+    public var thickness: Dp = 2.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
-    strokeWidthDp: Float = 0f,
+    margins: MutableDimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
     strokeColor: Int = Color.Transparent.toArgb(),
-) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidthDp, strokeColor) {
-
-    private val MeasureContext.thickness: Float
-        get() = thicknessDp.pixels
+) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidth, strokeColor) {
 
     /**
      * A convenience function for [draw] that draws the [LineComponent] horizontally.
@@ -178,13 +175,13 @@ public open class LineComponent(
         right: Float,
         centerY: Float,
         thicknessScale: Float = 1f,
-    ): Unit = with(context) {
+    ): Unit = with(context.drawScope) {
         draw(
-            context,
+            context.drawScope,
             left = left,
-            top = centerY - thickness * thicknessScale / 2,
+            top = centerY - thickness.toPx() * thicknessScale / 2,
             right = right,
-            bottom = centerY + thickness * thicknessScale / 2,
+            bottom = centerY + thickness.toPx() * thicknessScale / 2,
         )
     }
 
@@ -220,12 +217,12 @@ public open class LineComponent(
         bottom: Float,
         centerX: Float,
         thicknessScale: Float = 1f,
-    ): Unit = with(context) {
+    ): Unit = with(context.drawScope) {
         draw(
-            context,
-            left = centerX - thickness * thicknessScale / 2,
+            context.drawScope,
+            left = centerX - thickness.toPx() * thicknessScale / 2,
             top = top,
-            right = centerX + thickness * thicknessScale / 2,
+            right = centerX + thickness.toPx() * thicknessScale / 2,
             bottom = bottom,
         )
     }

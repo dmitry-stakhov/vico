@@ -78,12 +78,6 @@ public interface MeasureContext : Extras {
         get() = this * density
 
     /**
-     * The number of pixels corresponding to this number of density-independent pixels, with decimal values discarded.
-     */
-    public val Float.wholePixels: Int
-        get() = pixels.toInt()
-
-    /**
      * Returns the number of pixels corresponding to the provided number of density-independent pixels.
      */
     public fun toPixels(dp: Float): Float = dp * density

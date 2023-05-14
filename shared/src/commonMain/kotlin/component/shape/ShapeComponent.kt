@@ -24,18 +24,19 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.component.dimension.setMargins
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.ComponentShadow
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.debug.DebugHelper
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.alpha
 import com.patrykandpatrick.vico.core.extension.half
@@ -48,15 +49,15 @@ import kotlin.properties.Delegates
  * @param color the color of the shape.
  * @param dynamicShader an optional [Shader] provider used as the shape’s background.
  * @param margins the [Component]’s margins.
- * @param strokeWidthDp the width of the shape’s stroke (in dp).
+ * @param strokeWidth the width of the shape’s stroke (in dp).
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
     public val shape: Shape = RectangleShape,
     color: Int = Color.Black.toArgb(),
     public val dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
-    public val strokeWidthDp: Float = 0f,
+    public override val margins: MutableDimensions = emptyDimensions(),
+    public val strokeWidth: Dp = 0.dp,
     strokeColor: Int = Color.Transparent.toArgb(),
 ) : Component() {
 
@@ -83,48 +84,46 @@ public open class ShapeComponent(
             this.color = Color(strokeColor)
             style = PaintingStyle.Stroke
         }
-
-        setMargins(margins)
     }
 
     override fun draw(
-        context: DrawContext,
+        drawScope: DrawScope,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
+    ): Unit = with(drawScope) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.reset() // rewind
-        applyShader(context, left, top, right, bottom)
+        applyShader(left, top, right, bottom)
         val centerX = (left + right).half
         val centerY = (top + bottom).half
-        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+        shadowProperties.maybeUpdateShadowLayer(density = this, paint = paint, backgroundColor = color)
 
-        val strokeWidth = strokeWidthDp.pixels
-        strokePaint.strokeWidth = strokeWidth
+        val strokeWidthPx = strokeWidth.toPx()
+        strokePaint.strokeWidth = strokeWidthPx
 
         fun drawShape(paint: Paint) {
             val outline = shape.createOutline(
                 size = Size(
-                    width = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX) -
-                            minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
-                    height = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY) -
-                            minOf(top + margins.topDp.pixels + strokeWidth.half, centerY)
+                    width = maxOf(right - margins.end.toPx() - strokeWidthPx.half, centerX) -
+                            minOf(left + margins.start.toPx() + strokeWidthPx.half, centerX),
+                    height = maxOf(bottom - margins.bottom.toPx() - strokeWidthPx.half, centerY) -
+                            minOf(top + margins.top.toPx() + strokeWidthPx.half, centerY)
                 ),
                 LayoutDirection.Ltr,
-                context.drawScope
+                this
             )
-            context.drawScope.withTransform({this.translate(left, top) }) {
+            withTransform({ translate(left, top) }) {
                 drawOutline(outline, paint.color)
             }
         }
 
         drawShape(paint)
-        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+        if (strokeWidthPx > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
 
         DebugHelper.drawDebugBounds(
-            context = context.drawScope,
+            context = this,
             left = left,
             top = top,
             right = right,
@@ -133,14 +132,13 @@ public open class ShapeComponent(
     }
 
     protected fun applyShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
     ) {
         dynamicShader
-            ?.provideShader(context, left, top, right, bottom)
+            ?.provideShader(left, top, right, bottom)
 //            ?.let { shader -> paint.shader = shader }
     }
 

@@ -16,8 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.shader
 
-import android.graphics.Shader
-import com.patrykandpatrick.vico.core.context.DrawContext
+import androidx.compose.ui.graphics.Shader
 
 /**
  * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of bounds.
@@ -27,14 +26,13 @@ public abstract class CacheableDynamicShader : DynamicShader {
     private val cache = HashMap<String, Shader>(1)
 
     override fun provideShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
     ): Shader {
         val cacheKey = createKey(left, top, right, bottom)
-        return cache[cacheKey] ?: createShader(context, left, top, right, bottom).also { gradient ->
+        return cache[cacheKey] ?: createShader(left, top, right, bottom).also { gradient ->
             cache.clear()
             cache[cacheKey] = gradient
         }
@@ -45,7 +43,6 @@ public abstract class CacheableDynamicShader : DynamicShader {
      * have changed or there is no cached [Shader].
      */
     public abstract fun createShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,

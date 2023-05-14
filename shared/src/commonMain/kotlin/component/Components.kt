@@ -54,16 +54,16 @@ public fun lineComponent(
     thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
-    thicknessDp = thickness.value,
+    thickness = thickness,
     shape = shape,
     dynamicShader = dynamicShader,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
+    strokeWidth = strokeWidth,
     strokeColor = strokeColor.toArgb(),
 )
 
@@ -75,7 +75,7 @@ public fun shapeComponent(
     shape: Shape = RectangleShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent = ShapeComponent(
@@ -83,7 +83,7 @@ public fun shapeComponent(
     color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
+    strokeWidth = strokeWidth,
     strokeColor = strokeColor.toArgb(),
 )
 
@@ -95,7 +95,7 @@ public fun shapeComponent(
     shape: Shape = RectangleShape,
     color: Color = Color.Black,
     brush: Brush,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent = shapeComponent(
@@ -136,10 +136,10 @@ public fun overlayingComponent(
     OverlayingComponent(
         outer = outer,
         inner = inner,
-        innerPaddingStartDp = innerPaddingStart.value,
-        innerPaddingTopDp = innerPaddingTop.value,
-        innerPaddingBottomDp = innerPaddingBottom.value,
-        innerPaddingEndDp = innerPaddingEnd.value,
+        innerPaddingStart = innerPaddingStart,
+        innerPaddingTop = innerPaddingTop,
+        innerPaddingBottom = innerPaddingBottom,
+        innerPaddingEnd = innerPaddingEnd,
     )
 }
 

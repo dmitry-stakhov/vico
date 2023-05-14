@@ -16,90 +16,93 @@
 
 package com.patrykandpatrick.vico.core.dimensions
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 /**
  * An implementation of [Dimensions] whose every property is mutable.
  */
 public class MutableDimensions(
-    override var startDp: Float,
-    override var topDp: Float,
-    override var endDp: Float,
-    override var bottomDp: Float,
+    override var start: Dp,
+    override var top: Dp,
+    override var end: Dp,
+    override var bottom: Dp,
 ) : Dimensions {
 
     public constructor(
-        horizontalDp: Float,
-        verticalDp: Float,
+        horizontal: Dp,
+        vertical: Dp,
     ) : this(
-        startDp = horizontalDp,
-        topDp = verticalDp,
-        endDp = horizontalDp,
-        bottomDp = verticalDp,
+        start = horizontal,
+        top = vertical,
+        end = horizontal,
+        bottom = vertical,
     )
 
     /**
-     * The sum of [startDp] and [endDp].
+     * The sum of [start] and [end].
      */
-    public val horizontalDp: Float
-        get() = startDp + endDp
+    public val horizontal: Dp
+        get() = start + end
 
     /**
-     * The sum of [topDp] and [bottomDp].
+     * The sum of [top] and [bottom].
      */
-    public val verticalDp: Float
-        get() = topDp + bottomDp
+    public val vertical: Dp
+        get() = top + bottom
 
     /**
      * Updates these [MutableDimensions] to match the provided [Dimensions].
      */
     public fun set(other: Dimensions): MutableDimensions =
-        set(other.startDp, other.topDp, other.endDp, other.bottomDp)
+        set(other.start, other.top, other.end, other.bottom)
 
     /**
      * Sets a common value for each coordinate.
      */
-    public fun set(all: Float): MutableDimensions =
+    public fun set(all: Dp): MutableDimensions =
         set(all, all, all, all)
 
     /**
      * Updates the coordinates to the provided values.
      */
     public fun set(
-        startDp: Float = 0f,
-        topDp: Float = 0f,
-        endDp: Float = 0f,
-        bottomDp: Float = 0f,
+        start: Dp = 0.dp,
+        top: Dp = 0.dp,
+        end: Dp = 0.dp,
+        bottom: Dp = 0.dp,
     ): MutableDimensions = apply {
-        this.startDp = startDp
-        this.topDp = topDp
-        this.endDp = endDp
-        this.bottomDp = bottomDp
+        this.start = start
+        this.top = top
+        this.end = end
+        this.bottom = bottom
     }
 
     /**
-     * Evenly distributes the provided measurement between [startDp] and [endDp].
+     * Evenly distributes the provided measurement between [start] and [end].
      */
-    public fun setHorizontal(valueDp: Float): MutableDimensions = apply {
-        startDp = if (valueDp == 0f) valueDp else valueDp / 2
-        endDp = if (valueDp == 0f) valueDp else valueDp / 2
+    public fun setHorizontal(value: Dp): MutableDimensions = apply {
+        start = if (value == 0.dp) value else value / 2
+        end = if (value == 0.dp) value else value / 2
     }
 
     /**
-     * Evenly distributes the provided measurement between [topDp] and [bottomDp].
+     * Evenly distributes the provided measurement between [top] and [bottom].
      */
-    public fun setVertical(valueDp: Float): MutableDimensions = apply {
-        topDp = if (valueDp == 0f) valueDp else valueDp / 2
-        bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
+    public fun setVertical(value: Dp): MutableDimensions = apply {
+        top = if (value == 0.dp) value else value / 2
+        bottom = if (value == 0.dp) value else value / 2
     }
 
     /**
      * Sets all coordinates to 0.
      */
     public fun clear() {
-        set(0f)
+        set(0.dp)
     }
 }
 
 /**
  * Creates a [MutableDimensions] instance with all coordinates set to 0.
  */
-public fun emptyDimensions(): MutableDimensions = MutableDimensions(0f, 0f, 0f, 0f)
+public fun emptyDimensions(): MutableDimensions = MutableDimensions(0.dp, 0.dp, 0.dp, 0.dp)

@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.core.legend
 
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
@@ -29,7 +31,7 @@ public interface Legend : BoundsAware {
     /**
      * Returns the height of the legend.
      */
-    public fun getHeight(context: MeasureContext, availableWidth: Float): Float
+    public fun getHeight(density: Density, extras: Extras, availableWidth: Float): Float
 
     /**
      * Draws the legend.

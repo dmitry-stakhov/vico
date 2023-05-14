@@ -16,66 +16,69 @@
 
 package com.patrykandpatrick.vico.core.component
 
-import com.patrykandpatrick.vico.core.context.DrawContext
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.debug.DebugHelper
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 
 /**
  * A [Component] composed out of two [Component]s, with one drawn over the other.
  * @property outer the outer (background) [Component].
  * @property inner the inner (foreground) [Component].
- * @property innerPaddingStartDp the start padding between the inner and outer components.
- * @property innerPaddingTopDp the top padding between the inner and outer components.
- * @property innerPaddingEndDp the end padding between the inner and outer components.
- * @property innerPaddingBottomDp the bottom padding between the inner and outer components.
+ * @property innerPaddingStart the start padding between the inner and outer components.
+ * @property innerPaddingTop the top padding between the inner and outer components.
+ * @property innerPaddingEnd the end padding between the inner and outer components.
+ * @property innerPaddingBottom the bottom padding between the inner and outer components.
  */
 public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
-    public val innerPaddingStartDp: Float = 0f,
-    public val innerPaddingTopDp: Float = 0f,
-    public val innerPaddingEndDp: Float = 0f,
-    public val innerPaddingBottomDp: Float = 0f,
+    public val innerPaddingStart: Dp = 0.dp,
+    public val innerPaddingTop: Dp = 0.dp,
+    public val innerPaddingEnd: Dp = 0.dp,
+    public val innerPaddingBottom: Dp = 0.dp,
 ) : Component() {
 
     public constructor(
         outer: Component,
         inner: Component,
-        innerPaddingAllDp: Float = 0f,
+        innerPaddingAll: Dp = 0.dp,
     ) : this(
         outer = outer,
         inner = inner,
-        innerPaddingStartDp = innerPaddingAllDp,
-        innerPaddingTopDp = innerPaddingAllDp,
-        innerPaddingEndDp = innerPaddingAllDp,
-        innerPaddingBottomDp = innerPaddingAllDp,
+        innerPaddingStart = innerPaddingAll,
+        innerPaddingTop = innerPaddingAll,
+        innerPaddingEnd = innerPaddingAll,
+        innerPaddingBottom = innerPaddingAll,
     )
 
     init {
-        inner.margins.set(
-            startDp = innerPaddingStartDp,
-            topDp = innerPaddingTopDp,
-            endDp = innerPaddingEndDp,
-            bottomDp = innerPaddingBottomDp,
-        )
+//        inner.margins = MutableDimensions(
+//            start = innerPaddingStart,
+//            top = innerPaddingTop,
+//            end = innerPaddingEnd,
+//            bottom = innerPaddingBottom,
+//        )
     }
 
     override fun draw(
-        context: DrawContext,
+        drawScope: DrawScope,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
-        val leftWithMargin = left + margins.startDp.pixels
-        val topWithMargin = top + margins.topDp.pixels
-        val rightWithMargin = right - margins.endDp.pixels
-        val bottomWithMargin = bottom - margins.bottomDp.pixels
+    ): Unit = with(drawScope) {
+        val leftWithMargin = left + margins.start.toPx()
+        val topWithMargin = top + margins.top.toPx()
+        val rightWithMargin = right - margins.end.toPx()
+        val bottomWithMargin = bottom - margins.bottom.toPx()
 
-        outer.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
-        inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
+        outer.draw(this, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
+        inner.draw(this, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
 
         DebugHelper.drawDebugBounds(
-            context = context.drawScope,
+            context = this,
             left = left,
             top = top,
             right = right,

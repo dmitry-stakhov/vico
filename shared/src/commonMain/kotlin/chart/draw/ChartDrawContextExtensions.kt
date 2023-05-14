@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.chart.draw
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
@@ -48,7 +47,6 @@ import com.patrykandpatrick.vico.core.model.Point
  *
  * @see [ShapeComponent.setShadow]
  */
-@LongParameterListDrawFunction
 public fun chartDrawContext(
     drawScope: DrawScope,
     elevationOverlayColor: Int,
@@ -102,7 +100,6 @@ internal inline val ChartDrawContext.segmentWidth: Int
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
  * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
  */
-@LongParameterListDrawFunction
 public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     drawScope: DrawScope,
     marker: Marker,

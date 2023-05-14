@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.layout
 
 import androidx.compose.ui.geometry.Rect
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
@@ -55,7 +55,6 @@ public open class VirtualLayout(
      *
      * @return the bounds applied to the chart.
      */
-    @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
         context: MeasureContext,
         contentBounds: Rect,
@@ -68,7 +67,7 @@ public open class VirtualLayout(
         finalInsets.clear()
         tempInsets.clear()
 
-        val legendHeight = legend?.getHeight(context, contentBounds.width).orZero
+        val legendHeight = legend?.getHeight(Density(context.density), context, contentBounds.width).orZero
 
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)

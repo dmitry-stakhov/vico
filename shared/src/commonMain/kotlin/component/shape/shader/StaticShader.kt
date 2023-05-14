@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 public class StaticShader(private val shader: Shader) : DynamicShader {
 
     override fun provideShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,

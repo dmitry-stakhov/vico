@@ -28,13 +28,14 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
 import com.patrykandpatrick.vico.compose.component.textComponent
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
+import com.patrykandpatrick.vico.core.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
 /**
@@ -102,7 +103,7 @@ public fun axisLineComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
 ): LineComponent = lineComponent(
     color = color,
     thickness = thickness,
@@ -132,7 +133,7 @@ public fun axisLineComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
 ): LineComponent = lineComponent(
     color = color,
     thickness = thickness,
@@ -216,7 +217,7 @@ public fun axisGuidelineComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
 ): LineComponent = lineComponent(
     color = color,
     thickness = thickness,

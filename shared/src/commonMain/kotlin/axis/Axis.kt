@@ -18,6 +18,9 @@ package com.patrykandpatrick.vico.core.axis
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -45,17 +48,17 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     override var bounds: Rect = Rect.Zero
 
-    protected val MeasureContext.axisThickness: Float
-        get() = axisLine?.thicknessDp.orZero.pixels
+    protected val Density.axisThickness: Float
+        get() = axisLine?.thickness?.toPx().orZero
 
-    protected val MeasureContext.tickThickness: Float
-        get() = tick?.thicknessDp.orZero.pixels
+    protected val Density.tickThickness: Float
+        get() = tick?.thickness?.toPx().orZero
 
-    protected val MeasureContext.guidelineThickness: Float
-        get() = guideline?.thicknessDp.orZero.pixels
+    protected val Density.guidelineThickness: Float
+        get() = guideline?.thickness?.toPx().orZero
 
-    protected val MeasureContext.tickLength: Float
-        get() = if (tick != null) tickLengthDp.pixels else 0f
+    protected val Density.tickLengthPx: Float
+        get() = if (tick != null) tickLength.toPx() else 0f
 
     /**
      * The [TextComponent] to use for labels.
@@ -80,7 +83,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The tick length (in dp).
      */
-    public var tickLengthDp: Float = 0f
+    public var tickLength: Dp = 0.dp
 
     /**
      * Used by [Axis] subclasses for sizing and layout.
@@ -142,7 +145,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         /**
          * The tick length (in dp).
          */
-        public var tickLengthDp: Float = builder?.tickLengthDp ?: DefaultDimens.AXIS_TICK_LENGTH
+        public var tickLength: Dp = builder?.tickLength ?: DefaultDimens.AXIS_TICK_LENGTH.dp
 
         /**
          * The [LineComponent] to use for guidelines.
@@ -188,17 +191,17 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
         /**
          * The axis will measure itself and use as much space as it needs, but no less than [minSizeDp], and no more
-         * than [maxSizeDp].
+         * than [maxSize].
          */
         public class Auto(
-            public val minSizeDp: Float = 0f,
-            public val maxSizeDp: Float = Float.MAX_VALUE,
+            public val minSize: Dp = 0.dp,
+            public val maxSize: Dp = Float.MAX_VALUE.dp,
         ) : SizeConstraint()
 
         /**
-         * The axis size will be exactly [sizeDp].
+         * The axis size will be exactly [size].
          */
-        public class Exact(public val sizeDp: Float) : SizeConstraint()
+        public class Exact(public val size: Dp) : SizeConstraint()
 
         /**
          * The axis will use a fraction of the available space.
@@ -243,7 +246,7 @@ public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.
     axis.tick = tick
     axis.guideline = guideline
     axis.label = label
-    axis.tickLengthDp = tickLengthDp
+    axis.tickLength = tickLength
     axis.valueFormatter = valueFormatter
     axis.sizeConstraint = sizeConstraint
     axis.titleComponent = titleComponent

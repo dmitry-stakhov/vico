@@ -31,10 +31,8 @@ public fun interface DynamicShader {
      * Creates a [Shader] by using the provided [bounds].
      */
     public fun provideShader(
-        context: DrawContext,
         bounds: Rect,
     ): Shader = provideShader(
-        context = context,
         left = bounds.left,
         top = bounds.top,
         right = bounds.right,
@@ -45,7 +43,6 @@ public fun interface DynamicShader {
      * Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds.
      */
     public fun provideShader(
-        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,

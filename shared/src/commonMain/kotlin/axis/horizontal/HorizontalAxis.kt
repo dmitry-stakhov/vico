@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.axis.horizontal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.axis.axisGuidelineComponent
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
@@ -48,92 +48,6 @@ import kotlin.math.abs
 import kotlin.math.ceil
 
 /**
- * Creates a top axis.
- *
- * @param label the [TextComponent] to use for labels.
- * @param axis the [LineComponent] to use for the axis line.
- * @param tick the [LineComponent] to use for ticks.
- * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
- * offset and spacing for both ticks and labels.
- * @param guideline the [LineComponent] to use for guidelines.
- * @param valueFormatter the [AxisValueFormatter] for the axis.
- * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
- * @param labelRotationDegrees the rotation of axis labels in degrees.
- * @param titleComponent an optional [TextComponent] use as the axis title.
- * @param title the axis title.
- */
-@Composable
-public fun topAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
-    tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
-    guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
-    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
-    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
-    titleComponent: TextComponent? = null,
-    title: CharSequence? = null,
-): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
-    this.label = label
-    this.axis = axis
-    this.tick = tick
-    this.guideline = guideline
-    this.valueFormatter = valueFormatter
-    this.tickLengthDp = tickLength.value
-    this.tickPosition = tickPosition
-    this.sizeConstraint = sizeConstraint
-    this.labelRotationDegrees = labelRotationDegrees
-    this.titleComponent = titleComponent
-    this.title = title
-}
-
-/**
- * Creates a bottom axis.
- *
- * @param label the [TextComponent] to use for labels.
- * @param axis the [LineComponent] to use for the axis line.
- * @param tick the [LineComponent] to use for ticks.
- * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
- * offset and spacing for both ticks and labels.
- * @param guideline the [LineComponent] to use for guidelines.
- * @param valueFormatter the [AxisValueFormatter] for the axis.
- * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
- * @param labelRotationDegrees the rotation of axis labels in degrees.
- * @param titleComponent an optional [TextComponent] use as the axis title.
- * @param title the axis title.
- */
-@Composable
-public fun bottomAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
-    tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
-    guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
-    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
-    titleComponent: TextComponent? = null,
-    title: CharSequence? = null,
-    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
-): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
-    this.label = label
-    this.axis = axis
-    this.tick = tick
-    this.guideline = guideline
-    this.valueFormatter = valueFormatter
-    this.tickLengthDp = tickLength.value
-    this.tickPosition = tickPosition
-    this.sizeConstraint = sizeConstraint
-    this.labelRotationDegrees = labelRotationDegrees
-    this.titleComponent = titleComponent
-    this.title = title
-}
-
-/**
  * An implementation of [AxisRenderer] used for horizontal axes. This class extends [Axis].
  *
  * @see AxisRenderer
@@ -153,15 +67,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         canvas.save()
-        val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - tickLength
-        val tickMarkBottom = tickMarkTop + axisThickness + tickLength
+        val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - with(context.drawScope) { tickLengthPx }
+        val tickMarkBottom = tickMarkTop + with(drawScope) { axisThickness } + with(context.drawScope) { tickLengthPx }
         val chartValues = chartValuesManager.getChartValues()
         val step = chartValues.xStep
 
         canvas.clipRect(
-            bounds.left - tickPosition.getTickInset(tickThickness),
+            bounds.left - tickPosition.getTickInset(with(drawScope) { tickThickness }),
             minOf(bounds.top, chartBounds.top),
-            bounds.right + tickPosition.getTickInset(tickThickness),
+            bounds.right + tickPosition.getTickInset(with(drawScope) { tickThickness }),
             maxOf(bounds.bottom, chartBounds.bottom),
         )
 
@@ -210,7 +124,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 .takeIf { shouldDrawLabel }
                 ?.drawText(
                     drawScope = drawScope,
-                    context = context,
+                    extras = context,
                     text = valueFormatter.formatValue(x, chartValues),
                     textX = textCenter,
                     textY = textY,
@@ -221,7 +135,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         textX = textCenter,
                         bounds = chartBounds,
                     ),
-                    maxTextHeight = (bounds.height - tickLength - axisThickness.half).toInt(),
+                    maxTextHeight = (bounds.height - with(drawScope) { tickLengthPx } - with(drawScope) { axisThickness }.half).toInt(),
                     rotationDegrees = labelRotationDegrees,
                 )
 
@@ -233,13 +147,13 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             context = context,
             left = chartBounds.left,
             right = chartBounds.right,
-            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half,
+            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + with(drawScope) { axisThickness }.half,
         )
 
         title?.let { title ->
             titleComponent?.drawText(
                 drawScope = drawScope,
-                context = context,
+                extras = context,
                 textX = bounds.center.x,
                 textY = if (position.isTop) bounds.top else bounds.bottom,
                 verticalPosition = if (position.isTop) Alignment.Bottom else Alignment.Top,
@@ -302,7 +216,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         with(outInsets) {
-            setHorizontal(tickPosition.getTickInset(tickThickness))
+            setHorizontal(tickPosition.getTickInset(with(Density(density)) { tickThickness }))
             top = if (position.isTop) getDesiredHeight(context, segmentProperties) else 0f
             bottom = if (position.isBottom) getDesiredHeight(context, segmentProperties) else 0f
         }
@@ -324,7 +238,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 val labelHeight = label?.let { label ->
                     getLabelsToMeasure().maxOf { labelText ->
                         label.getHeight(
-                            context = this,
+                            extras = this,
+                            density = Density(density),
                             text = labelText,
                             width = labelWidth,
                             rotationDegrees = labelRotationDegrees,
@@ -333,19 +248,27 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 }.orZero
                 val titleComponentHeight = title?.let { title ->
                     titleComponent?.getHeight(
-                        context = context,
+                        extras = this,
+                        density = Density(density),
                         width = bounds.width.toInt(),
                         text = title,
                     )
                 }.orZero
-                (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
-                    .coerceAtMost(maximumValue = canvasBounds.height / MAX_HEIGHT_DIVISOR)
-                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+                with(Density(density)) {
+                    (labelHeight + titleComponentHeight + (if (position.isBottom) Density(density).axisThickness else 0f) +
+                            with(Density(density)) { tickLengthPx })
+                        .coerceAtMost(maximumValue = canvasBounds.height / MAX_HEIGHT_DIVISOR)
+                        .coerceIn(
+                            minimumValue = constraint.minSize.toPx(),
+                            maximumValue = constraint.maxSize.toPx()
+                        )
+                }
             }
-            is SizeConstraint.Exact -> constraint.sizeDp.pixels
+            is SizeConstraint.Exact -> with(Density(density)) { constraint.size.toPx() }
             is SizeConstraint.Fraction -> canvasBounds.height * constraint.fraction
             is SizeConstraint.TextWidth ->  label?.getHeight(
-                context = this,
+                extras = this,
+                density = Density(density),
                 text = constraint.text,
                 width = labelWidth,
                 rotationDegrees = labelRotationDegrees,
@@ -512,3 +435,89 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
     block: HorizontalAxis.Builder<Position>.() -> Unit = {},
 ): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()
+
+/**
+ * Creates a top axis.
+ *
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
+ * offset and spacing for both ticks and labels.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
+ */
+@Composable
+public fun topAxis(
+    label: TextComponent? = axisLabelComponent(),
+    axis: LineComponent? = axisLineComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
+    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
+    guideline: LineComponent? = axisGuidelineComponent(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
+): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    this.tickLength = tickLength
+    this.tickPosition = tickPosition
+    this.sizeConstraint = sizeConstraint
+    this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
+}
+
+/**
+ * Creates a bottom axis.
+ *
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
+ * offset and spacing for both ticks and labels.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
+ */
+@Composable
+public fun bottomAxis(
+    label: TextComponent? = axisLabelComponent(),
+    axis: LineComponent? = axisLineComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
+    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
+    guideline: LineComponent? = axisGuidelineComponent(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
+    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    this.tickLength = tickLength
+    this.tickPosition = tickPosition
+    this.sizeConstraint = sizeConstraint
+    this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
+}

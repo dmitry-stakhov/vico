@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.component.dimension
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 
@@ -33,10 +35,10 @@ public interface Margins {
      * Updates each margin individually.
      */
     public fun setMargins(
-        start: Float = 0f,
-        top: Float = 0f,
-        end: Float = 0f,
-        bottom: Float = 0f,
+        start: Dp = 0.dp,
+        top: Dp = 0.dp,
+        end: Dp = 0.dp,
+        bottom: Dp = 0.dp,
     ) {
         margins.set(start, top, end, bottom)
     }
@@ -45,17 +47,8 @@ public interface Margins {
      * Sets a common size for each margin.
      */
     public fun setMargins(
-        all: Float = 0f,
+        all: Dp = 0.dp,
     ) {
-        margins.set(all)
+        margins.set(all, all, all, all)
     }
-}
-
-/**
- * Sets the values of these [Margins] to those of the provided [Dimensions].
- *
- * @param margins the [Dimensions] whose values to assign to these [Margins].
- */
-public fun Margins.setMargins(margins: Dimensions) {
-    this.margins.set(margins)
 }

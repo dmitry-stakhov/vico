@@ -282,7 +282,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         bounds = Rect(left = 0f, top = 0f, right = size.width, bottom = size.height)
         chart.updateChartValues(measureContext.chartValuesManager, model)
 
-        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+        val segmentProperties = chart.getSegmentProperties(this, model)
 
         val chartBounds = virtualLayout.setBounds(
             context = measureContext,

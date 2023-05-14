@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.extension.ceil
 import kotlin.math.roundToInt
@@ -34,19 +35,19 @@ import kotlin.math.roundToInt
  * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.
  *
  * @property shape the base [Shape] from which to create the [DashedShape].
- * @property dashLengthDp the dash length in dp.
- * @property gapLengthDp the gap length in dp.
+ * @property dashLength the dash length in dp.
+ * @property gapLength the gap length in dp.
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
     public val shape: Shape = RectangleShape,
-    public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
-    public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
+    public val dashLength: Dp = DefaultDimens.DASH_LENGTH.dp,
+    public val gapLength: Dp = DefaultDimens.DASH_GAP.dp,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
 
-    private var drawDashLength = dashLengthDp
-    private var drawGapLength = gapLengthDp
+    private var drawDashLength = dashLength.value
+    private var drawGapLength = gapLength.value
 
     override fun createOutline(
         size: Size,
@@ -59,8 +60,8 @@ public class DashedShape(
             calculateDrawLengths(density, size.height)
         }
         return Outline.Generic(Path().apply {
-            val dashLengthPx = with(density) { Dp(dashLengthDp).toPx() }
-            val gapLengthPx = with(density) { Dp(gapLengthDp).toPx() }
+            val dashLengthPx = with(density) { dashLength.toPx() }
+            val gapLengthPx = with(density) { gapLength.toPx() }
             val stepsCount = ((size.width + gapLengthPx) / (dashLengthPx + gapLengthPx)).roundToInt()
             val actualStep = size.width / stepsCount
             val dotSize = if (size.width > size.height) {
@@ -90,7 +91,7 @@ public class DashedShape(
     }
 
     private fun calculateDrawLengths(density: Density, length: Float): Unit = with(density) {
-        calculateDrawLengths(Dp(dashLengthDp).toPx(), Dp(gapLengthDp).toPx(), length)
+        calculateDrawLengths(dashLength.toPx(), gapLength.toPx(), length)
     }
 
     private fun calculateDrawLengths(
@@ -127,13 +128,13 @@ public class DashedShape(
      */
     public enum class FitStrategy {
         /**
-         * The [DashedShape] will slightly increase or decrease the [DashedShape.dashLengthDp] and
-         * [DashedShape.gapLengthDp] values so that the dashes fit perfectly without being cut off.
+         * The [DashedShape] will slightly increase or decrease the [DashedShape.dashLength] and
+         * [DashedShape.gapLength] values so that the dashes fit perfectly without being cut off.
          */
         Resize,
 
         /**
-         * The [DashedShape] will use the exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp] values
+         * The [DashedShape] will use the exact [DashedShape.dashLength] and [DashedShape.gapLength] values
          * provided. As a result, the [DashedShape] may not fit within its bounds or be cut off.
          */
         Fixed,

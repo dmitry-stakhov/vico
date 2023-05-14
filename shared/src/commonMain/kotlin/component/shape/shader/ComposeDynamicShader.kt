@@ -16,40 +16,35 @@
 
 package com.patrykandpatrick.vico.compose.component.shape.shader
 
-import android.graphics.BlendMode
-import android.graphics.ComposeShader
-import android.graphics.PorterDuff
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 
 /**
  * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
  */
-@RequiresApi(Build.VERSION_CODES.Q)
-public fun composeShader(
-    first: DynamicShader,
-    second: DynamicShader,
-    mode: BlendMode,
-): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-    ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-    )
-}
+//@RequiresApi(Build.VERSION_CODES.Q)
+//public fun composeShader(
+//    first: DynamicShader,
+//    second: DynamicShader,
+//    mode: BlendMode,
+//): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+//    ComposeShader(
+//        first.provideShader(context, left, top, right, bottom),
+//        second.provideShader(context, left, top, right, bottom),
+//        mode,
+//    )
+//}
 
 /**
  * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
  */
-public fun composeShader(
-    first: DynamicShader,
-    second: DynamicShader,
-    mode: PorterDuff.Mode,
-): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-    ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-    )
-}
+//public fun composeShader(
+//    first: DynamicShader,
+//    second: DynamicShader,
+//    mode: PorterDuff.Mode,
+//): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+//    ComposeShader(
+//        first.provideShader(context, left, top, right, bottom),
+//        second.provideShader(context, left, top, right, bottom),
+//        mode,
+//    )
+//}

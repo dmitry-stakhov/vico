@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -29,11 +30,11 @@ import com.patrykandpatrick.vico.core.formatter.ValueFormatter
  */
 public fun LineChart.LineSpec.copy(
     lineColor: Int = this.lineColor,
-    lineThicknessDp: Float = this.lineThicknessDp,
+    lineThickness: Dp = this.lineThickness,
     lineBackgroundShader: DynamicShader? = this.lineBackgroundShader,
     lineCap: StrokeCap = this.lineCap,
     point: Component? = this.point,
-    pointSizeDp: Float = this.pointSizeDp,
+    pointSize: Dp = this.pointSize,
     dataLabel: TextComponent? = this.dataLabel,
     dataLabelVerticalPosition: Alignment.Vertical = this.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
@@ -41,11 +42,11 @@ public fun LineChart.LineSpec.copy(
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
 ): LineChart.LineSpec = LineChart.LineSpec(
     lineColor = lineColor,
-    lineThicknessDp = lineThicknessDp,
+    lineThickness = lineThickness,
     lineBackgroundShader = lineBackgroundShader,
     lineCap = lineCap,
     point = point,
-    pointSizeDp = pointSizeDp,
+    pointSize = pointSize,
     dataLabel = dataLabel,
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,

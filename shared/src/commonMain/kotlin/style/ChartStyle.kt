@@ -111,8 +111,8 @@ public data class ChartStyle(
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = DashedShape(
             shape = RectangleShape,
-            dashLengthDp = DefaultDimens.DASH_LENGTH,
-            gapLengthDp = DefaultDimens.DASH_GAP,
+            dashLength = DefaultDimens.DASH_LENGTH.dp,
+            gapLength = DefaultDimens.DASH_GAP.dp,
         ),
         val axisLineColor: Color,
         val axisLineWidth: Dp = DefaultDimens.AXIS_LINE_WIDTH.dp,
@@ -198,7 +198,7 @@ public data class ChartStyle(
                 columns = entityColors.map { entityColor ->
                     LineComponent(
                         color = entityColor.toArgb(),
-                        thicknessDp = DefaultDimens.COLUMN_WIDTH,
+                        thickness = DefaultDimens.COLUMN_WIDTH.dp,
                         shape = RoundedCornerShape(percent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
                     )
                 },
