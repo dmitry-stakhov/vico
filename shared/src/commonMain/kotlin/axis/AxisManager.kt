@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.collections.cacheInList
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import extension.isLtr
 
 /**
  * Manages a chart’s axes, setting their bounds and drawing them.
@@ -90,33 +91,33 @@ public open class AxisManager {
      * properly, axes should take these insets into account while setting their bounds.
      */
     public fun setAxesBounds(
-        measureContext: MeasureContext,
+        drawScope: DrawScope,
         contentBounds: Rect,
         chartBounds: Rect,
         insets: Insets,
     ) {
         startAxis?.setStartAxisBounds(
-            context = measureContext,
+            drawScope = drawScope,
             contentBounds = contentBounds,
             chartBounds = chartBounds,
             insets = insets,
         )
 
         topAxis?.setTopAxisBounds(
-            context = measureContext,
+            drawScope = drawScope,
             contentBounds = contentBounds,
             insets = insets,
         )
 
         endAxis?.setEndAxisBounds(
-            context = measureContext,
+            drawScope = drawScope,
             contentBounds = contentBounds,
             chartBounds = chartBounds,
             insets = insets,
         )
 
         bottomAxis?.setBottomAxisBounds(
-            context = measureContext,
+            drawScope = drawScope,
             contentBounds = contentBounds,
             chartBounds = chartBounds,
             insets = insets,
@@ -126,66 +127,58 @@ public open class AxisManager {
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
-        context: MeasureContext,
+        drawScope: DrawScope,
         contentBounds: Rect,
         chartBounds: Rect,
         insets: Insets,
     ) {
-        with(context) {
-            setBounds(
-                left = if (isLtr) contentBounds.left else contentBounds.right - insets.start,
-                top = chartBounds.top,
-                right = if (isLtr) contentBounds.left + insets.start else contentBounds.right,
-                bottom = chartBounds.bottom,
-            )
-        }
+        setBounds(
+            left = if (drawScope.isLtr) contentBounds.left else contentBounds.right - insets.start,
+            top = chartBounds.top,
+            right = if (drawScope.isLtr) contentBounds.left + insets.start else contentBounds.right,
+            bottom = chartBounds.bottom,
+        )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
-        context: MeasureContext,
+        drawScope: DrawScope,
         contentBounds: Rect,
         insets: Insets,
     ) {
-        with(context) {
-            setBounds(
-                left = contentBounds.left + if (isLtr) insets.start else insets.end,
-                top = contentBounds.top,
-                right = contentBounds.right - if (isLtr) insets.end else insets.start,
-                bottom = contentBounds.top + insets.top,
-            )
-        }
+        setBounds(
+            left = contentBounds.left + if (drawScope.isLtr) insets.start else insets.end,
+            top = contentBounds.top,
+            right = contentBounds.right - if (drawScope.isLtr) insets.end else insets.start,
+            bottom = contentBounds.top + insets.top,
+        )
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
-        context: MeasureContext,
+        drawScope: DrawScope,
         contentBounds: Rect,
         chartBounds: Rect,
         insets: Insets,
     ) {
-        with(context) {
-            setBounds(
-                left = if (isLtr) contentBounds.right - insets.end else contentBounds.left,
-                top = chartBounds.top,
-                right = if (isLtr) contentBounds.right else contentBounds.left + insets.end,
-                bottom = chartBounds.bottom,
-            )
-        }
+        setBounds(
+            left = if (drawScope.isLtr) contentBounds.right - insets.end else contentBounds.left,
+            top = chartBounds.top,
+            right = if (drawScope.isLtr) contentBounds.right else contentBounds.left + insets.end,
+            bottom = chartBounds.bottom,
+        )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
-        context: MeasureContext,
+        drawScope: DrawScope,
         contentBounds: Rect,
         chartBounds: Rect,
         insets: Insets,
     ) {
-        with(context) {
-            setBounds(
-                left = contentBounds.left + if (isLtr) insets.start else insets.end,
-                top = chartBounds.bottom,
-                right = contentBounds.right - if (isLtr) insets.end else insets.start,
-                bottom = chartBounds.bottom + insets.bottom,
-            )
-        }
+        setBounds(
+            left = contentBounds.left + if (drawScope.isLtr) insets.start else insets.end,
+            top = chartBounds.bottom,
+            right = contentBounds.right - if (drawScope.isLtr) insets.end else insets.start,
+            bottom = chartBounds.bottom + insets.bottom,
+        )
     }
 
     private fun setRestrictedBounds() {
@@ -203,9 +196,9 @@ public open class AxisManager {
      *
      * @see Axis.drawBehindChart
      */
-    public fun drawBehindChart(context: ChartDrawContext) {
+    public fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawBehindChart(context)
+            axis.drawBehindChart(drawScope, context)
         }
     }
 
@@ -217,9 +210,9 @@ public open class AxisManager {
      *
      * @see Axis.drawAboveChart
      */
-    public fun drawAboveChart(context: ChartDrawContext) {
+    public fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawAboveChart(context)
+            axis.drawAboveChart(drawScope, context)
         }
     }
 

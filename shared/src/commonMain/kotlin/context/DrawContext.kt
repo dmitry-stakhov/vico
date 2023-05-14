@@ -36,21 +36,11 @@ public interface DrawContext : MeasureContext {
     public val drawScope: DrawScope
 
     /**
-     * The canvas to draw the chart on.
-     */
-    public val canvas: Canvas
-
-    /**
      * Saves the [Canvas] state.
      *
      * @see Canvas.save
      */
-    public fun saveCanvas(): Unit = canvas.save()
-
-    /**
-     * Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver.
-     */
-    public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
+    public fun saveCanvas(): Unit = drawScope.drawContext.canvas.save()
 
     /**
      * Clips the [Canvas] to the specified rectangle.
@@ -58,7 +48,7 @@ public interface DrawContext : MeasureContext {
      * @see Canvas.clipRect
      */
     public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
-        canvas.clipRect(left, top, right, bottom)
+        drawScope.drawContext.canvas.clipRect(left, top, right, bottom)
     }
 
     /**
@@ -67,7 +57,7 @@ public interface DrawContext : MeasureContext {
      * @see Canvas.clipRect
      */
     public fun clipRect(rectF: Rect) {
-        canvas.clipRect(rectF)
+        drawScope.drawContext.canvas.clipRect(rectF)
     }
 
     /**
@@ -76,7 +66,7 @@ public interface DrawContext : MeasureContext {
      * @see Canvas.restore
      */
     public fun restoreCanvas() {
-        canvas.restore()
+        drawScope.drawContext.canvas.restore()
     }
 
     /**
@@ -99,5 +89,5 @@ public interface DrawContext : MeasureContext {
         top: Float = 0f,
         right: Float = Float.MAX_VALUE,
         bottom: Float = Float.MAX_VALUE,
-    ): Int = canvas.saveLayer(left, top, right, bottom)
+    ): Int = drawScope.drawContext.canvas.saveLayer(left, top, right, bottom)
 }

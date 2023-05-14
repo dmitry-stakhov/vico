@@ -38,26 +38,16 @@ public fun drawContext(
     drawScope: DrawScope,
     density: Float = 1f,
     fontScale: Float = 1f,
-    isLtr: Boolean = true,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
     override val canvasBounds: Rect = Rect(0f, 0f, Float.MAX_VALUE, Float.MAX_VALUE)
     override val elevationOverlayColor: Long = elevationOverlayColor
     override val drawScope: DrawScope = drawScope
-    override var canvas: Canvas = drawScope.drawContext.canvas
     override val density: Float = density
     override val fontScale: Float = fontScale
-    override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
     override val chartScale: Float = 1f
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
-
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
-        val originalCanvas = this.canvas
-        this.canvas = canvas
-        block(this)
-        this.canvas = originalCanvas
-    }
 
     override fun reset() {
         chartValuesManager.resetChartValues()

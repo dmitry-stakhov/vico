@@ -21,6 +21,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradientShader
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.FADING_EDGE_WIDTH_DP
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -86,38 +88,43 @@ public open class FadingEdges(
      * @param bounds the bounds within which the fading edges will be drawn.
      */
     public fun applyFadingEdges(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         bounds: Rect,
     ): Unit = with(context) {
-        val maxScroll = getMaxScrollDistance()
-        var fadeAlphaFraction: Float
+        with(context.drawScope) {
+            val maxScroll = getMaxScrollDistance(drawScope)
+            var fadeAlphaFraction: Float
 
-        if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
-            fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
+            if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
+                fadeAlphaFraction =
+                    (horizontalScroll / visibilityThresholdDp.dp.toPx()).coerceAtMost(1f)
 
-            drawFadingEdge(
-                left = bounds.left,
-                top = bounds.top,
-                right = bounds.left + startEdgeWidthDp.pixels,
-                bottom = bounds.bottom,
-                direction = -1,
-                alpha = (FULL_ALPHA).toInt(),
+                drawFadingEdge(
+                    left = bounds.left,
+                    top = bounds.top,
+                    right = bounds.left + startEdgeWidthDp.dp.toPx(),
+                    bottom = bounds.bottom,
+                    direction = -1,
+                    alpha = (FULL_ALPHA).toInt(),
 //                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-            )
-        }
+                )
+            }
 
-        if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
-            fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
+            if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
+                fadeAlphaFraction =
+                    ((maxScroll - horizontalScroll) / visibilityThresholdDp.dp.toPx()).coerceAtMost(1f)
 
-            drawFadingEdge(
-                left = bounds.right - endEdgeWidthDp.pixels,
-                top = bounds.top,
-                right = bounds.right,
-                bottom = bounds.bottom,
-                direction = 1,
-                alpha = (FULL_ALPHA).toInt(),
+                drawFadingEdge(
+                    left = bounds.right - endEdgeWidthDp.dp.toPx(),
+                    top = bounds.top,
+                    right = bounds.right,
+                    bottom = bounds.bottom,
+                    direction = 1,
+                    alpha = (FULL_ALPHA).toInt(),
 //                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-            )
+                )
+            }
         }
     }
 
@@ -138,6 +145,6 @@ public open class FadingEdges(
             to = Offset(rect.right, 0f),
             colors = if (direction < 0) listOf(faded, Color(NO_FADE)) else listOf(Color(NO_FADE), faded),
         )
-        canvas.drawRect(rect, paint)
+        drawScope.drawContext.canvas.drawRect(rect, paint)
     }
 }

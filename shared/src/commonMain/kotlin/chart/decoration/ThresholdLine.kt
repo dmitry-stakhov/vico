@@ -20,6 +20,7 @@ import DecimalFormat
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -32,6 +33,7 @@ import com.patrykandpatrick.vico.core.extension.getEnd
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.median
+import extension.isLtr
 
 /**
  * [ThresholdLine] is drawn on top of charts and marks a certain range of y-axis values.
@@ -100,54 +102,57 @@ public data class ThresholdLine(
         context: ChartDrawContext,
         bounds: Rect,
     ): Unit = with(context) {
-        val chartValues = chartValuesManager.getChartValues()
+        with(context.drawScope) {
+            val chartValues = chartValuesManager.getChartValues()
 
-        val valueRange = chartValues.maxY - chartValues.minY
+            val valueRange = chartValues.maxY - chartValues.minY
 
-        val centerY = bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height
+            val centerY =
+                bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height
 
-        val topY = minOf(
-            bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height,
-            centerY - minimumLineThicknessDp.pixels.half,
-        ).ceil
-        val bottomY = maxOf(
-            bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height,
-            centerY + minimumLineThicknessDp.pixels.half,
-        ).floor
-        val textY = when (labelVerticalPosition) {
-            LabelVerticalPosition.Top -> topY
-            LabelVerticalPosition.Bottom -> bottomY
-        }
+            val topY = minOf(
+                bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height,
+                centerY - minimumLineThicknessDp.dp.toPx().half,
+            ).ceil
+            val bottomY = maxOf(
+                bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height,
+                centerY + minimumLineThicknessDp.dp.toPx().half,
+            ).floor
+            val textY = when (labelVerticalPosition) {
+                LabelVerticalPosition.Top -> topY
+                LabelVerticalPosition.Bottom -> bottomY
+            }
 
-        lineComponent.draw(
-            drawScope = context.drawScope,
-            left = bounds.left,
-            right = bounds.right,
-            top = topY,
-            bottom = bottomY,
-        )
-        labelComponent.drawText(
-            drawScope = drawScope,
-            extras = context,
-            text = "", // thresholdLabel,
-            maxTextWidth = bounds.width.toInt(),
-            textX = when (labelHorizontalPosition) {
-                LabelHorizontalPosition.Start -> bounds.getStart(isLtr = isLtr)
-                LabelHorizontalPosition.End -> bounds.getEnd(isLtr = isLtr)
-            },
-            textY = textY,
-            horizontalPosition = labelHorizontalPosition.position,
-            verticalPosition = labelVerticalPosition.position.inBounds(
-                bounds = bounds,
-                componentHeight = 0f, //labelComponent.getHeight(
+            lineComponent.draw(
+                drawScope = context.drawScope,
+                left = bounds.left,
+                right = bounds.right,
+                top = topY,
+                bottom = bottomY,
+            )
+            labelComponent.drawText(
+                drawScope = drawScope,
+                extras = context,
+                text = "", // thresholdLabel,
+                maxTextWidth = bounds.width.toInt(),
+                textX = when (labelHorizontalPosition) {
+                    LabelHorizontalPosition.Start -> bounds.getStart(isLtr = isLtr)
+                    LabelHorizontalPosition.End -> bounds.getEnd(isLtr = isLtr)
+                },
+                textY = textY,
+                horizontalPosition = labelHorizontalPosition.position,
+                verticalPosition = labelVerticalPosition.position.inBounds(
+                    bounds = bounds,
+                    componentHeight = 0f, //labelComponent.getHeight(
 //                    context = context,
 //                    text = "", // thresholdLabel,
 //                    rotationDegrees = labelRotationDegrees,
 //                ),
-                y = textY,
-            ),
-            rotationDegrees = labelRotationDegrees,
-        )
+                    y = textY,
+                ),
+                rotationDegrees = labelRotationDegrees,
+            )
+        }
     }
 
     /**

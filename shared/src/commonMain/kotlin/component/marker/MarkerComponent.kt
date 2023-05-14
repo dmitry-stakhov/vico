@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
@@ -71,8 +74,8 @@ public open class MarkerComponent(
 
     private var tempBounds = Rect.Zero
 
-    private val TextComponent.tickSizeDp: Float
-        get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
+    private val TextComponent.tickSize: Dp
+        get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero.dp
 
     /**
      * The indicator size (in dp).
@@ -97,20 +100,28 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
         chartValuesProvider: ChartValuesProvider,
     ): Unit = with(context) {
-        drawGuideline(context, bounds, markedEntries)
-        val halfIndicatorSize = indicatorSizeDp.half.pixels
+        with(drawScope) {
+            drawGuideline(drawScope, bounds, markedEntries)
+            val halfIndicatorSize = indicatorSizeDp.half.dp.toPx()
 
-        markedEntries.forEachIndexed { _, model ->
-            onApplyEntryColor?.invoke(model.color)
-            indicator?.draw(
+            markedEntries.forEachIndexed { _, model ->
+                onApplyEntryColor?.invoke(model.color)
+                indicator?.draw(
+                    drawScope,
+                    model.location.x - halfIndicatorSize,
+                    model.location.y - halfIndicatorSize,
+                    model.location.x + halfIndicatorSize,
+                    model.location.y + halfIndicatorSize,
+                )
+            }
+            drawLabel(
                 drawScope,
-                model.location.x - halfIndicatorSize,
-                model.location.y - halfIndicatorSize,
-                model.location.x + halfIndicatorSize,
-                model.location.y + halfIndicatorSize,
+                context,
+                bounds,
+                markedEntries,
+                chartValuesProvider.getChartValues()
             )
         }
-        drawLabel(drawScope, context, bounds, markedEntries, chartValuesProvider.getChartValues())
     }
 
     private fun drawLabel(
@@ -120,21 +131,23 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
     ): Unit = with(context) {
-        val text = labelFormatter.getLabel(markedEntries, chartValues)
-        val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds = Rect.Zero // label.getTextBounds(context, text, outRect = tempBounds)
-        val halfOfTextWidth = labelBounds.width.half
-        val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-        this[MarkerCorneredShape.tickXKey] = entryX
+        with(drawScope) {
+            val text = labelFormatter.getLabel(markedEntries, chartValues)
+            val entryX = markedEntries.averageOf { it.location.x }
+            val labelBounds = Rect.Zero // label.getTextBounds(context, text, outRect = tempBounds)
+            val halfOfTextWidth = labelBounds.width.half
+            val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
+            context[MarkerCorneredShape.tickXKey] = entryX
 
-        label.drawText(
-            drawScope = drawScope,
-            extras = context,
-            text = text,
-            textX = x,
-            textY = bounds.top - labelBounds.height - label.tickSizeDp.pixels,
-            verticalPosition = Alignment.Bottom,
-        )
+            label.drawText(
+                drawScope = drawScope,
+                extras = context,
+                text = text,
+                textX = x,
+                textY = bounds.top - labelBounds.height - label.tickSize.toPx(),
+                verticalPosition = Alignment.Bottom,
+            )
+        }
     }
 
     private fun overrideXPositionToFit(
@@ -148,7 +161,7 @@ public open class MarkerComponent(
     }
 
     private fun drawGuideline(
-        context: DrawContext,
+        drawScope: DrawScope,
         bounds: Rect,
         markedEntries: List<Marker.EntryModel>,
     ) {
@@ -157,7 +170,7 @@ public open class MarkerComponent(
             .toSet()
             .forEach { x ->
                 guideline?.drawVertical(
-                    context,
+                    drawScope,
                     bounds.top,
                     bounds.bottom,
                     x,
@@ -165,11 +178,12 @@ public open class MarkerComponent(
             }
     }
 
-    override fun getInsets(
+    public override fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
-    ): Unit = with(context) {
-        outInsets.top = 0f /* label.getHeight(context) */+ label.tickSizeDp.pixels
+    ): Unit = with(density) {
+        outInsets.top = label.getHeight(context, density) + label.tickSize.toPx()
     }
 }

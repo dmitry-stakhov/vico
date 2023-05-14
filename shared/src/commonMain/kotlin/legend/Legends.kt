@@ -47,9 +47,9 @@ public fun verticalLegend(
 ): VerticalLegend = remember(items, iconSize, iconPadding, spacing, padding) {
     VerticalLegend(
         items = items,
-        iconSizeDp = iconSize.value,
-        iconPaddingDp = iconPadding.value,
-        spacingDp = spacing.value,
+        iconSize = iconSize,
+        iconPadding = iconPadding,
+        spacing = spacing,
         padding = padding,
     )
 }

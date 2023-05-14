@@ -285,6 +285,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         val segmentProperties = chart.getSegmentProperties(this, model)
 
         val chartBounds = virtualLayout.setBounds(
+            drawScope = this,
             context = measureContext,
             contentBounds = bounds,
             chart = chart,
@@ -296,6 +297,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         if (chartBounds.isEmpty) return@Canvas
 
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
+            drawScope = this,
             chartWidth = chart.bounds.width,
             segmentProperties = segmentProperties,
         )
@@ -315,15 +317,15 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
-        axisManager.drawBehindChart(chartDrawContext)
-        chart.drawScrollableContent(chartDrawContext, model)
+        axisManager.drawBehindChart(this, chartDrawContext)
+        chart.drawScrollableContent(this, chartDrawContext, model)
 
         fadingEdges?.apply {
-            applyFadingEdges(chartDrawContext, chart.bounds)
+            applyFadingEdges(this@Canvas, chartDrawContext, chart.bounds)
             chartDrawContext.restoreCanvasToCount(count)
         }
 
-        axisManager.drawAboveChart(chartDrawContext)
+        axisManager.drawAboveChart(this, chartDrawContext)
         chart.drawNonScrollableContent(chartDrawContext, model)
         legend?.draw(chartDrawContext)
 

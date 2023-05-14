@@ -55,6 +55,8 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
+import extension.isLtr
+import extension.layoutDirectionMultiplier
 import kotlin.math.abs
 
 /**
@@ -120,12 +122,14 @@ public open class ColumnChart(
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
-    override fun drawChart(
+    public override fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         entryLocationMap.clear()
         drawChartInternal(
+            drawScope = drawScope,
             chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
             cellWidth = segmentProperties.cellWidth,
@@ -135,6 +139,7 @@ public open class ColumnChart(
     }
 
     protected open fun ChartDrawContext.drawChartInternal(
+        drawScope: DrawScope,
         chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,
@@ -157,6 +162,7 @@ public open class ColumnChart(
 
             column = columns.getRepeating(index)
             drawingStart = getDrawingStart(
+                drawScope = drawScope,
                 entryCollectionIndex = index,
                 segmentCompensation = (cellWidth - defCellWidth) / 2,
                 spacing = spacing,
@@ -166,7 +172,7 @@ public open class ColumnChart(
             entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
                 height = abs(entry.y) * heightMultiplier
-                columnCenterX = drawingStart + layoutDirectionMultiplier *
+                columnCenterX = drawingStart + drawScope.layoutDirectionMultiplier *
                     (cellWidth + spacing) * (entry.x - chartValues.minX) / model.xStep
 
                 when (mergeMode) {
@@ -180,7 +186,7 @@ public open class ColumnChart(
                             }
 
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += layoutDirectionMultiplier * cellWidth.half
+                        columnCenterX += drawScope.layoutDirectionMultiplier * cellWidth.half
                         heightMap[entry.x] =
                             if (entry.y < 0f) {
                                 stackedNegY + entry.y to stackedPosY
@@ -192,7 +198,7 @@ public open class ColumnChart(
                     MergeMode.Grouped -> {
                         columnBottom = zeroLinePosition + if (entry.y < 0f) height else 0f
                         columnTop = columnBottom - height
-                        columnCenterX += layoutDirectionMultiplier * with(drawScope) { column.thickness.toPx() } * chartScale
+                        columnCenterX += drawScope.layoutDirectionMultiplier * with(drawScope) { column.thickness.toPx() } * chartScale
                     }
                 }
 
@@ -208,7 +214,7 @@ public open class ColumnChart(
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
-                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
+                    column.drawVertical(drawScope, columnTop, columnBottom, columnCenterX, chartScale)
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
@@ -264,7 +270,7 @@ public open class ColumnChart(
                 mergeMode == MergeMode.Stack ||
                     mergeMode == MergeMode.Grouped && modelEntriesSize == 1
             val maxWidth = when {
-                canUseSegmentWidth -> segmentWidth
+                canUseSegmentWidth -> segmentWidth(drawScope)
                 mergeMode == MergeMode.Grouped ->
                     with(drawScope) { (columnThickness.value + 2 * minOf(spacing.value, innerSpacing.value.half)).dp.toPx().toInt() }
 
@@ -357,18 +363,20 @@ public open class ColumnChart(
     }
 
     protected open fun MeasureContext.getDrawingStart(
+        drawScope: DrawScope,
         entryCollectionIndex: Int,
         segmentCompensation: Float,
         columnWidth: Float,
         spacing: Float,
-    ): Float {
-        val baseStart = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * spacing.half
-        return when (mergeMode) {
+    ): Float = with(drawScope) {
+        val baseStart =
+            bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * spacing.half
+        when (mergeMode) {
             MergeMode.Stack -> baseStart
             MergeMode.Grouped -> {
                 val offset = segmentCompensation - columnWidth.half +
-                    Density(density).getCumulatedThickness(entryCollectionIndex) * chartScale +
-                    innerSpacing.value.pixels * chartScale * entryCollectionIndex
+                        Density(density).getCumulatedThickness(entryCollectionIndex) * chartScale +
+                        innerSpacing.toPx() * chartScale * entryCollectionIndex
                 baseStart + layoutDirectionMultiplier * offset
             }
         }

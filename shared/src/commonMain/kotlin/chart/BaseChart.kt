@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
@@ -29,6 +30,7 @@ import com.patrykandpatrick.vico.core.extension.getEntryModel
 import com.patrykandpatrick.vico.core.extension.inClip
 import com.patrykandpatrick.vico.core.extension.setAll
 import com.patrykandpatrick.vico.core.marker.Marker
+import extension.isLtr
 
 /**
  * A base implementation of [Chart].
@@ -85,19 +87,20 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     }
 
     override fun drawScrollableContent(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
         insets.clear()
-        getInsets(this, insets, segmentProperties)
-        drawChartInternal(context, model)
+        getInsets(Density(density),this, insets, segmentProperties)
+        drawChartInternal(drawScope, context, model)
     }
 
     override fun drawNonScrollableContent(
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
-        canvas.inClip(
+        drawScope.drawContext.canvas.inClip(
             left = bounds.left,
             top = 0f,
             right = bounds.right,
@@ -122,23 +125,25 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
      * An internal function that draws both [Decoration]s behind the chart and the chart itself in the clip bounds.
      */
     protected open fun drawChartInternal(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
-        canvas.inClip(
-            left = bounds.left - insets.getLeft(isLtr),
+        drawScope.drawContext.canvas.inClip(
+            left = bounds.left - insets.getLeft(drawScope.isLtr),
             top = bounds.top - insets.top,
-            right = bounds.right + insets.getRight(isLtr),
+            right = bounds.right + insets.getRight(drawScope.isLtr),
             bottom = bounds.bottom + insets.bottom,
         ) {
             drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
-                drawChart(context, model)
+                drawChart(drawScope, context, model)
             }
         }
     }
 
     protected abstract fun drawChart(
+        drawChart: DrawScope,
         context: ChartDrawContext,
         model: Model,
     )

@@ -81,20 +81,21 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ComposedChartEntryModel<Model>,
     ) {
         entryLocationMap.clear()
         model.forEachModelWithChart { item, chart ->
-            chart.drawScrollableContent(context, item)
+            chart.drawScrollableContent(drawScope, context, item)
             entryLocationMap.updateAll(chart.entryLocationMap)
         }
     }
 
-    override fun drawChartInternal(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+    override fun drawChartInternal(drawScope: DrawScope, context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
         drawDecorationBehindChart(context)
         if (model.entries.isNotEmpty()) {
-            drawChart(context, model)
+            drawChart(drawScope, context, model)
         }
     }
 
@@ -134,12 +135,13 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
     ) {
         charts.forEach { chart ->
-            chart.getInsets(context, tempInsets, segmentProperties)
+            chart.getInsets(density, context, tempInsets, segmentProperties)
             outInsets.setValuesIfGreater(tempInsets)
         }
     }

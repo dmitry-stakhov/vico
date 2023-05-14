@@ -42,14 +42,12 @@ public fun getMeasureContext(
         canvasBounds = canvasBounds,
         density = 0f,
         fontScale = 0f,
-        isLtr = true,
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         chartScale = chartScale,
     )
 }.apply {
     this.density = LocalDensity.current.density
     this.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
-    this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
     this.chartScale = chartScale
 }

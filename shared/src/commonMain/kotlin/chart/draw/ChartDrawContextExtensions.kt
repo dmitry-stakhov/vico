@@ -19,6 +19,8 @@ package com.patrykandpatrick.vico.core.chart.draw
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
@@ -60,8 +62,6 @@ public fun chartDrawContext(
 
     override val chartBounds: Rect = chartBounds
 
-    override var canvas: Canvas = drawScope.drawContext.canvas
-
     override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
 
     override val drawScope: DrawScope = drawScope
@@ -73,13 +73,6 @@ public fun chartDrawContext(
     override val segmentProperties: SegmentProperties = segmentProperties.scaled(chartScale)
 
     override val horizontalScroll: Float = horizontalScroll
-
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
-        val originalCanvas = this.canvas
-        this.canvas = canvas
-        block(this)
-        this.canvas = originalCanvas
-    }
 
     private fun calculateDrawScale(): Float {
         val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
@@ -93,8 +86,9 @@ public fun chartDrawContext(
     }
 }
 
-internal inline val ChartDrawContext.segmentWidth: Int
-    get() = segmentProperties.segmentWidth.pixels.toInt()
+internal inline fun ChartDrawContext.segmentWidth(density: Density): Int = with(density) {
+    segmentProperties.segmentWidth.dp.toPx().toInt()
+}
 
 /**
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the

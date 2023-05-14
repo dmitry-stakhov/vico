@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -158,7 +159,7 @@ public fun Shape.dashedShape(
  */
 public open class LineComponent(
     color: Int,
-    public var thickness: Dp = 2.dp,
+    public val thickness: Dp = 2.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: MutableDimensions = emptyDimensions(),
@@ -187,7 +188,7 @@ public open class LineComponent(
 
     /**
      * Checks whether the [LineComponent] fits horizontally within the given [boundingBox] with its current
-     * [thicknessDp].
+     * [thickness].
      */
     public open fun fitsInHorizontal(
         context: DrawContext,
@@ -212,14 +213,14 @@ public open class LineComponent(
      * A convenience function for [draw] that draws the [LineComponent] vertically.
      */
     public open fun drawVertical(
-        context: DrawContext,
+        drawScope: DrawScope,
         top: Float,
         bottom: Float,
         centerX: Float,
         thicknessScale: Float = 1f,
-    ): Unit = with(context.drawScope) {
+    ): Unit = with(drawScope) {
         draw(
-            context.drawScope,
+            drawScope,
             left = centerX - thickness.toPx() * thicknessScale / 2,
             top = top,
             right = centerX + thickness.toPx() * thicknessScale / 2,

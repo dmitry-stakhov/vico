@@ -17,11 +17,14 @@
 package com.patrykandpatrick.vico.core.chart.draw
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.model.Point
+import extension.isLtr
+import extension.layoutDirectionMultiplier
 
 /**
  * An extension of [DrawContext] that holds additional data required to render a [Chart].
@@ -53,6 +56,7 @@ public interface ChartDrawContext : DrawContext {
  * Returns the maximum scroll distance.
  */
 public fun MeasureContext.getMaxScrollDistance(
+    drawScope: DrawScope,
     chartWidth: Float,
     segmentProperties: SegmentProperties,
 ): Float {
@@ -60,16 +64,17 @@ public fun MeasureContext.getMaxScrollDistance(
         chartValuesManager.getChartValues().getDrawnEntryCount() *
         chartScale
 
-    return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
-        if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
+    return (drawScope.layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
+        if (drawScope.isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
     }
 }
 
 /**
  * Returns the maximum scroll distance.
  */
-public fun ChartDrawContext.getMaxScrollDistance(): Float =
+public fun ChartDrawContext.getMaxScrollDistance(drawScope: DrawScope): Float =
     getMaxScrollDistance(
+        drawScope = drawScope,
         chartWidth = chartBounds.width,
         segmentProperties = segmentProperties,
     )

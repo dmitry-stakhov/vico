@@ -52,6 +52,7 @@ import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
+import extension.isLtr
 import kotlin.math.roundToInt
 
 private const val LABELS_KEY = "labels"
@@ -94,39 +95,42 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
-        val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
+    override fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
+        with(drawScope) {
+            val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
 
-        val axisStep = bounds.height / (drawLabelCount - 1)
+            val axisStep = bounds.height / (drawLabelCount - 1)
 
-        var centerY: Float
+            var centerY: Float
 
-        for (index in 0 until drawLabelCount) {
-            centerY = bounds.bottom - axisStep * index + context.drawScope.guidelineThickness.half
+            for (index in 0 until drawLabelCount) {
+                centerY =
+                    bounds.bottom - axisStep * index + context.drawScope.guidelineThickness.half
 
-            guideline?.takeIf {
-                isNotInRestrictedBounds(
+                guideline?.takeIf {
+                    isNotInRestrictedBounds(
+                        left = chartBounds.left,
+                        top = centerY - context.drawScope.guidelineThickness.half,
+                        right = chartBounds.right,
+                        bottom = centerY - context.drawScope.guidelineThickness.half,
+                    )
+                }?.drawHorizontal(
+                    context = context,
                     left = chartBounds.left,
-                    top = centerY - context.drawScope.guidelineThickness.half,
                     right = chartBounds.right,
-                    bottom = centerY - context.drawScope.guidelineThickness.half,
+                    centerY = centerY,
                 )
-            }?.drawHorizontal(
-                context = context,
-                left = chartBounds.left,
-                right = chartBounds.right,
-                centerY = centerY,
+            }
+            axisLine?.drawVertical(
+                drawScope = drawScope,
+                top = bounds.top,
+                bottom = bounds.bottom + drawScope.axisThickness,
+                centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
             )
         }
-        axisLine?.drawVertical(
-            context = context,
-            top = bounds.top,
-            bottom = bounds.bottom + drawScope.axisThickness,
-            centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
-        )
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(bounds.height.toInt())
 
@@ -136,7 +140,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         val tickRightX = tickLeftX + drawScope.axisThickness.half + with(drawScope) { tickLengthPx }
 
-        val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
+        val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == drawScope.isLtr) tickLeftX else tickRightX
 
         var tickCenterY: Float
 
@@ -167,7 +171,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 drawScope = drawScope,
                 extras = this,
                 text = title,
-                textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
+                textX = if (position.isStart) bounds.getStart(isLtr = drawScope.isLtr) else bounds.getEnd(isLtr = drawScope.isLtr),
                 textY = bounds.center.y,
                 horizontalPosition = if (position.isStart) Alignment.End else Alignment.Start,
                 verticalPosition = Alignment.CenterVertically,
@@ -282,12 +286,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         val labelHeight = 0f // label?.getHeight(context = context).orZero
-        val lineThickness = with(Density(density)) { maxOf(axisThickness, tickThickness) }
+        val lineThickness = maxOf(density.axisThickness, density.tickThickness)
         when (verticalLabelPosition) {
             Center -> outInsets.set(
                 top = labelHeight.half - lineThickness,

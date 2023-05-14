@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.chart.insets
 
+import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
@@ -38,6 +39,7 @@ public interface ChartInsetter {
      * @param segmentProperties the associated [Chart]’s [SegmentProperties].
      */
     public fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,

@@ -54,44 +54,30 @@ public class DashedShape(
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
-        if (size.width > size.height) {
-            calculateDrawLengths(density, size.width)
-        } else {
-            calculateDrawLengths(density, size.height)
+        with(density) {
+            calculateDrawLengths(dashLength.toPx(), gapLength.toPx(), size.maxDimension)
         }
         return Outline.Generic(Path().apply {
-            val dashLengthPx = with(density) { dashLength.toPx() }
-            val gapLengthPx = with(density) { gapLength.toPx() }
-            val stepsCount = ((size.width + gapLengthPx) / (dashLengthPx + gapLengthPx)).roundToInt()
+            val stepsCount = ((size.width + drawGapLength) / (drawGapLength + drawDashLength)).roundToInt()
             val actualStep = size.width / stepsCount
-            val dotSize = if (size.width > size.height) {
-                Size(width = dashLengthPx, height = size.height)
-            } else {
-                Size(width = size.width, height = dashLengthPx)
-            }
             for (i in 0 until stepsCount) {
-                if (size.width > size.height) {
-                    addRect(
-                        Rect(
-                            offset = Offset(x = i * actualStep, y = 0f),
-                            size = dotSize
-                        )
+                addRect(
+                    Rect(
+                        offset = if (size.width > size.height) {
+                            Offset(x = i * actualStep, y = 0f)
+                        } else {
+                            Offset(x = 0f, y = i * actualStep)
+                        },
+                        size = if (size.width > size.height) {
+                            Size(width = drawGapLength, height = size.height)
+                        } else {
+                            Size(width = size.width, height = drawGapLength)
+                        }
                     )
-                } else {
-                    addRect(
-                        Rect(
-                            offset = Offset(x = 0f, y = i * actualStep),
-                            size = dotSize
-                        )
-                    )
-                }
+                )
             }
             close()
         })
-    }
-
-    private fun calculateDrawLengths(density: Density, length: Float): Unit = with(density) {
-        calculateDrawLengths(dashLength.toPx(), gapLength.toPx(), length)
     }
 
     private fun calculateDrawLengths(

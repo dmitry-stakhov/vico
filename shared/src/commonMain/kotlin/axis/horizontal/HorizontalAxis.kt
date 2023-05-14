@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.axis.horizontal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.axis.axisGuidelineComponent
@@ -44,6 +45,8 @@ import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
+import extension.isLtr
+import extension.layoutDirectionMultiplier
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -65,107 +68,127 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var tickPosition: TickPosition = TickPosition.Edge
 
-    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
-        canvas.save()
-        val tickMarkTop: Float = if (position.isBottom) bounds.top else bounds.bottom - with(context.drawScope) { tickLengthPx }
-        val tickMarkBottom = tickMarkTop + with(drawScope) { axisThickness } + with(context.drawScope) { tickLengthPx }
-        val chartValues = chartValuesManager.getChartValues()
-        val step = chartValues.xStep
+    override fun drawBehindChart(
+        drawScope: DrawScope,
+        context: ChartDrawContext
+    ): Unit = with(context) {
+        with(drawScope) {
+            drawScope.drawContext.canvas.save()
+            val tickMarkTop: Float =
+                if (position.isBottom) bounds.top else bounds.bottom - with(context.drawScope) { tickLengthPx }
+            val tickMarkBottom =
+                tickMarkTop + with(drawScope) { axisThickness } + with(context.drawScope) { tickLengthPx }
+            val chartValues = chartValuesManager.getChartValues()
+            val step = chartValues.xStep
 
-        canvas.clipRect(
-            bounds.left - tickPosition.getTickInset(with(drawScope) { tickThickness }),
-            minOf(bounds.top, chartBounds.top),
-            bounds.right + tickPosition.getTickInset(with(drawScope) { tickThickness }),
-            maxOf(bounds.bottom, chartBounds.bottom),
-        )
+            drawScope.drawContext.canvas.clipRect(
+                bounds.left - tickPosition.getTickInset(with(drawScope) { tickThickness }),
+                minOf(bounds.top, chartBounds.top),
+                bounds.right + tickPosition.getTickInset(with(drawScope) { tickThickness }),
+                maxOf(bounds.bottom, chartBounds.bottom),
+            )
 
-        val tickDrawStep = segmentProperties.segmentWidth
-        val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
-        val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+            val tickDrawStep = segmentProperties.segmentWidth
+            val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
+            val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        val labelPositionOffset = when (segmentProperties.labelPositionOrDefault) {
-            LabelPosition.Start -> 0f
-            LabelPosition.Center -> tickDrawStep.half
-        }
+            val labelPositionOffset = when (segmentProperties.labelPositionOrDefault) {
+                LabelPosition.Start -> 0f
+                LabelPosition.Center -> tickDrawStep.half
+            }
 
-        var textCenter: Float = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
-            (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll
+            var textCenter: Float = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
+                    (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll
 
-        var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
+            var tickCenter = getTickDrawCenter(
+                tickPosition,
+                horizontalScroll,
+                tickDrawStep,
+                scrollAdjustment,
+                textCenter
+            )
 
-        forEachEntity(
-            scrollAdjustment = scrollAdjustment,
-            step = step,
-            xRange = chartValues.minX..chartValues.maxX,
-        ) { x, shouldDrawLines, shouldDrawLabel ->
+            forEachEntity(
+                scrollAdjustment = scrollAdjustment,
+                step = step,
+                xRange = chartValues.minX..chartValues.maxX,
+            ) { x, shouldDrawLines, shouldDrawLabel ->
 
-            guideline
-                ?.takeIf {
-                    shouldDrawLines &&
-                        it.fitsInVertical(
-                            context = context,
-                            top = chartBounds.top,
-                            bottom = chartBounds.bottom,
-                            centerX = tickCenter,
-                            boundingBox = chartBounds,
-                        )
-                }?.drawVertical(
-                    context = context,
-                    top = chartBounds.top,
-                    bottom = chartBounds.bottom,
-                    centerX = tickCenter,
-                )
+                guideline
+                    ?.takeIf {
+                        shouldDrawLines &&
+                                it.fitsInVertical(
+                                    context = context,
+                                    top = chartBounds.top,
+                                    bottom = chartBounds.bottom,
+                                    centerX = tickCenter,
+                                    boundingBox = chartBounds,
+                                )
+                    }?.drawVertical(
+                        drawScope = context.drawScope,
+                        top = chartBounds.top,
+                        bottom = chartBounds.bottom,
+                        centerX = tickCenter,
+                    )
 
-            tick
-                .takeIf { shouldDrawLines }
-                ?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
+                tick
+                    .takeIf { shouldDrawLines }
+                    ?.drawVertical(
+                        drawScope = context.drawScope,
+                        top = tickMarkTop,
+                        bottom = tickMarkBottom,
+                        centerX = tickCenter
+                    )
 
-            label
-                .takeIf { shouldDrawLabel }
-                ?.drawText(
+                label
+                    .takeIf { shouldDrawLabel }
+                    ?.drawText(
+                        drawScope = drawScope,
+                        extras = context,
+                        text = valueFormatter.formatValue(x, chartValues),
+                        textX = textCenter,
+                        textY = textY,
+                        verticalPosition = position.textVerticalPosition,
+                        maxTextWidth = getMaxTextWidth(
+                            tickDrawStep = tickDrawStep,
+                            spacing = tickPosition.spacing,
+                            textX = textCenter,
+                            bounds = chartBounds,
+                        ),
+                        maxTextHeight = (bounds.height - with(drawScope) { tickLengthPx } - with(
+                            drawScope
+                        ) { axisThickness }.half).toInt(),
+                        rotationDegrees = labelRotationDegrees,
+                    )
+
+                tickCenter += layoutDirectionMultiplier * tickDrawStep
+                textCenter += layoutDirectionMultiplier * tickDrawStep
+            }
+
+            axisLine?.drawHorizontal(
+                context = context,
+                left = chartBounds.left,
+                right = chartBounds.right,
+                centerY = (if (position.isBottom) bounds.top else bounds.bottom) + with(drawScope) { axisThickness }.half,
+            )
+
+            title?.let { title ->
+                titleComponent?.drawText(
                     drawScope = drawScope,
                     extras = context,
-                    text = valueFormatter.formatValue(x, chartValues),
-                    textX = textCenter,
-                    textY = textY,
-                    verticalPosition = position.textVerticalPosition,
-                    maxTextWidth = getMaxTextWidth(
-                        tickDrawStep = tickDrawStep,
-                        spacing = tickPosition.spacing,
-                        textX = textCenter,
-                        bounds = chartBounds,
-                    ),
-                    maxTextHeight = (bounds.height - with(drawScope) { tickLengthPx } - with(drawScope) { axisThickness }.half).toInt(),
-                    rotationDegrees = labelRotationDegrees,
+                    textX = bounds.center.x,
+                    textY = if (position.isTop) bounds.top else bounds.bottom,
+                    verticalPosition = if (position.isTop) Alignment.Bottom else Alignment.Top,
+                    maxTextWidth = bounds.width.toInt(),
+                    text = title,
                 )
+            }
 
-            tickCenter += layoutDirectionMultiplier * tickDrawStep
-            textCenter += layoutDirectionMultiplier * tickDrawStep
+            drawScope.drawContext.canvas.restore()
         }
-
-        axisLine?.drawHorizontal(
-            context = context,
-            left = chartBounds.left,
-            right = chartBounds.right,
-            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + with(drawScope) { axisThickness }.half,
-        )
-
-        title?.let { title ->
-            titleComponent?.drawText(
-                drawScope = drawScope,
-                extras = context,
-                textX = bounds.center.x,
-                textY = if (position.isTop) bounds.top else bounds.bottom,
-                verticalPosition = if (position.isTop) Alignment.Bottom else Alignment.Top,
-                maxTextWidth = bounds.width.toInt(),
-                text = title,
-            )
-        }
-
-        canvas.restore()
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
+    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = Unit
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width / segmentWidth).toInt() + 1
@@ -198,7 +221,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun DrawContext.getTickDrawCenter(
+    private fun DrawScope.getTickDrawCenter(
         tickPosition: TickPosition,
         scrollX: Float,
         tickDrawStep: Float,
@@ -211,12 +234,13 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
-    ): Unit = with(context) {
+    ): Unit = with(density) {
         with(outInsets) {
-            setHorizontal(tickPosition.getTickInset(with(Density(density)) { tickThickness }))
+            setHorizontal(tickPosition.getTickInset(tickThickness))
             top = if (position.isTop) getDesiredHeight(context, segmentProperties) else 0f
             bottom = if (position.isBottom) getDesiredHeight(context, segmentProperties) else 0f
         }

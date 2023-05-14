@@ -39,13 +39,13 @@ public abstract class Component : Margins by DefaultMargins() {
     )
 
     internal fun drawPoint(
-        context: DrawContext,
+        drawScope: DrawScope,
         x: Float,
         y: Float,
         halfPointSize: Float,
     ) {
         draw(
-            drawScope = context.drawScope,
+            drawScope = drawScope,
             left = x - halfPointSize,
             top = y - halfPointSize,
             right = x + halfPointSize,

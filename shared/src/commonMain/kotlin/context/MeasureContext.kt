@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.context
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
@@ -49,11 +50,6 @@ public interface MeasureContext : Extras {
     public val fontScale: Float
 
     /**
-     * Whether the layout direction is left-to-right.
-     */
-    public val isLtr: Boolean
-
-    /**
      * Whether horizontal scrolling is enabled.
      */
     public val isHorizontalScrollEnabled: Boolean
@@ -62,30 +58,6 @@ public interface MeasureContext : Extras {
      * The scale of the chart. Used to handle zooming in and out.
      */
     public val chartScale: Float
-
-    /**
-     * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation
-     * deltas are multiplied by this value. [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f`
-     * otherwise.
-     */
-    public val layoutDirectionMultiplier: Float
-        get() = if (isLtr) 1f else -1f
-
-    /**
-     * The number of pixels corresponding to this number of density-independent pixels.
-     */
-    public val Float.pixels: Float
-        get() = this * density
-
-    /**
-     * Returns the number of pixels corresponding to the provided number of density-independent pixels.
-     */
-    public fun toPixels(dp: Float): Float = dp * density
-
-    /**
-     * Returns the number of pixels corresponding to the provided number of scaled pixels.
-     */
-    public fun toFontSize(sp: Float): Float = sp * fontScale
 
     /**
      * Removes all stored extras and resets [ChartValuesManager.chartValues].

@@ -19,31 +19,32 @@ package com.patrykandpatrick.vico.core.legend
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.Extras
-import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
+import extension.isLtr
 
 /**
  * [VerticalLegend] displays legend items in a vertical list.
  *
  * @param items a [Collection] of [Item]s to be displayed by this [VerticalLegend].
- * @param iconSizeDp defines the size of all [Item.icon]s.
- * @param iconPaddingDp defines the padding between each [Item.icon] and its corresponding [Item.label].
- * @param spacingDp defines the vertical spacing between each [Item].
+ * @param iconSize defines the size of all [Item.icon]s.
+ * @param iconPadding defines the padding between each [Item.icon] and its corresponding [Item.label].
+ * @param spacing defines the vertical spacing between each [Item].
  * @param padding defines the padding of the content.
  */
 public open class VerticalLegend(
     public var items: Collection<Item>,
-    public var iconSizeDp: Float,
-    public var iconPaddingDp: Float,
-    public var spacingDp: Float = 0f,
+    public var iconSize: Dp,
+    public var iconPadding: Dp,
+    public var spacing: Dp = 0.dp,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
 
@@ -54,51 +55,54 @@ public open class VerticalLegend(
     public override fun getHeight(density: Density, extras: Extras, availableWidth: Float): Float = with(density) {
         items.fold(0f) { sum, item ->
             sum + maxOf(
-                iconSizeDp.dp.toPx(),
+                iconSize.toPx(),
                 item.getHeight(density, extras, availableWidth),
             ).also { height -> heights[item] = height }
-        } + (padding.vertical.toPx() + spacingDp * (items.size - 1)).dp.toPx()
+        } + (padding.vertical.toPx() + spacing.value * (items.size - 1)).dp.toPx()
     }
 
     override fun draw(context: ChartDrawContext): Unit = with(context) {
-        var currentTop = bounds.top + with(context.drawScope) { padding.top.toPx() }
+        with(context.drawScope) {
+            var currentTop = bounds.top + with(context.drawScope) { padding.top.toPx() }
 
-        items.forEach { item ->
+            items.forEach { item ->
 
-            val height = heights.getOrPut(item) { item.getHeight(drawScope, context, chartBounds.width) }
-            val centerY = currentTop + height.half
-            var startX = if (isLtr) {
-                chartBounds.left + with(context.drawScope) { padding.start.toPx() }
-            } else {
-                chartBounds.right - with(context.drawScope) { padding.start.toPx() } - iconSizeDp.pixels
+                val height =
+                    heights.getOrPut(item) { item.getHeight(drawScope, context, chartBounds.width) }
+                val centerY = currentTop + height.half
+                var startX = if (isLtr) {
+                    chartBounds.left + with(context.drawScope) { padding.start.toPx() }
+                } else {
+                    chartBounds.right - with(context.drawScope) { padding.start.toPx() } - iconSize.toPx()
+                }
+
+                item.icon.draw(
+                    drawScope = context.drawScope,
+                    left = startX,
+                    top = centerY - iconSize.toPx().half,
+                    right = startX + iconSize.toPx(),
+                    bottom = centerY + iconSize.toPx(),
+                )
+
+                startX += if (isLtr) {
+                    (iconSize + iconPadding).toPx()
+                } else {
+                    -iconPadding.toPx()
+                }
+
+                item.label.drawText(
+                    drawScope = drawScope,
+                    extras = context,
+                    text = item.labelText,
+                    textX = startX,
+                    textY = centerY,
+                    horizontalPosition = Alignment.End,
+                    maxTextWidth = (chartBounds.width - (iconSize + iconPadding + padding.horizontal).toPx())
+                        .toInt(),
+                )
+
+                currentTop += height + spacing.toPx()
             }
-
-            item.icon.draw(
-                drawScope = context.drawScope,
-                left = startX,
-                top = centerY - iconSizeDp.half.pixels,
-                right = startX + iconSizeDp.pixels,
-                bottom = centerY + iconSizeDp.half.pixels,
-            )
-
-            startX += if (isLtr) {
-                (iconSizeDp + iconPaddingDp).pixels
-            } else {
-                -iconPaddingDp.pixels
-            }
-
-            item.label.drawText(
-                drawScope = drawScope,
-                extras = context,
-                text = item.labelText,
-                textX = startX,
-                textY = centerY,
-                horizontalPosition = Alignment.End,
-                maxTextWidth = (chartBounds.width - (iconSizeDp + iconPaddingDp + padding.horizontal.value).pixels)
-                    .toInt(),
-            )
-
-            currentTop += height + spacingDp.pixels
         }
     }
 
@@ -111,7 +115,7 @@ public open class VerticalLegend(
             density = density,
             extras = extras,
             text = labelText,
-            width = (availableWidth - iconSizeDp.dp.toPx() - iconPaddingDp.dp.toPx()).toInt(),
+            width = (availableWidth - iconSize.toPx() - iconPadding.toPx()).toInt(),
         )
     }
 

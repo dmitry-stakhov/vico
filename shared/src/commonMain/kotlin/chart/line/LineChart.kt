@@ -72,6 +72,8 @@ import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
+import extension.isLtr
+import extension.layoutDirectionMultiplier
 import kotlin.math.max
 import kotlin.math.min
 
@@ -173,11 +175,11 @@ public open class LineChart(
          * @see Component
          */
         public fun drawPoint(
-            context: DrawContext,
+            drawScope: DrawScope,
             x: Float,
             y: Float,
-        ): Unit = with(context.drawScope) {
-            point?.drawPoint(context, x, y, pointSize.toPx().half)
+        ): Unit = with(drawScope) {
+            point?.drawPoint(drawScope, x, y, pointSize.toPx().half)
         }
 
         /**
@@ -191,7 +193,7 @@ public open class LineChart(
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(context: DrawContext, bounds: Rect, path: Path): Unit = with(context) {
+        public fun drawBackgroundLine(drawScope: DrawScope, bounds: Rect, path: Path): Unit = with(drawScope) {
             lineBackgroundPaint.shader = lineBackgroundShader
                 ?.provideShader(
                     left = bounds.left,
@@ -200,7 +202,7 @@ public open class LineChart(
                     bottom = bounds.bottom,
                 )
 
-            canvas.drawPath(path, lineBackgroundPaint)
+            drawContext.canvas.drawPath(path, lineBackgroundPaint)
         }
 
         internal inline val pointSizeDpOrZero: Float
@@ -246,6 +248,7 @@ public open class LineChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
+        drawScope: DrawScope,
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
@@ -261,18 +264,19 @@ public open class LineChart(
 //            lineBackgroundPath.rewind()
             val component = lines.getRepeating(entryListIndex)
 
-            var prevX = bounds.getStart(isLtr = isLtr)
+            var prevX = bounds.getStart(isLtr = drawScope.isLtr)
             var prevY = bounds.bottom
 
-            val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
+            val drawingStartAlignmentCorrection = drawScope.layoutDirectionMultiplier *
                 when (pointPosition) {
                     PointPosition.Start -> 0f
                     PointPosition.Center -> (spacing + cellWidth).half
                 }
 
-            val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
+            val drawingStart = bounds.getStart(isLtr = drawScope.isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
             forEachPointWithinBoundsIndexed(
+                drawScope = drawScope,
                 entries = entries,
                 segment = segmentProperties,
                 drawingStart = drawingStart,
@@ -322,7 +326,7 @@ public open class LineChart(
             if (component.hasLineBackgroundShader) {
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
                 lineBackgroundPath.close()
-                component.drawBackgroundLine(context, bounds, lineBackgroundPath)
+                component.drawBackgroundLine(context.drawScope, bounds, lineBackgroundPath)
             }
             component.drawLine(context.drawScope, linePath)
 
@@ -347,19 +351,22 @@ public open class LineChart(
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
 
         forEachPointWithinBoundsIndexed(
+            drawScope = drawScope,
             entries = entries,
             segment = segmentProperties,
             drawingStart = drawingStart,
         ) { index, chartEntry, x, y ->
 
-            if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
+            if (lineSpec.point != null) lineSpec.drawPoint(drawScope = drawScope, x = x, y = y)
 
             lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
 
-                val distanceFromLine = maxOf(
-                    a = lineSpec.lineThickness.value,
-                    b = lineSpec.pointSizeDpOrZero,
-                ).half.pixels
+                val distanceFromLine = with(drawScope) {
+                    maxOf(
+                        a = lineSpec.lineThickness.value,
+                        b = lineSpec.pointSizeDpOrZero,
+                    ).half.dp.toPx()
+                }
 
                 val text = lineSpec.dataLabelValueFormatter.formatValue(
                     value = chartEntry.y,
@@ -372,7 +379,7 @@ public open class LineChart(
                         extras = this,
                         density = Density(density),
                         text = text,
-                        width = segmentWidth,
+                        width = segmentWidth(drawScope),
                         rotationDegrees = lineSpec.dataLabelRotationDegrees,
                     ),
                     y = y,
@@ -390,7 +397,7 @@ public open class LineChart(
                     textY = dataLabelY,
                     text = text,
                     verticalPosition = verticalPosition,
-                    maxTextWidth = segmentWidth,
+                    maxTextWidth = segmentWidth(drawScope),
                     rotationDegrees = lineSpec.dataLabelRotationDegrees,
                 )
             }
@@ -412,6 +419,7 @@ public open class LineChart(
      * Performs the given [action] for each [ChartEntry] in [entries] that lies within the chart’s bounds.
      */
     protected open fun DrawContext.forEachPointWithinBoundsIndexed(
+        drawScope: DrawScope,
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
@@ -433,10 +441,10 @@ public open class LineChart(
 
         val heightMultiplier: Float = bounds.height / (maxY - minY)
 
-        val boundsStart: Float = bounds.getStart(isLtr = isLtr)
-        val boundsEnd: Float = boundsStart + layoutDirectionMultiplier * bounds.width
+        val boundsStart: Float = bounds.getStart(isLtr = drawScope.isLtr)
+        val boundsEnd: Float = boundsStart + drawScope.layoutDirectionMultiplier * bounds.width
 
-        fun getDrawX(entry: ChartEntry): Float = drawingStart + layoutDirectionMultiplier *
+        fun getDrawX(entry: ChartEntry): Float = drawingStart + drawScope.layoutDirectionMultiplier *
             (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
@@ -448,7 +456,7 @@ public open class LineChart(
             y = getDrawY(entry)
 
             when {
-                isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
+                drawScope.isLtr && x < boundsStart || drawScope.isLtr.not() && x > boundsStart -> {
                     prevEntry = entry
                 }
 
@@ -460,7 +468,7 @@ public open class LineChart(
                     action(index, entry, x, y)
                 }
 
-                (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
+                (drawScope.isLtr && x > boundsEnd || drawScope.isLtr.not() && x < boundsEnd) && lastEntry == null -> {
                     action(index, entry, x, y)
                     lastEntry = entry
                 }
@@ -495,14 +503,15 @@ public open class LineChart(
     }
 
     override fun getInsets(
+        density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
-    ): Unit = with(context) {
+    ): Unit = with(density) {
         outInsets.setVertical(
             value = lines.maxOf {
                 if (it.point != null) max(a = it.lineThickness.value, b = it.pointSize.value) else it.lineThickness.value
-            }.pixels,
+            }.dp.toPx(),
         )
     }
 

@@ -67,8 +67,8 @@ public fun App() {
                         labelText = "Morroni"
                     )
                 ),
-                iconSizeDp = 10f,
-                iconPaddingDp = 10f,
+                iconSize = 10.dp,
+                iconPadding = 10.dp,
             ),
             startAxis = startAxis(
                 valueFormatter = DecimalFormatAxisValueFormatter("#")
