@@ -158,19 +158,3 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 }
-
-private fun childChartsValue(
-    setValue: Chart<*>.(newValue: Float?) -> Unit,
-): ReadWriteProperty<ComposedChart<*>, Float?> =
-    object : ReadWriteProperty<ComposedChart<*>, Float?> {
-
-        private var backingValue: Float? = null
-
-        override fun getValue(thisRef: ComposedChart<*>, property: KProperty<*>): Float? =
-            backingValue
-
-        override fun setValue(thisRef: ComposedChart<*>, property: KProperty<*>, value: Float?) {
-            thisRef.charts.forEach { chart -> chart.setValue(value) }
-            backingValue = value
-        }
-    }
