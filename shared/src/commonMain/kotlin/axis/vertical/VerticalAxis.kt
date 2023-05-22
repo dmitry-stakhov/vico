@@ -304,7 +304,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         outInsets: Insets,
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
-        val labelHeight = 0f // label?.getHeight(context = context).orZero
+        val labelHeight = label?.getHeight(extras = context, density = density).orZero
         val lineThickness = maxOf(density.axisThickness, density.tickThickness)
         when (verticalLabelPosition) {
             Center -> outInsets.set(
