@@ -32,7 +32,6 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
-import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
@@ -43,7 +42,6 @@ import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 import extension.isLtr
 import extension.layoutDirectionMultiplier
 import kotlin.math.abs
@@ -400,34 +398,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    /**
-     * A subclass of [Axis.Builder] used to build [HorizontalAxis] instances.
-     */
-    public class Builder<Position : AxisPosition.Horizontal>(
-        builder: Axis.Builder<Position>? = null,
-    ) : Axis.Builder<Position>(builder) {
-
-        /**
-         * Defines the tick placement.
-         */
-        public var tickPosition: TickPosition = TickPosition.Edge
-
-        /**
-         * Creates a [HorizontalAxis] instance with the properties from this [Builder].
-         */
-        @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : Position> build(): HorizontalAxis<T> {
-            val position = when (T::class) {
-                AxisPosition.Horizontal.Top::class -> AxisPosition.Horizontal.Top
-                AxisPosition.Horizontal.Bottom::class -> AxisPosition.Horizontal.Bottom
-                else -> throw UnknownAxisPositionException()
-            } as Position
-            return setTo(HorizontalAxis(position = position)).also { axis ->
-                axis.tickPosition = tickPosition
-            } as HorizontalAxis<T>
-        }
-    }
-
     internal companion object {
         const val MAX_HEIGHT_DIVISOR = 3f
 
@@ -450,15 +420,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 }
-
-/**
- * A convenience function that creates a [HorizontalAxis] instance.
- *
- * @param block a lambda function yielding [HorizontalAxis.Builder] as its receiver.
- */
-public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
-    block: HorizontalAxis.Builder<Position>.() -> Unit = {},
-): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()
 
 /**
  * Creates a top axis.
@@ -489,9 +450,11 @@ public fun topAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
+): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
+    position = AxisPosition.Horizontal.Top
+).apply {
     this.label = label
-    this.axis = axis
+    this.axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
@@ -532,9 +495,11 @@ public fun bottomAxis(
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
-): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
+): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
+    position = AxisPosition.Horizontal.Bottom
+).apply {
     this.label = label
-    this.axis = axis
+    this.axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter

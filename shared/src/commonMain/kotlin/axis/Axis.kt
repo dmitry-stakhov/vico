@@ -21,9 +21,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DefaultAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -130,62 +128,6 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 
     /**
-     * Used to construct [Axis] instances.
-     */
-    public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
-        /**
-         * The [TextComponent] to use for labels.
-         */
-        public var label: TextComponent? = builder?.label
-
-        /**
-         * The [LineComponent] to use for the axis line.
-         */
-        public var axis: LineComponent? = builder?.axis
-
-        /**
-         * The [LineComponent] to use for axis ticks.
-         */
-        public var tick: LineComponent? = builder?.tick
-
-        /**
-         * The tick length (in dp).
-         */
-        public var tickLength: Dp = builder?.tickLength ?: DefaultDimens.AXIS_TICK_LENGTH.dp
-
-        /**
-         * The [LineComponent] to use for guidelines.
-         */
-        public var guideline: LineComponent? = builder?.guideline
-
-        /**
-         * The [AxisValueFormatter] for the axis.
-         */
-        public var valueFormatter: AxisValueFormatter<Position> =
-            builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
-
-        /**
-         * Used by [Axis] subclasses for sizing and layout.
-         */
-        public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
-
-        /**
-         * An optional [TextComponent] to use as the axis title.
-         */
-        public var titleComponent: TextComponent? = builder?.titleComponent
-
-        /**
-         * The axis title.
-         */
-        public var title: CharSequence? = builder?.title
-
-        /**
-         * The rotation of axis labels (in degrees).
-         */
-        public var labelRotationDegrees: Float = builder?.labelRotationDegrees ?: 0f
-    }
-
-    /**
      * Defines how an [Axis] is to size itself.
      * - For [VerticalAxis], this defines the width.
      * - For [HorizontalAxis], this defines the height.
@@ -196,7 +138,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public sealed class SizeConstraint {
 
         /**
-         * The axis will measure itself and use as much space as it needs, but no less than [minSizeDp], and no more
+         * The axis will measure itself and use as much space as it needs, but no less than [minSize], and no more
          * than [maxSize].
          */
         public class Auto(
@@ -232,31 +174,4 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
          */
         public class TextWidth(public val text: String) : SizeConstraint()
     }
-}
-
-/**
- * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
- * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
- */
-public fun <Position : AxisPosition> axisBuilder(
-    block: Axis.Builder<Position>.() -> Unit = {},
-): Axis.Builder<Position> = Axis.Builder<Position>().apply(block)
-
-/**
- * A convenience function that allows for applying the properties from an [Axis.Builder] to an [Axis] subclass.
- *
- * @param axis the [Axis] whose properties will be updated to this [Axis.Builder]’s properties.
- */
-public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.setTo(axis: A): A {
-    axis.axisLine = this.axis
-    axis.tick = tick
-    axis.guideline = guideline
-    axis.label = label
-    axis.tickLength = tickLength
-    axis.valueFormatter = valueFormatter
-    axis.sizeConstraint = sizeConstraint
-    axis.titleComponent = titleComponent
-    axis.title = title
-    axis.labelRotationDegrees = labelRotationDegrees
-    return axis
 }

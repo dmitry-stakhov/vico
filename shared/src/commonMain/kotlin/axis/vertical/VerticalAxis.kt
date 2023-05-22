@@ -34,7 +34,6 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
-import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
@@ -51,7 +50,6 @@ import com.patrykandpatrick.vico.core.extension.getEnd
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 import extension.isLtr
 import kotlin.math.roundToInt
 
@@ -387,68 +385,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      *
      * @param textPosition the label position.
      *
-     * @see VerticalPosition
+     * @see Alignment
      */
     public enum class VerticalLabelPosition(public val textPosition: Alignment.Vertical) {
         Center(Alignment.CenterVertically),
         Top(Alignment.Top),
         Bottom(Alignment.Bottom),
     }
-
-    /**
-     * A subclass of [Axis.Builder] used to build [VerticalAxis] instances.
-     */
-    public class Builder<Position : AxisPosition.Vertical>(
-        builder: Axis.Builder<Position>? = null,
-    ) : Axis.Builder<Position>(builder) {
-        /**
-         * The maximum label count.
-         */
-        public var maxLabelCount: Int = DEF_LABEL_COUNT
-
-        /**
-         * The label spacing (in dp).
-         */
-        public var labelSpacing: Float = DEF_LABEL_SPACING
-
-        /**
-         * Defines the horizontal position of each axis label relative to the axis line.
-         */
-        public var horizontalLabelPosition: HorizontalLabelPosition = Outside
-
-        /**
-         * Defines the vertical position of each axis label relative to its corresponding tick.
-         */
-        public var verticalLabelPosition: VerticalLabelPosition = Center
-
-        /**
-         * Creates a [VerticalAxis] instance with the properties from this [Builder].
-         */
-        @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : Position> build(): VerticalAxis<T> {
-            val position = when (T::class) {
-                AxisPosition.Vertical.Start::class -> AxisPosition.Vertical.Start
-                AxisPosition.Vertical.End::class -> AxisPosition.Vertical.End
-                else -> throw UnknownAxisPositionException()
-            } as Position
-            return setTo(VerticalAxis(position)).also { axis ->
-                axis.maxLabelCount = maxLabelCount
-                axis.labelSpacing = labelSpacing
-                axis.horizontalLabelPosition = horizontalLabelPosition
-                axis.verticalLabelPosition = verticalLabelPosition
-            } as VerticalAxis<T>
-        }
-    }
 }
-
-/**
- * A convenience function that creates a [VerticalAxis] instance.
- *
- * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
- */
-public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
-    block: VerticalAxis.Builder<Position>.() -> Unit = {},
-): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()
 
 /**
  * Creates a start axis.
@@ -482,9 +426,11 @@ public fun startAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
+): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
+    position = AxisPosition.Vertical.Start
+).apply {
     this.label = label
-    this.axis = axis
+    this.axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
@@ -530,9 +476,11 @@ public fun endAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
+): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
+    position = AxisPosition.Vertical.End
+).apply {
     this.label = label
-    this.axis = axis
+    this.axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
