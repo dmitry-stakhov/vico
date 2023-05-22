@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.setAll
 
@@ -120,7 +119,14 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         right: Float,
         bottom: Float,
     ): Boolean = restrictedBounds.none {
-        it.contains(Offset(right - left, bottom - top)) || it.overlaps(Rect(left, top, right, bottom))
+        it.contains(Offset(right - left, bottom - top)) || it.overlaps(
+            Rect(
+                left,
+                top,
+                right,
+                bottom
+            )
+        )
     }
 
     /**

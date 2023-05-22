@@ -71,6 +71,12 @@ public class RandomEntriesGenerator(
         const val Y_RANGE_TOP = 20
 
         fun RandomEntriesGenerator.getChartEntryModelProducer(): ChartModelProducer<ChartEntryModel> =
-            ChartEntryModelProducer(listOf(generateRandomEntries(), generateRandomEntries(), generateRandomEntries()))
+            ChartEntryModelProducer(
+                listOf(
+                    generateRandomEntries(),
+                    generateRandomEntries(),
+                    generateRandomEntries()
+                )
+            )
     }
 }

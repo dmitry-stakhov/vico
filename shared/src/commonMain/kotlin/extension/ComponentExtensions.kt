@@ -31,7 +31,9 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
  */
 public var MarkerComponent.indicatorSize: Dp
     get() = indicatorSizeDp.dp
-    set(value) { indicatorSizeDp = value.value }
+    set(value) {
+        indicatorSizeDp = value.value
+    }
 
 /**
  * Applies a drop shadow to this [ShapeComponent].

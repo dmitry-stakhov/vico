@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.collections.cacheInList
-import com.patrykandpatrick.vico.core.context.MeasureContext
 import extension.isLtr
 
 /**

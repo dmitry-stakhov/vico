@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.legend.VerticalLegend.Item
 import extension.isLtr
 
 /**
@@ -52,14 +53,15 @@ public open class VerticalLegend(
 
     override var bounds: Rect = Rect.Zero
 
-    public override fun getHeight(density: Density, extras: Extras, availableWidth: Float): Float = with(density) {
-        items.fold(0f) { sum, item ->
-            sum + maxOf(
-                iconSize.toPx(),
-                item.getHeight(density, extras, availableWidth),
-            ).also { height -> heights[item] = height }
-        } + (padding.vertical.toPx() + spacing.value * (items.size - 1)).dp.toPx()
-    }
+    public override fun getHeight(density: Density, extras: Extras, availableWidth: Float): Float =
+        with(density) {
+            items.fold(0f) { sum, item ->
+                sum + maxOf(
+                    iconSize.toPx(),
+                    item.getHeight(density, extras, availableWidth),
+                ).also { height -> heights[item] = height }
+            } + (padding.vertical.toPx() + spacing.value * (items.size - 1)).dp.toPx()
+        }
 
     override fun draw(context: ChartDrawContext): Unit = with(context) {
         with(context.drawScope) {

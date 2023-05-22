@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.component.shape.shader
 
 import androidx.compose.ui.graphics.Shader
-import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * Creates a [DynamicShader], which always provides the same [Shader] instance.

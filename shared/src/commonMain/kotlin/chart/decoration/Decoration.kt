@@ -44,5 +44,9 @@ public interface Decoration {
      * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
-    public fun onDrawAboveChart(drawScope: DrawScope, context: ChartDrawContext, bounds: Rect): Unit = Unit
+    public fun onDrawAboveChart(
+        drawScope: DrawScope,
+        context: ChartDrawContext,
+        bounds: Rect
+    ): Unit = Unit
 }

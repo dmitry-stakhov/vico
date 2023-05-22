@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import component.shape.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -40,6 +39,7 @@ import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.marker.DefaultMarkerLabelFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
+import component.shape.MarkerCorneredShape
 
 /**
  * Creates a [MarkerComponent].

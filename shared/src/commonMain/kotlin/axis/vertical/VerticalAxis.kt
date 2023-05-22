@@ -70,7 +70,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private val areLabelsOutsideAtStartOrInsideAtEnd
         get() = horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
-            horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
+                horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
     private val textHorizontalPosition: Alignment.Horizontal
         get() = if (areLabelsOutsideAtStartOrInsideAtEnd) Alignment.Start else Alignment.End
@@ -95,91 +95,98 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
-        with(drawScope) {
-            val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
+    override fun drawBehindChart(drawScope: DrawScope, context: ChartDrawContext): Unit =
+        with(context) {
+            with(drawScope) {
+                val drawLabelCount = getDrawLabelCount(bounds.height.toInt())
 
-            val axisStep = bounds.height / (drawLabelCount - 1)
+                val axisStep = bounds.height / (drawLabelCount - 1)
 
-            var centerY: Float
+                var centerY: Float
 
-            for (index in 0 until drawLabelCount) {
-                centerY =
-                    bounds.bottom - axisStep * index + context.drawScope.guidelineThickness.half
+                for (index in 0 until drawLabelCount) {
+                    centerY =
+                        bounds.bottom - axisStep * index + context.drawScope.guidelineThickness.half
 
-                guideline?.takeIf {
-                    isNotInRestrictedBounds(
+                    guideline?.takeIf {
+                        isNotInRestrictedBounds(
+                            left = chartBounds.left,
+                            top = centerY - context.drawScope.guidelineThickness.half,
+                            right = chartBounds.right,
+                            bottom = centerY - context.drawScope.guidelineThickness.half,
+                        )
+                    }?.drawHorizontal(
+                        context = context,
                         left = chartBounds.left,
-                        top = centerY - context.drawScope.guidelineThickness.half,
                         right = chartBounds.right,
-                        bottom = centerY - context.drawScope.guidelineThickness.half,
+                        centerY = centerY,
                     )
-                }?.drawHorizontal(
-                    context = context,
-                    left = chartBounds.left,
-                    right = chartBounds.right,
-                    centerY = centerY,
+                }
+                axisLine?.drawVertical(
+                    drawScope = drawScope,
+                    top = bounds.top,
+                    bottom = bounds.bottom + drawScope.axisThickness,
+                    centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
                 )
             }
-            axisLine?.drawVertical(
-                drawScope = drawScope,
-                top = bounds.top,
-                bottom = bounds.bottom + drawScope.axisThickness,
-                centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
-            )
-        }
-    }
-
-    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit = with(context) {
-        val label = label
-        val labelCount = getDrawLabelCount(bounds.height.toInt())
-
-        val labels = getLabels(labelCount)
-
-        val tickLeftX = drawScope.getTickLeftX()
-
-        val tickRightX = tickLeftX + drawScope.axisThickness.half + with(drawScope) { tickLengthPx }
-
-        val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == drawScope.isLtr) tickLeftX else tickRightX
-
-        var tickCenterY: Float
-
-        (0 until labelCount).forEach { index ->
-            tickCenterY = bounds.bottom - bounds.height / (labelCount - 1) * index + drawScope.tickThickness.half
-
-            tick?.drawHorizontal(
-                context = context,
-                left = tickLeftX,
-                right = tickRightX,
-                centerY = tickCenterY,
-            )
-
-            label ?: return@forEach
-            val labelText = labels.getOrNull(index) ?: return@forEach
-            drawLabel(
-                extras = context,
-                drawScope = drawScope,
-                label = label,
-                labelText = labelText,
-                labelX = labelX,
-                tickCenterY = tickCenterY,
-            )
         }
 
-        title?.let { title ->
-            titleComponent?.drawText(
-                drawScope = drawScope,
-                extras = this,
-                text = title,
-                textX = if (position.isStart) bounds.getStart(isLtr = drawScope.isLtr) else bounds.getEnd(isLtr = drawScope.isLtr),
-                textY = bounds.center.y,
-                horizontalPosition = if (position.isStart) Alignment.End else Alignment.Start,
-                verticalPosition = Alignment.CenterVertically,
-                rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
-                maxTextHeight = bounds.height.toInt(),
-            )
+    override fun drawAboveChart(drawScope: DrawScope, context: ChartDrawContext): Unit =
+        with(context) {
+            val label = label
+            val labelCount = getDrawLabelCount(bounds.height.toInt())
+
+            val labels = getLabels(labelCount)
+
+            val tickLeftX = drawScope.getTickLeftX()
+
+            val tickRightX =
+                tickLeftX + drawScope.axisThickness.half + with(drawScope) { tickLengthPx }
+
+            val labelX =
+                if (areLabelsOutsideAtStartOrInsideAtEnd == drawScope.isLtr) tickLeftX else tickRightX
+
+            var tickCenterY: Float
+
+            (0 until labelCount).forEach { index ->
+                tickCenterY =
+                    bounds.bottom - bounds.height / (labelCount - 1) * index + drawScope.tickThickness.half
+
+                tick?.drawHorizontal(
+                    context = context,
+                    left = tickLeftX,
+                    right = tickRightX,
+                    centerY = tickCenterY,
+                )
+
+                label ?: return@forEach
+                val labelText = labels.getOrNull(index) ?: return@forEach
+                drawLabel(
+                    extras = context,
+                    drawScope = drawScope,
+                    label = label,
+                    labelText = labelText,
+                    labelX = labelX,
+                    tickCenterY = tickCenterY,
+                )
+            }
+
+            title?.let { title ->
+                titleComponent?.drawText(
+                    drawScope = drawScope,
+                    extras = this,
+                    text = title,
+                    textX = if (position.isStart) bounds.getStart(isLtr = drawScope.isLtr) else bounds.getEnd(
+                        isLtr = drawScope.isLtr
+                    ),
+                    textY = bounds.center.y,
+                    horizontalPosition = if (position.isStart) Alignment.End else Alignment.Start,
+                    verticalPosition = Alignment.CenterVertically,
+                    rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+                    maxTextHeight = bounds.height.toInt(),
+                )
+            }
         }
-    }
 
     private fun ChartDrawContext.drawLabel(
         drawScope: DrawScope,
@@ -189,7 +196,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         labelX: Float,
         tickCenterY: Float,
     ) {
-        val textBounds = label.getTextBounds(extras, drawScope, labelText, rotationDegrees = labelRotationDegrees).let {
+        val textBounds = label.getTextBounds(
+            extras,
+            drawScope,
+            labelText,
+            rotationDegrees = labelRotationDegrees
+        ).let {
             it.translate(
                 translateX = labelX,
                 translateY = tickCenterY - it.center.y,
@@ -239,7 +251,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     extras = this,
                     density = Density(density),
                     // TODO Fix
-                    text = value.roundToInt().toString(), //  valueFormatter.formatValue(value, chartValues),
+                    text = value.roundToInt()
+                        .toString(), //  valueFormatter.formatValue(value, chartValues),
                     rotationDegrees = labelRotationDegrees,
                 )
 
@@ -298,10 +311,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 top = labelHeight.half - lineThickness,
                 bottom = labelHeight.half,
             )
+
             VerticalLabelPosition.Top -> outInsets.set(
                 top = labelHeight - lineThickness,
                 bottom = lineThickness,
             )
+
             VerticalLabelPosition.Bottom -> outInsets.set(
                 top = lineThickness.half,
                 bottom = labelHeight,
@@ -334,6 +349,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                         )
                 }
             }
+
             is SizeConstraint.Exact -> with(Density(density)) { constraint.size.toPx() }
             is SizeConstraint.Fraction -> canvasBounds.width * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getWidth(
@@ -344,12 +360,20 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
-        Outside -> label?.let { label ->
-            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
-        }.orZero
-        Inside -> 0f
-    }
+    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float =
+        when (horizontalLabelPosition) {
+            Outside -> label?.let { label ->
+                labels.maxOfOrNull {
+                    label.getWidth(
+                        this,
+                        it,
+                        rotationDegrees = labelRotationDegrees
+                    )
+                }
+            }.orZero
+
+            Inside -> 0f
+        }
 
     /**
      * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.

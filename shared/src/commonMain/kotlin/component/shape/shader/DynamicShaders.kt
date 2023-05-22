@@ -18,10 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape.shader
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
-import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * Creates a [ComponentShader] out of the provided [component].

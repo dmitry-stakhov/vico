@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Shader
 import com.patrykandpatrick.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatrick.vico.core.context.DrawContext
 import kotlin.math.abs
 
 /**

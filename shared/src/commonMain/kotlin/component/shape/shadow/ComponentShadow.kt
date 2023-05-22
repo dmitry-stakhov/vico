@@ -17,10 +17,7 @@
 package com.patrykandpatrick.vico.core.component.shape.shadow
 
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.extension.applyElevationOverlayToColor
 
 /**
  * A class that stores shadow properties.

@@ -21,8 +21,6 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import java.util.SortedMap
-import java.util.TreeMap
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

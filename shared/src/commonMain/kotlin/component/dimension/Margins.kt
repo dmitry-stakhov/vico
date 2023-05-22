@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.component.dimension
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 
 /**

@@ -17,10 +17,7 @@
 package com.patrykandpatrick.vico.core.component.text
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -33,7 +30,6 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
@@ -42,11 +38,9 @@ import com.patrykandpatrick.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.Padding
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
@@ -173,21 +167,24 @@ public open class TextComponent protected constructor() : Padding, Margins {
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
-        val textStartPosition = horizontalPosition.getTextStartPosition(drawScope, textX, layout!!.size.width.toFloat())
-        val textTopPosition = verticalPosition.getTextTopPosition(drawScope, textY, layout!!.size.height.toFloat())
+        val textStartPosition =
+            horizontalPosition.getTextStartPosition(drawScope, textX, layout!!.size.width.toFloat())
+        val textTopPosition =
+            verticalPosition.getTextTopPosition(drawScope, textY, layout!!.size.height.toFloat())
 
         with(drawContext.canvas) {
             save()
 
             var bounds = layout!!.size
-            val textAlignCorrection = horizontalPosition.getXCorrection(width = bounds.width.toFloat())
+            val textAlignCorrection =
+                horizontalPosition.getXCorrection(width = bounds.width.toFloat())
 
             val rect = bounds.toIntRect()
             bounds = rect.copy(
                 left = rect.left - padding.getLeftDp(isLtr).toPx().toInt(),
                 top = rect.top - padding.top.toPx().toInt(),
                 right = rect.right + padding.getRightDp(isLtr).toPx().toInt(),
-                bottom = rect.bottom +  padding.bottom.toPx().toInt()
+                bottom = rect.bottom + padding.bottom.toPx().toInt()
             ).size
 
             var xCorrection = 0f
@@ -233,7 +230,11 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //                bounds.top + padding.topDp.pixels,
 //            )
 //
-            drawScope.drawText(textMeasurer!!, text.toString(), Offset(textStartPosition, textTopPosition))
+            drawScope.drawText(
+                textMeasurer!!,
+                text.toString(),
+                Offset(textStartPosition, textTopPosition)
+            )
             restore()
         }
     }
@@ -245,11 +246,19 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = with(drawScope) {
         when (this@getTextStartPosition) {
             Alignment.Start ->
-                if (isLtr) getTextRightPosition(baseXPosition, width) else getTextLeftPosition(baseXPosition)
+                if (isLtr) getTextRightPosition(baseXPosition, width) else getTextLeftPosition(
+                    baseXPosition
+                )
+
             Alignment.Center ->
                 baseXPosition - width.half
+
             Alignment.End ->
-                if (isLtr) getTextLeftPosition(baseXPosition) else getTextRightPosition(baseXPosition, width)
+                if (isLtr) getTextLeftPosition(baseXPosition) else getTextRightPosition(
+                    baseXPosition,
+                    width
+                )
+
             else -> error("Not Supported")
         }
     }
@@ -260,7 +269,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
     private fun DrawScope.getTextRightPosition(
         baseXPosition: Float,
         width: Float,
-    ): Float = baseXPosition - padding.getRightDp(isLtr).toPx() - margins.getRightDp(isLtr).toPx() - width
+    ): Float =
+        baseXPosition - padding.getRightDp(isLtr).toPx() - margins.getRightDp(isLtr).toPx() - width
 
     private fun Alignment.Horizontal.getXCorrection(width: Float): Float = when (this) {
         Alignment.Start -> 0f
@@ -354,7 +364,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 //                right += margins.horizontalDp.pixels
 //                bottom += margins.verticalDp.pixels
 //            }
-        }
+    }
 
     @OptIn(ExperimentalTextApi::class)
     private fun Density.getLayout(
@@ -369,20 +379,22 @@ public open class TextComponent protected constructor() : Padding, Margins {
         val heightWithoutMargins = height - (margins as MutableDimensions).vertical.toPx().toInt()
 
         val correctedWidth = (
-            when {
-                rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
-                rotationDegrees % .5f.piRad == 0f -> heightWithoutMargins
-                else -> {
-                    val cumulatedHeight = lineCount + padding.vertical.toPx().toInt()
-                    val alpha = 0f // Math.toRadians(rotationDegrees.toDouble())
-                    val absSinAlpha = sin(alpha).absoluteValue
-                    val absCosAlpha = cos(alpha).absoluteValue
-                    val basedOnWidth = (widthWithoutMargins - cumulatedHeight * absSinAlpha) / absCosAlpha
-                    val basedOnHeight = (heightWithoutMargins - cumulatedHeight * absCosAlpha) / absSinAlpha
-                    min(basedOnWidth, basedOnHeight).toInt()
-                }
-            } - padding.horizontal.toPx().toInt()
-            ).coerceAtLeast(0)
+                when {
+                    rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
+                    rotationDegrees % .5f.piRad == 0f -> heightWithoutMargins
+                    else -> {
+                        val cumulatedHeight = lineCount + padding.vertical.toPx().toInt()
+                        val alpha = 0f // Math.toRadians(rotationDegrees.toDouble())
+                        val absSinAlpha = sin(alpha).absoluteValue
+                        val absCosAlpha = cos(alpha).absoluteValue
+                        val basedOnWidth =
+                            (widthWithoutMargins - cumulatedHeight * absSinAlpha) / absCosAlpha
+                        val basedOnHeight =
+                            (heightWithoutMargins - cumulatedHeight * absCosAlpha) / absSinAlpha
+                        min(basedOnWidth, basedOnHeight).toInt()
+                    }
+                } - padding.horizontal.toPx().toInt()
+                ).coerceAtLeast(0)
 
         val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
         return extras.getOrPutExtra(key = key) {

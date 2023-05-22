@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.component.shape.shader
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Shader
-import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * [DynamicShader] creates [Shader] instances on demand.

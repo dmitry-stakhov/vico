@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.ComponentShadow
 import com.patrykandpatrick.vico.core.debug.DebugHelper
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.alpha
@@ -70,12 +69,16 @@ public open class ShapeComponent(
     /**
      * The color of the shape.
      */
-    public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = Color(value) }
+    public var color: Int by Delegates.observable(color) { _, _, value ->
+        paint.color = Color(value)
+    }
 
     /**
      * The color of the stroke.
      */
-    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = Color(value) }
+    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value ->
+        strokePaint.color = Color(value)
+    }
 
     init {
         paint.color = Color(color)
@@ -98,7 +101,11 @@ public open class ShapeComponent(
         applyShader(left, top, right, bottom)
         val centerX = (left + right).half
         val centerY = (top + bottom).half
-        shadowProperties.maybeUpdateShadowLayer(density = this, paint = paint, backgroundColor = color)
+        shadowProperties.maybeUpdateShadowLayer(
+            density = this,
+            paint = paint,
+            backgroundColor = color
+        )
 
         val strokeWidthPx = strokeWidth.toPx()
         strokePaint.strokeWidth = strokeWidthPx

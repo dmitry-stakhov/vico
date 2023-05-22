@@ -23,7 +23,8 @@ internal fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
-internal const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
+internal const val ERR_REPEATING_COLLECTION_EMPTY =
+    "Cannot get repeated item from empty collection."
 
 /**
  * Replaces all of the elements of this [MutableList] with the elements of the provided collection.

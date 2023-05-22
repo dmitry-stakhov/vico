@@ -22,7 +22,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 /**
  * A [ValueFormatter] implementation that formats values using a [DecimalFormat] with a given pattern.
  */
-public open class DecimalFormatValueFormatter(private val decimalFormat: DecimalFormat) : ValueFormatter {
+public open class DecimalFormatValueFormatter(private val decimalFormat: DecimalFormat) :
+    ValueFormatter {
 
     /**
      * Creates a [DecimalFormatValueFormatter] using the default pattern.

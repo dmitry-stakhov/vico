@@ -26,10 +26,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.state.mutableSharedStateOf
 import com.patrykandpatrick.vico.core.Animation
-import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 

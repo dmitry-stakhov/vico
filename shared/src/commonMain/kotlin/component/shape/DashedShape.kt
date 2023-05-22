@@ -58,7 +58,8 @@ public class DashedShape(
             calculateDrawLengths(dashLength.toPx(), gapLength.toPx(), size.maxDimension)
         }
         return Outline.Generic(Path().apply {
-            val stepsCount = ((size.width + drawGapLength) / (drawGapLength + drawDashLength)).roundToInt()
+            val stepsCount =
+                ((size.width + drawGapLength) / (drawGapLength + drawDashLength)).roundToInt()
             val actualStep = size.width / stepsCount
             for (i in 0 until stepsCount) {
                 addRect(
@@ -95,13 +96,16 @@ public class DashedShape(
                     drawDashLength = length
                     drawGapLength = 0f
                 }
+
                 else -> {
                     val gapAndDashLength = gapLength + dashLength
-                    val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
+                    val ratio =
+                        length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
                     drawDashLength = dashLength * ratio
                     drawGapLength = gapLength * ratio
                 }
             }
+
             FitStrategy.Fixed -> {
                 drawDashLength = dashLength
                 drawGapLength = gapLength

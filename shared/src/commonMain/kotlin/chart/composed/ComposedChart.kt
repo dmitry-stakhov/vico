@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.chart.composed
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
-import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -54,26 +53,11 @@ public class ComposedChart<Model : ChartEntryModel>(
 
     private val segmentProperties = MutableSegmentProperties()
 
-    override val entryLocationMap: MutableMap<Float, MutableList<Marker.EntryModel>> = mutableMapOf()
+    override val entryLocationMap: MutableMap<Float, MutableList<Marker.EntryModel>> =
+        mutableMapOf()
 
     override val chartInsetters: Collection<ChartInsetter>
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
-    override var minY: Float? by childChartsValue { minY = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
-    override var maxY: Float? by childChartsValue { maxY = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
-    override var minX: Float? by childChartsValue { minX = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
-    override var maxX: Float? by childChartsValue { maxX = it }
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
 //        this.bounds.set(left, top, right, bottom)
@@ -92,7 +76,11 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun drawChartInternal(drawScope: DrawScope, context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+    override fun drawChartInternal(
+        drawScope: DrawScope,
+        context: ChartDrawContext,
+        model: ComposedChartEntryModel<Model>
+    ) {
         drawDecorationBehindChart(context)
         if (model.entries.isNotEmpty()) {
             drawChart(drawScope, context, model)
@@ -109,7 +97,8 @@ public class ComposedChart<Model : ChartEntryModel>(
             segmentProperties.apply {
                 cellWidth = maxOf(cellWidth, chartSegmentProperties.cellWidth)
                 marginWidth = maxOf(marginWidth, chartSegmentProperties.marginWidth)
-                labelPosition = getProperLabelPosition(labelPosition, chartSegmentProperties.labelPosition)
+                labelPosition =
+                    getProperLabelPosition(labelPosition, chartSegmentProperties.labelPosition)
             }
         }
         return segmentProperties
@@ -146,7 +135,11 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getHorizontalInsets(context: MeasureContext, availableHeight: Float, outInsets: HorizontalInsets) {
+    override fun getHorizontalInsets(
+        context: MeasureContext,
+        availableHeight: Float,
+        outInsets: HorizontalInsets
+    ) {
         charts.forEach { chart ->
             chart.getHorizontalInsets(context, availableHeight, tempInsets)
             outInsets.setValuesIfGreater(start = tempInsets.start, end = tempInsets.end)
@@ -168,14 +161,16 @@ public class ComposedChart<Model : ChartEntryModel>(
 
 private fun childChartsValue(
     setValue: Chart<*>.(newValue: Float?) -> Unit,
-): ReadWriteProperty<ComposedChart<*>, Float?> = object : ReadWriteProperty<ComposedChart<*>, Float?> {
+): ReadWriteProperty<ComposedChart<*>, Float?> =
+    object : ReadWriteProperty<ComposedChart<*>, Float?> {
 
-    private var backingValue: Float? = null
+        private var backingValue: Float? = null
 
-    override fun getValue(thisRef: ComposedChart<*>, property: KProperty<*>): Float? = backingValue
+        override fun getValue(thisRef: ComposedChart<*>, property: KProperty<*>): Float? =
+            backingValue
 
-    override fun setValue(thisRef: ComposedChart<*>, property: KProperty<*>, value: Float?) {
-        thisRef.charts.forEach { chart -> chart.setValue(value) }
-        backingValue = value
+        override fun setValue(thisRef: ComposedChart<*>, property: KProperty<*>, value: Float?) {
+            thisRef.charts.forEach { chart -> chart.setValue(value) }
+            backingValue = value
+        }
     }
-}

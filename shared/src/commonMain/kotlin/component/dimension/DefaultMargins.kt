@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.component.dimension
 
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 

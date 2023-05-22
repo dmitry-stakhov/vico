@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.draw
 
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager

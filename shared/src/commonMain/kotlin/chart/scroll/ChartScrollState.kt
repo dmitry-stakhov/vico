@@ -78,7 +78,10 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
     override val isScrollInProgress: Boolean
         get() = scrollableState.isScrollInProgress
 
-    override suspend fun scroll(scrollPriority: MutatePriority, block: suspend ScrollScope.() -> Unit) {
+    override suspend fun scroll(
+        scrollPriority: MutatePriority,
+        block: suspend ScrollScope.() -> Unit
+    ) {
         scrollableState.scroll(scrollPriority, block)
     }
 

@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -206,12 +205,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             val x = relativeX + xRange.start
 
             val firstEntityConditionsMet = relativeX != 0f ||
-                !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
-                tickPosition.offset > 0
+                    !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
+                    tickPosition.offset > 0
 
             val shouldDrawLines = relativeX / step >= tickPosition.offset &&
-                (relativeX / step - tickPosition.offset) % tickPosition.spacing == 0f &&
-                firstEntityConditionsMet
+                    (relativeX / step - tickPosition.offset) % tickPosition.spacing == 0f &&
+                    firstEntityConditionsMet
 
             action(
                 x,
@@ -230,7 +229,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ) = when (tickPosition) {
         is TickPosition.Center -> textDrawCenter
         is TickPosition.Edge -> bounds.getStart(isLtr = isLtr) + tickDrawStep * tickPosition.offset +
-            layoutDirectionMultiplier * tickDrawStep * scrollAdjustment - scrollX
+                layoutDirectionMultiplier * tickDrawStep * scrollAdjustment - scrollX
     }
 
     override fun getInsets(
@@ -288,9 +287,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         )
                 }
             }
+
             is SizeConstraint.Exact -> with(Density(density)) { constraint.size.toPx() }
             is SizeConstraint.Fraction -> canvasBounds.height * constraint.fraction
-            is SizeConstraint.TextWidth ->  label?.getHeight(
+            is SizeConstraint.TextWidth -> label?.getHeight(
                 extras = this,
                 density = Density(density),
                 text = constraint.text,

@@ -100,7 +100,11 @@ public open class ColumnChart(
         column: LineComponent,
         spacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(columns = listOf(column), spacing = spacing, targetVerticalAxisPosition = targetVerticalAxisPosition)
+    ) : this(
+        columns = listOf(column),
+        spacing = spacing,
+        targetVerticalAxisPosition = targetVerticalAxisPosition
+    )
 
     /**
      * Creates a [ColumnChart] instance with [columns] set to an empty list. The list must be populated before the chart
@@ -173,17 +177,17 @@ public open class ColumnChart(
 
                 height = abs(entry.y) * heightMultiplier
                 columnCenterX = drawingStart + drawScope.layoutDirectionMultiplier *
-                    (cellWidth + spacing) * (entry.x - chartValues.minX) / model.xStep
+                        (cellWidth + spacing) * (entry.x - chartValues.minX) / model.xStep
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
                         val (stackedNegY, stackedPosY) = heightMap.getOrElse(entry.x) { 0f to 0f }
                         columnBottom = zeroLinePosition +
-                            if (entry.y < 0f) {
-                                height + abs(stackedNegY) * heightMultiplier
-                            } else {
-                                -stackedPosY * heightMultiplier
-                            }
+                                if (entry.y < 0f) {
+                                    height + abs(stackedNegY) * heightMultiplier
+                                } else {
+                                    -stackedPosY * heightMultiplier
+                                }
 
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += drawScope.layoutDirectionMultiplier * cellWidth.half
@@ -213,12 +217,31 @@ public open class ColumnChart(
                         thicknessScale = chartScale,
                     )
                 ) {
-                    updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
-                    column.drawVertical(drawScope, columnTop, columnBottom, columnCenterX, chartScale)
+                    updateMarkerLocationMap(
+                        entry,
+                        columnSignificantY,
+                        columnCenterX,
+                        column,
+                        entryIndex
+                    )
+                    column.drawVertical(
+                        drawScope,
+                        columnTop,
+                        columnBottom,
+                        columnCenterX,
+                        chartScale
+                    )
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
-                    drawDataLabel(drawScope, model.entries.size, column.thickness, entry.y, columnCenterX, columnSignificantY)
+                    drawDataLabel(
+                        drawScope,
+                        model.entries.size,
+                        column.thickness,
+                        entry.y,
+                        columnCenterX,
+                        columnSignificantY
+                    )
                 } else if (entryIndex == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
@@ -268,11 +291,16 @@ public open class ColumnChart(
 
             val canUseSegmentWidth =
                 mergeMode == MergeMode.Stack ||
-                    mergeMode == MergeMode.Grouped && modelEntriesSize == 1
+                        mergeMode == MergeMode.Grouped && modelEntriesSize == 1
             val maxWidth = when {
                 canUseSegmentWidth -> segmentWidth(drawScope)
                 mergeMode == MergeMode.Grouped ->
-                    with(drawScope) { (columnThickness.value + 2 * minOf(spacing.value, innerSpacing.value.half)).dp.toPx().toInt() }
+                    with(drawScope) {
+                        (columnThickness.value + 2 * minOf(
+                            spacing.value,
+                            innerSpacing.value.half
+                        )).dp.toPx().toInt()
+                    }
 
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             } * chartScale
@@ -280,11 +308,11 @@ public open class ColumnChart(
                 value = dataLabelValue,
                 chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             )
-            val dataLabelWidth = 0f // textComponent.getWidth(
-//                context = this,
-//                text = text,
-//                rotationDegrees = dataLabelRotationDegrees,
-//            ).coerceAtMost(maximumValue = maxWidth)
+            val dataLabelWidth = textComponent.getWidth(
+                context = this,
+                text = text,
+                rotationDegrees = dataLabelRotationDegrees,
+            ).coerceAtMost(maximumValue = maxWidth)
 
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
@@ -334,12 +362,11 @@ public open class ColumnChart(
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
-        @Suppress("DEPRECATION")
         chartValuesManager.tryUpdate(
-            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
-            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model),
-            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
+            minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: mergeMode.getMinY(model),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: mergeMode.getMaxY(model),
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
         )
@@ -349,7 +376,10 @@ public open class ColumnChart(
         density: Density,
         model: ChartEntryModel,
     ): SegmentProperties = with(density) {
-        segmentProperties.set(cellWidth = getCellWidth(model.entries.size), marginWidth = spacing.toPx())
+        segmentProperties.set(
+            cellWidth = getCellWidth(model.entries.size),
+            marginWidth = spacing.toPx()
+        )
     }
 
     protected open fun Density.getCellWidth(

@@ -113,7 +113,9 @@ public open class FadingEdges(
 
             if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
                 fadeAlphaFraction =
-                    ((maxScroll - horizontalScroll) / visibilityThresholdDp.dp.toPx()).coerceAtMost(1f)
+                    ((maxScroll - horizontalScroll) / visibilityThresholdDp.dp.toPx()).coerceAtMost(
+                        1f
+                    )
 
                 drawFadingEdge(
                     left = bounds.right - endEdgeWidthDp.dp.toPx(),
@@ -143,7 +145,10 @@ public open class FadingEdges(
         paint.shader = LinearGradientShader(
             from = Offset(rect.left, 0f),
             to = Offset(rect.right, 0f),
-            colors = if (direction < 0) listOf(faded, Color(NO_FADE)) else listOf(Color(NO_FADE), faded),
+            colors = if (direction < 0) listOf(faded, Color(NO_FADE)) else listOf(
+                Color(NO_FADE),
+                faded
+            ),
         )
         drawScope.drawContext.canvas.drawRect(rect, paint)
     }

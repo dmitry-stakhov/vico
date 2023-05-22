@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.layout
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter

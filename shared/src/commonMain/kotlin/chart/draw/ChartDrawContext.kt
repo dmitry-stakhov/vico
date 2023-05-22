@@ -61,8 +61,8 @@ public fun MeasureContext.getMaxScrollDistance(
     segmentProperties: SegmentProperties,
 ): Float {
     val cumulatedSegmentWidth = segmentProperties.segmentWidth *
-        chartValuesManager.getChartValues().getDrawnEntryCount() *
-        chartScale
+            chartValuesManager.getChartValues().getDrawnEntryCount() *
+            chartScale
 
     return (drawScope.layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
         if (drawScope.isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)

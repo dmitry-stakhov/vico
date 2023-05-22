@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.component
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.patrykandpatrick.vico.core.component.dimension.DefaultMargins
 import com.patrykandpatrick.vico.core.component.dimension.Margins
-import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * [Component] is a generic concept of an object that can be drawn on a canvas at a given pair of coordinates.

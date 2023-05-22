@@ -50,7 +50,9 @@ public class DefaultPointConnector(
             x = x,
             y = y,
             curvature = segmentProperties.marginWidth * cubicStrength *
-                (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
+                    (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(
+                        maximumValue = 1f
+                    ),
         )
     }
 

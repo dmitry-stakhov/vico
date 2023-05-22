@@ -193,17 +193,18 @@ public open class LineChart(
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(drawScope: DrawScope, bounds: Rect, path: Path): Unit = with(drawScope) {
-            lineBackgroundPaint.shader = lineBackgroundShader
-                ?.provideShader(
-                    left = bounds.left,
-                    top = bounds.top,
-                    right = bounds.right,
-                    bottom = bounds.bottom,
-                )
+        public fun drawBackgroundLine(drawScope: DrawScope, bounds: Rect, path: Path): Unit =
+            with(drawScope) {
+                lineBackgroundPaint.shader = lineBackgroundShader
+                    ?.provideShader(
+                        left = bounds.left,
+                        top = bounds.top,
+                        right = bounds.right,
+                        bottom = bounds.bottom,
+                    )
 
-            drawContext.canvas.drawPath(path, lineBackgroundPaint)
-        }
+                drawContext.canvas.drawPath(path, lineBackgroundPaint)
+            }
 
         internal inline val pointSizeDpOrZero: Float
             get() = if (point != null) pointSize.value else 0f
@@ -268,12 +269,13 @@ public open class LineChart(
             var prevY = bounds.bottom
 
             val drawingStartAlignmentCorrection = drawScope.layoutDirectionMultiplier *
-                when (pointPosition) {
-                    PointPosition.Start -> 0f
-                    PointPosition.Center -> (spacing + cellWidth).half
-                }
+                    when (pointPosition) {
+                        PointPosition.Start -> 0f
+                        PointPosition.Center -> (spacing + cellWidth).half
+                    }
 
-            val drawingStart = bounds.getStart(isLtr = drawScope.isLtr) + drawingStartAlignmentCorrection - horizontalScroll
+            val drawingStart =
+                bounds.getStart(isLtr = drawScope.isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
             forEachPointWithinBoundsIndexed(
                 drawScope = drawScope,
@@ -359,48 +361,49 @@ public open class LineChart(
 
             if (lineSpec.point != null) lineSpec.drawPoint(drawScope = drawScope, x = x, y = y)
 
-            lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
+            lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }
+                ?.let { textComponent ->
 
-                val distanceFromLine = with(drawScope) {
-                    maxOf(
-                        a = lineSpec.lineThickness.value,
-                        b = lineSpec.pointSizeDpOrZero,
-                    ).half.dp.toPx()
-                }
+                    val distanceFromLine = with(drawScope) {
+                        maxOf(
+                            a = lineSpec.lineThickness.value,
+                            b = lineSpec.pointSizeDpOrZero,
+                        ).half.dp.toPx()
+                    }
 
-                val text = lineSpec.dataLabelValueFormatter.formatValue(
-                    value = chartEntry.y,
-                    chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
-                )
-                val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
-                    bounds = bounds,
-                    distanceFromPoint = distanceFromLine,
-                    componentHeight =  textComponent.getHeight(
+                    val text = lineSpec.dataLabelValueFormatter.formatValue(
+                        value = chartEntry.y,
+                        chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+                    )
+                    val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
+                        bounds = bounds,
+                        distanceFromPoint = distanceFromLine,
+                        componentHeight = textComponent.getHeight(
+                            extras = this,
+                            density = Density(density),
+                            text = text,
+                            width = segmentWidth(drawScope),
+                            rotationDegrees = lineSpec.dataLabelRotationDegrees,
+                        ),
+                        y = y,
+                    )
+                    val dataLabelY = y + when (verticalPosition) {
+                        Alignment.Top -> -distanceFromLine
+                        Alignment.Center -> 0f
+                        Alignment.Bottom -> distanceFromLine
+                        else -> error("")
+                    }
+                    textComponent.drawText(
+                        drawScope = drawScope,
                         extras = this,
-                        density = Density(density),
+                        textX = x,
+                        textY = dataLabelY,
                         text = text,
-                        width = segmentWidth(drawScope),
+                        verticalPosition = verticalPosition,
+                        maxTextWidth = segmentWidth(drawScope),
                         rotationDegrees = lineSpec.dataLabelRotationDegrees,
-                    ),
-                    y = y,
-                )
-                val dataLabelY = y + when (verticalPosition) {
-                    Alignment.Top -> -distanceFromLine
-                    Alignment.Center -> 0f
-                    Alignment.Bottom -> distanceFromLine
-                    else -> error("")
+                    )
                 }
-                textComponent.drawText(
-                    drawScope = drawScope,
-                    extras = this,
-                    textX = x,
-                    textY = dataLabelY,
-                    text = text,
-                    verticalPosition = verticalPosition,
-                    maxTextWidth = segmentWidth(drawScope),
-                    rotationDegrees = lineSpec.dataLabelRotationDegrees,
-                )
-            }
         }
     }
 
@@ -444,8 +447,9 @@ public open class LineChart(
         val boundsStart: Float = bounds.getStart(isLtr = drawScope.isLtr)
         val boundsEnd: Float = boundsStart + drawScope.layoutDirectionMultiplier * bounds.width
 
-        fun getDrawX(entry: ChartEntry): Float = drawingStart + drawScope.layoutDirectionMultiplier *
-            (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / xStep
+        fun getDrawX(entry: ChartEntry): Float =
+            drawingStart + drawScope.layoutDirectionMultiplier *
+                    (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
@@ -491,12 +495,11 @@ public open class LineChart(
         chartValuesManager: ChartValuesManager,
         model: ChartEntryModel,
     ) {
-        @Suppress("DEPRECATION")
         chartValuesManager.tryUpdate(
-            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
-            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
-            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: model.maxY,
+            minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: min(model.minY, 0f),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: model.maxY,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
         )
@@ -510,7 +513,10 @@ public open class LineChart(
     ): Unit = with(density) {
         outInsets.setVertical(
             value = lines.maxOf {
-                if (it.point != null) max(a = it.lineThickness.value, b = it.pointSize.value) else it.lineThickness.value
+                if (it.point != null) max(
+                    a = it.lineThickness.value,
+                    b = it.pointSize.value
+                ) else it.lineThickness.value
             }.dp.toPx(),
         )
     }

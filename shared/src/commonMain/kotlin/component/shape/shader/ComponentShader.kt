@@ -16,12 +16,7 @@
 
 package com.patrykandpatrick.vico.core.component.shape.shader
 
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shader
-import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.extension.half
 
 /**
  * [ComponentShader] creates a [Shader] out of the provided [component].

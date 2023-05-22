@@ -33,14 +33,24 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
      * The current scroll amount (in pixels).
      */
     public var value: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        scrollListeners.forEach { scrollListener -> scrollListener.onValueChanged(oldValue, newValue) }
+        scrollListeners.forEach { scrollListener ->
+            scrollListener.onValueChanged(
+                oldValue,
+                newValue
+            )
+        }
     }
 
     /**
      * The maximum scroll amount (in pixels).
      */
     public var maxValue: Float by Delegates.observable(initialMaxValue) { _, oldMaxValue, newMaxValue ->
-        scrollListeners.forEach { scrollListener -> scrollListener.onMaxValueChanged(oldMaxValue, newMaxValue) }
+        scrollListeners.forEach { scrollListener ->
+            scrollListener.onMaxValueChanged(
+                oldMaxValue,
+                newMaxValue
+            )
+        }
     }
 
     private fun getClampedScroll(scroll: Float): Float = scroll.coerceIn(0f.rangeWith(maxValue))
@@ -59,7 +69,8 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     /**
      * Checks whether a scroll by the given [delta] value is possible.
      */
-    public fun canScrollBy(delta: Float): Boolean = delta == 0f || value - getClampedScroll(value - delta) != 0f
+    public fun canScrollBy(delta: Float): Boolean =
+        delta == 0f || value - getClampedScroll(value - delta) != 0f
 
     /**
      * Updates [value] to [targetScroll], which is restricted to the interval [0, [maxValue]].

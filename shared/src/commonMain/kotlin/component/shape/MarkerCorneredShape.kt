@@ -21,14 +21,9 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
-import com.patrykandpatrick.vico.core.extension.doubled
-import com.patrykandpatrick.vico.core.extension.half
 
 /**
  * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
@@ -45,7 +40,12 @@ public open class MarkerCorneredShape(
     bottomRight: Float,
     bottomLeft: Float,
     public val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
-) : CornerBasedShape(CornerSize(topLeft), CornerSize(topRight), CornerSize(bottomRight), CornerSize(bottomLeft)) {
+) : CornerBasedShape(
+    CornerSize(topLeft),
+    CornerSize(topRight),
+    CornerSize(bottomRight),
+    CornerSize(bottomLeft)
+) {
 
     public constructor(
         all: Float,

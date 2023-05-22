@@ -54,18 +54,6 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    override var minY: Float? = null
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    override var maxY: Float? = null
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    override var minX: Float? = null
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
-    override var maxX: Float? = null
-
     override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)
 
     override fun setDecorations(decorations: List<Decoration>) {
@@ -92,7 +80,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         model: Model,
     ): Unit = with(context) {
         insets.clear()
-        getInsets(Density(density),this, insets, segmentProperties)
+        getInsets(Density(density), this, insets, segmentProperties)
         drawChartInternal(drawScope, context, model)
     }
 

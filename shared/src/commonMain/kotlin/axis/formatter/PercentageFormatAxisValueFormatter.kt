@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.axis.formatter
 
+import DecimalFormat
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.formatter.PercentageFormatValueFormatter
 

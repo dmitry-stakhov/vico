@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.context
 
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import kotlin.collections.Map
 
 /**
  * An abstraction layer over [Map] used by [MeasureContext] and [ChartDrawContext] to store and retrieve data.

@@ -49,7 +49,7 @@ public fun <P : Padding> P.setPadding(
 ): P = apply {
     padding.set(
         start = horizontal,
-        top= vertical,
+        top = vertical,
         end = horizontal,
         bottom = vertical,
     )

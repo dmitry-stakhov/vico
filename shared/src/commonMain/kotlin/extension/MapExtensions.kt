@@ -19,8 +19,6 @@ package com.patrykandpatrick.vico.core.extension
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.Point
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * Returns that of the [Marker.EntryModel]s stored in the [Map] whose x-axis map key is the closest to the [Point.x]

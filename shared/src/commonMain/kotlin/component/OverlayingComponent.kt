@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.debug.DebugHelper
-import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 
 /**
  * A [Component] composed out of two [Component]s, with one drawn over the other.

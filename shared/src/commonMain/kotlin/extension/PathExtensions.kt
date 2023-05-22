@@ -29,5 +29,12 @@ public fun Path.horizontalCubicTo(
     curvature: Float,
 ) {
     val directionMultiplier = if (x >= prevX) 1f else -1f
-    cubicTo(prevX + directionMultiplier * curvature, prevY, x - directionMultiplier * curvature, y, x, y)
+    cubicTo(
+        prevX + directionMultiplier * curvature,
+        prevY,
+        x - directionMultiplier * curvature,
+        y,
+        x,
+        y
+    )
 }
