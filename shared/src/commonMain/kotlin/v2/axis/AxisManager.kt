@@ -6,10 +6,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import extension.isLtr
+import v2.chart.insets.ChartInsetter
 
 public open class AxisManager(
     /**

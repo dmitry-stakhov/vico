@@ -6,7 +6,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +26,6 @@ import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.layout.getMeasureContext
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -63,7 +61,7 @@ public fun <Model : ChartEntryModel> ChartLayout(
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
     chartScrollState.registerScrollListener(scrollListener)
-    chart.updateChartValues(measureContext.chartValuesManager, model)
+//    chart.updateChartValues(measureContext.chartValuesManager, model)
 
     val virtualLayout = remember(axisManager) { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
@@ -102,9 +100,9 @@ public fun <Model : ChartEntryModel> ChartLayout(
     ) { constraints ->
         val size = IntSize(constraints.maxWidth, constraints.maxHeight).toSize()
         bounds = size.toRect()
-        chart.updateChartValues(measureContext.chartValuesManager, model)
+//        chart.updateChartValues(measureContext.chartValuesManager, model)
 
-        val segmentProperties = chart.getSegmentProperties(this, model)
+//        val segmentProperties = chart.getSegmentProperties(this, model)
 
 //        val chartBounds = virtualLayout.setBounds(
 //            drawScope = this,
