@@ -24,6 +24,8 @@ import com.patrykandpatrick.vico.core.extension.half
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public override val position: Position,
     public override val label: @Composable (label: String) -> Unit,
+    override val tick: @Composable () -> Unit,
+    override val axisLine: @Composable () -> Unit,
 ) : Axis<Position>() {
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
@@ -113,13 +115,17 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 @Composable
 public fun topAxis(
     label: @Composable (label: String) -> Unit = { Text(it) },
+    tick: @Composable () -> Unit = {},
+    axisLine: @Composable () -> Unit = {},
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = remember(label) {
-    HorizontalAxis(AxisPosition.Horizontal.Top, label)
+    HorizontalAxis(AxisPosition.Horizontal.Top, label, tick, axisLine)
 }
 
 @Composable
 public fun bottomAxis(
     label: @Composable (label: String) -> Unit = { Text(it) },
+    tick: @Composable () -> Unit = {},
+    axisLine: @Composable () -> Unit = {},
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = remember(label) {
-    HorizontalAxis(AxisPosition.Horizontal.Bottom, label)
+    HorizontalAxis(AxisPosition.Horizontal.Bottom, label, tick, axisLine)
 }

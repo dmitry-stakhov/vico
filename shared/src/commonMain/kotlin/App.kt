@@ -73,9 +73,7 @@ public fun App() {
 //                iconSize = 10.dp,
 //                iconPadding = 10.dp,
 //            ),
-            startAxis = startAxis(
-                label = { Text(it) }
-            ),
+            startAxis = startAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false)
         )
     }

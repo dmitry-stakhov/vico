@@ -3,6 +3,7 @@ package v2.axis
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
@@ -19,6 +20,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
@@ -41,6 +44,8 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     public override val position: Position,
     public override val label: @Composable (label: String) -> Unit,
+    override val tick: @Composable () -> Unit,
+    override val axisLine: @Composable () -> Unit,
 ): Axis<Position>() {
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -178,17 +183,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getPlaceables(measureScope: SubcomposeMeasureScope, measureContext: MeasureContext) : AxisPlaceables {
         return with(measureScope) {
             val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
-            val line = getAxisLinePlaceable(constraints)
+            val line = getAxisLinePlaceable()
             val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
             AxisPlaceables(line, labels, ticks)
         }
     }
 
-    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
-        constraints: Constraints,
-    ): Placeable {
-        return subcompose("line-$position") { Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black)) }.first().measure(
+    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(): Placeable {
+        return subcompose("line-$position", axisLine).first().measure(
             Constraints(maxHeight = bounds.height.toInt())
         )
     }
@@ -225,6 +228,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
         axisLine.place(axisLineOffset.roundToInt(), bounds.top.roundToInt())
 
+        val label = label
+        val labelCount = axisLabelPlaceables.size
+
+        val labels = axisLabelPlaceables
+
+        val tickLeftX = tickPlaceables.first().width
+
+        var tickCenterY: Float
+
         var y = constraints.maxHeight.toFloat()
         axisLabelPlaceables.forEach {
             val x = if (position.isLeft(true)) {
@@ -238,21 +250,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         var y2 = constraints.maxHeight.toFloat()
         val axisOffset = axisLabelPlaceables.maxOf { it.width }
-        tickPlaceables.forEach {
+        tickPlaceables.forEachIndexed { index, item ->
+            tickCenterY =
+                bounds.bottom - bounds.height / (labelCount - 1) * index + 0 // drawScope.tickThickness.half
+
             val x = if (position.isLeft(true)) {
-                axisOffset - it.width.half
+                axisOffset - item.width.half
             } else {
-                constraints.maxWidth - axisOffset - it.width.half
+                constraints.maxWidth - axisOffset - item.width.half
             }
-            it.place(x, y2.toInt() - it.height, 2f)
+            item.place(x, tickCenterY.toInt() - item.height, 2f)
             y2 -= axisStep
         }
     }
 
     internal fun SubcomposeMeasureScope.getTickPlaceables(count: Int): List<Placeable> {
-        return subcompose("Tick-$position") {
-            repeat(count)  { Divider(Modifier.size(10.dp), color = Color.Black) }
-        }.map {
+        return subcompose("Tick-$position") { repeat(count)  { tick() } }.map {
             it.measure(Constraints())
         }
     }
@@ -327,16 +340,48 @@ public data class AxisPlaceables(
 
 @Composable
 public fun startAxis(
-    label: @Composable (label: String) -> Unit = { Text(it) },
-): VerticalAxis<AxisPosition.Vertical.Start> = remember(label) {
-    VerticalAxis(AxisPosition.Vertical.Start, label)
+    label: @Composable (label: String) -> Unit = {
+        Text(
+            text = it,
+            fontSize = DefaultDimens.AXIS_LABEL_SIZE.sp,
+            maxLines = DefaultDimens.AXIS_LABEL_MAX_LINES,
+            modifier = Modifier.padding(
+                horizontal = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+                vertical = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp
+            )
+        )
+    },
+    tick: @Composable () -> Unit = {
+        Divider(Modifier.width(4.dp), color = Color.Black)
+    },
+    axisLine: @Composable () -> Unit = {
+        Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
+    }
+): VerticalAxis<AxisPosition.Vertical.Start> = remember(label, tick) {
+    VerticalAxis(AxisPosition.Vertical.Start, label, tick, axisLine)
 }
 
 @Composable
 public fun endAxis(
-    label: @Composable (label: String) -> Unit = { Text(it) },
-): VerticalAxis<AxisPosition.Vertical.End> = remember(label) {
-    VerticalAxis(AxisPosition.Vertical.End, label)
+    label: @Composable (label: String) -> Unit = {
+        Text(
+            text = it,
+            fontSize = DefaultDimens.AXIS_LABEL_SIZE.sp,
+            maxLines = DefaultDimens.AXIS_LABEL_MAX_LINES,
+            modifier = Modifier.padding(
+                horizontal = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+                vertical = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp
+            )
+        )
+    },
+    tick: @Composable () -> Unit = {
+        Divider(Modifier.width(4.dp), color = Color.Black)
+    },
+    axisLine: @Composable () -> Unit = {
+        Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
+    }
+): VerticalAxis<AxisPosition.Vertical.End> = remember(label, tick) {
+    VerticalAxis(AxisPosition.Vertical.End, label, tick, axisLine)
 }
 
 internal const val maxLabelCount = 100

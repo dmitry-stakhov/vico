@@ -48,10 +48,10 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     override var bounds: Rect = Rect.Zero
 
     protected val Density.axisThickness: Float
-        get() = axisLine?.thickness?.toPx().orZero
+        get() = 0f
 
     protected val Density.tickThickness: Float
-        get() = tick?.thickness?.toPx().orZero
+        get() = 0f
 
     protected val Density.guidelineThickness: Float
         get() = guideline?.thickness?.toPx().orZero
@@ -67,12 +67,12 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [LineComponent] to use for the axis line.
      */
-    public var axisLine: LineComponent? = null
+    public abstract val axisLine: @Composable () -> Unit
 
     /**
      * The [LineComponent] to use for ticks.
      */
-    public var tick: LineComponent? = null
+    public abstract val tick: @Composable () -> Unit
 
     /**
      * The [LineComponent] to use for guidelines.
