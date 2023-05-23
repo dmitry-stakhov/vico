@@ -17,9 +17,11 @@
 package v2.axis
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import v2.chart.Chart
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import v2.chart.insets.ChartInsetter

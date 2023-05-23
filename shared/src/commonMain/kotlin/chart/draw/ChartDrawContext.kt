@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -66,6 +67,23 @@ public fun MeasureContext.getMaxScrollDistance(
 
     return (drawScope.layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
         if (drawScope.isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
+    }
+}
+
+/**
+ * Returns the maximum scroll distance.
+ */
+public fun MeasureContext.getMaxScrollDistance(
+    layoutDirection: LayoutDirection,
+    chartWidth: Float,
+    segmentProperties: SegmentProperties,
+): Float {
+    val cumulatedSegmentWidth = segmentProperties.segmentWidth *
+            chartValuesManager.getChartValues().getDrawnEntryCount() *
+            chartScale
+
+    return (layoutDirection.layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
+        if (layoutDirection.isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
     }
 }
 

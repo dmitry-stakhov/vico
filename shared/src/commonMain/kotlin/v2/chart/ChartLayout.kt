@@ -1,6 +1,7 @@
 package v2.chart
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,11 +13,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import com.patrykandpatrick.vico.compose.chart.ChartBox
@@ -33,6 +36,9 @@ import com.patrykandpatrick.vico.compose.layout.getMeasureContext
 import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.drawMarker
+import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
@@ -245,7 +251,6 @@ public fun <Model : ChartEntryModel> ChartImpl(
 //        )
 //    }
 
-    val marker = null
     SubcomposeLayout(modifier = Modifier
         .fillMaxSize()
         .chartTouchEvent(
@@ -266,15 +271,28 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         val segmentProperties = chart.getSegmentProperties(this, model)
 
-//        val chartBounds = virtualLayout.setBounds(
-//            drawScope = this,
-//            context = measureContext,
-//            contentBounds = bounds,
-//            chart = chart,
-//            legend = legend,
-//            segmentProperties = segmentProperties,
-//            marker,
-//        )
+        val chartBounds = virtualLayout.setBounds(
+            density = this,
+            layoutDirection = this.layoutDirection,
+            context = measureContext,
+            contentBounds = bounds,
+            chart = chart,
+            legend = legend,
+            segmentProperties = segmentProperties,
+            null,
+        )
+
+        if (chartBounds.isEmpty) {
+            return@SubcomposeLayout layout(constraints.maxWidth, constraints.maxHeight) { }
+        }
+
+        chartScrollState.maxValue = measureContext.getMaxScrollDistance(
+            layoutDirection = this.layoutDirection,
+            chartWidth = chart.bounds.width,
+            segmentProperties = segmentProperties,
+        )
+
+        chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val startAxisPlaceables = startAxis?.run {
             val line = getAxisLinePlaceable(constraints)

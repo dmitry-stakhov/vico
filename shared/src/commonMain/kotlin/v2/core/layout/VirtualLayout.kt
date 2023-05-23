@@ -2,11 +2,14 @@ package v2.core.layout
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.SubcomposeMeasureScope
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import v2.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.legend.Legend
 import extension.isLtr
 import v2.axis.AxisManager
@@ -22,7 +25,8 @@ public open class VirtualLayout(
     private val tempInsets: Insets = Insets()
 
     public open fun <Model : ChartEntryModel> setBounds(
-        subcomposeMeasureScope: SubcomposeMeasureScope,
+        density: Density,
+        layoutDirection: LayoutDirection,
         context: MeasureContext,
         contentBounds: Rect,
         chart: Chart<Model>,
@@ -34,7 +38,7 @@ public open class VirtualLayout(
         finalInsets.clear()
         tempInsets.clear()
 
-        val legendHeight = 0 //legend?.getHeight(drawScope, context, contentBounds.width).orZero
+        val legendHeight = legend?.getHeight(density, context, contentBounds.width).orZero
 
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
@@ -42,7 +46,7 @@ public open class VirtualLayout(
         tempInsetters.add(chart)
 
         tempInsetters.forEach { insetter ->
-//            insetter.getInsets(drawScope, context, tempInsets, segmentProperties)
+            insetter.getInsets(density, context, tempInsets, segmentProperties)
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
@@ -54,9 +58,9 @@ public open class VirtualLayout(
         }
 
         val chartBounds = Rect(
-            left = contentBounds.left + finalInsets.getLeft(subcomposeMeasureScope.layoutDirection.isLtr),
+            left = contentBounds.left + finalInsets.getLeft(layoutDirection.isLtr),
             top = contentBounds.top + finalInsets.top,
-            right = contentBounds.right - finalInsets.getRight(subcomposeMeasureScope.layoutDirection.isLtr),
+            right = contentBounds.right - finalInsets.getRight(layoutDirection.isLtr),
             bottom = contentBounds.bottom - finalInsets.bottom - legendHeight,
         )
 
@@ -67,7 +71,7 @@ public open class VirtualLayout(
             bottom = chartBounds.bottom,
         )
 
-//        axisManager.setAxesBounds(drawScope, contentBounds, chartBounds, finalInsets)
+        axisManager.setAxesBounds(layoutDirection, contentBounds, chartBounds, finalInsets)
 
         legend?.setBounds(
             left = contentBounds.left,
