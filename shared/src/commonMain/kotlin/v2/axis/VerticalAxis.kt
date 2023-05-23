@@ -17,15 +17,16 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import v2.formatter.IntFormatter
 
 public class VerticalAxis<Position : AxisPosition.Vertical>(
-    public val position: Position,
-    public val label: @Composable (label: String) -> Unit,
-) {
+    public override val position: Position,
+    public val labelLayout: @Composable (label: String) -> Unit,
+): Axis<Position>() {
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
     ): Placeable {
@@ -45,12 +46,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    internal fun Placeable.PlacementScope.placeAxis(
+    override fun Placeable.PlacementScope.placeAxis(
         axisLine: Placeable,
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
-        constraints: Constraints
+        constraints: Constraints,
     ) {
         val axisLineOffset = if (position.isLeft(true)) {
             axisOffset - axisLine.width
@@ -99,13 +100,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val chartValues = measureContext.chartValuesManager.getChartValues(position)
 
         val minSpace = subcompose("min-label-$position") {
-            label(IntFormatter.format(chartValues.minY))
+            labelLayout(IntFormatter.format(chartValues.minY))
         }.first().measure(Constraints())
         val middleSpace = subcompose("middle-label-$position") {
-            label(IntFormatter.format((chartValues.maxY + chartValues.minY) / 2))
+            labelLayout(IntFormatter.format((chartValues.maxY + chartValues.minY) / 2))
         }.first().measure(Constraints())
         val maxSpace = subcompose("max-label-$position") {
-            label(IntFormatter.format(chartValues.maxY))
+            labelLayout(IntFormatter.format(chartValues.maxY))
         }.first().measure(Constraints())
 
         val avgSpace = when (position) {

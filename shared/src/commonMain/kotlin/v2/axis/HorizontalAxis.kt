@@ -16,13 +16,14 @@ import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
-    public val position: Position,
-    public val label: @Composable (label: String) -> Unit,
-) {
+    public override val position: Position,
+    public val labelLayout: @Composable (label: String) -> Unit,
+) : Axis<Position>() {
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
     ): Placeable {
@@ -44,12 +45,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    internal fun Placeable.PlacementScope.placeAxis(
+    override fun Placeable.PlacementScope.placeAxis(
         axisLine: Placeable,
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
-        constraints: Constraints
+        constraints: Constraints,
     ) {
         axisLine.place(axisOffset - axisLine.width, 0, 1f)
 
