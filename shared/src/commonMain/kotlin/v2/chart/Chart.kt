@@ -16,7 +16,6 @@
 
 package v2.chart
 
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
@@ -146,7 +145,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param context holds data used for component measurements.
      * @param model holds data about the [Chart]’s entries.
      */
-//    public fun getSegmentProperties(density: Density, model: Model): SegmentProperties
+    public fun getSegmentProperties(density: Density, model: Model): SegmentProperties
 
     /**
      * Updates the [ChartValues] stored in the provided [ChartValuesManager] instance to this [Chart]’s [ChartValues].
@@ -154,7 +153,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param chartValuesManager the [ChartValuesManager] whose properties will be updated.
      * @param model holds data about the [Chart]’s entries.
      */
-//    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model)
+    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model)
 }
 
 /**

@@ -1,7 +1,5 @@
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,15 +8,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.line.lineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.debug.DebugHelper
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.legend.VerticalLegend
 import v2.axis.endAxis
 import v2.axis.startAxis
-import v2.chart.ChartLayout
+import v2.chart.Chart
+import v2.chart.ChartImpl
+import v2.chart.line.lineChart
 import kotlin.random.Random
 
 @Composable
@@ -40,10 +43,8 @@ public fun App() {
             )
         }
 
-        ChartLayout(
-            startAxis = startAxis { label -> Text(label) },
-            endAxis = endAxis { label -> Text(label) },
-            model = chartEntryModel,
+        Chart(
+            modifier = Modifier.padding(horizontal = 10.dp),
             chart = lineChart(
                 lines = listOf(
                     LineChart.LineSpec(myColor.toArgb()),
@@ -55,44 +56,28 @@ public fun App() {
                     maxY = 100f
                 )
             ),
-            modifier = Modifier.height(300.dp)
+            model = chartEntryModel,
+            legend = VerticalLegend(
+                items = listOf(
+                    VerticalLegend.Item(
+                        icon = ShapeComponent(color = myColor.toArgb()),
+                        label = textComponent(color = myColor),
+                        labelText = "Dmitry"
+                    ),
+                    VerticalLegend.Item(
+                        icon = ShapeComponent(color = opColor.toArgb()),
+                        label = textComponent(color = opColor),
+                        labelText = "Morroni"
+                    )
+                ),
+                iconSize = 10.dp,
+                iconPadding = 10.dp,
+            ),
+            startAxis = startAxis(
+                label = { Text(it) }
+            ),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false)
         )
-
-//        Chart(
-//            modifier = Modifier.padding(horizontal = 10.dp),
-//            chart = lineChart(
-//                lines = listOf(
-//                    LineChart.LineSpec(myColor.toArgb()),
-//                    LineChart.LineSpec(opColor.toArgb()),
-//                ),
-//                pointPosition = LineChart.PointPosition.Start,
-//                axisValuesOverrider = AxisValuesOverrider.fixed(
-//                    minY = 10f,
-//                    maxY = 100f
-//                )
-//            ),
-//            model = chartEntryModel,
-//            legend = VerticalLegend(
-//                items = listOf(
-//                    VerticalLegend.Item(
-//                        icon = ShapeComponent(color = myColor.toArgb()),
-//                        label = textComponent(color = myColor),
-//                        labelText = "Dmitry"
-//                    ),
-//                    VerticalLegend.Item(
-//                        icon = ShapeComponent(color = opColor.toArgb()),
-//                        label = textComponent(color = opColor),
-//                        labelText = "Morroni"
-//                    )
-//                ),
-//                iconSize = 10.dp,
-//                iconPadding = 10.dp,
-//            ),
-//            startAxis = startAxis(
-//                valueFormatter = DecimalFormatAxisValueFormatter("#")
-//            ),
-//            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false)
-//        )
     }
 }
 
