@@ -1,5 +1,6 @@
 package v2.chart.insets
 
+import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Density
 import com.patrykandpatrick.vico.core.axis.Axis
 import v2.chart.Chart
@@ -25,6 +26,7 @@ public interface ChartInsetter {
      * @param segmentProperties the associated [Chart]’s [SegmentProperties].
      */
     public fun getInsets(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         density: Density,
         context: MeasureContext,
         outInsets: Insets,
@@ -41,6 +43,7 @@ public interface ChartInsetter {
      * @param outInsets used to store the requested insets.
      */
     public fun getHorizontalInsets(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         context: MeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,

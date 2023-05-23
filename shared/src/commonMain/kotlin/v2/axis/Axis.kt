@@ -16,6 +16,7 @@
 
 package v2.axis
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
@@ -61,7 +62,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [TextComponent] to use for labels.
      */
-    public var label: TextComponent? = null
+    public abstract val label: @Composable (label: String) -> Unit
 
     /**
      * The [LineComponent] to use for the axis line.

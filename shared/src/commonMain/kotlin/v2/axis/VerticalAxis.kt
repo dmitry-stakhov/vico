@@ -39,7 +39,7 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     public override val position: Position,
-    public val labelLayout: @Composable (label: String) -> Unit,
+    public override val label: @Composable (label: String) -> Unit,
 ): Axis<Position>() {
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -52,13 +52,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public var verticalLabelPosition: VerticalLabelPosition = VerticalLabelPosition.Center
 
     override fun getHorizontalInsets(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         context: MeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ): Unit = with(context) {
-        val labels = getLabels(maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
+        val labels = getLabels(maxLabelCount = getDrawLabelCount(subcomposeMeasureScope, availableHeight.toInt()))
 
-        val desiredWidth = getDesiredWidth(context, labels)
+        val desiredWidth = getDesiredWidth(subcomposeMeasureScope, context, labels)
 
         outInsets.set(
             start = if (position.isStart) desiredWidth else 0f,
@@ -70,6 +71,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
     private fun getDesiredWidth(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         context: MeasureContext,
         labels: List<CharSequence>,
     ): Float = with(context) {
@@ -84,7 +86,10 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     )
                 }.orZero
                 with(Density(density)) {
-                    (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLengthPx)
+                    (getMaxLabelWidth(
+                        subcomposeMeasureScope = subcomposeMeasureScope,
+                        labels = labels
+                    ) + titleComponentWidth + axisThickness.half + tickLengthPx)
                         .coerceIn(
                             minimumValue = constraint.minSize.toPx(),
                             maximumValue = constraint.maxSize.toPx()
@@ -94,62 +99,62 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             is SizeConstraint.Exact -> with(Density(density)) { constraint.size.toPx() }
             is SizeConstraint.Fraction -> canvasBounds.width * constraint.fraction
-            is SizeConstraint.TextWidth -> label?.getWidth(
-                context = this,
-                text = constraint.text,
-                rotationDegrees = labelRotationDegrees,
-            ).orZero + with(Density(density)) { tickLengthPx + axisThickness.half }
+            is SizeConstraint.TextWidth -> {
+                val labelWidth = subcomposeMeasureScope.subcompose("label-getDesiredWidth-$position") {
+                    label(constraint.text)
+                }.first().measure(Constraints()).width
+                labelWidth + with(Density(density)) { tickLengthPx + axisThickness.half }
+            }
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float =
+    private fun MeasureContext.getMaxLabelWidth(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
+        labels: List<CharSequence>
+    ): Float =
         when (horizontalLabelPosition) {
-            HorizontalLabelPosition.Outside -> label?.let { label ->
+            HorizontalLabelPosition.Outside -> {
                 labels.maxOfOrNull {
-                    label.getWidth(
-                        this,
-                        it,
-                        rotationDegrees = labelRotationDegrees
-                    )
-                }
-            }.orZero
+                    subcomposeMeasureScope.subcompose("label-getMaxLabelWidth-$it-$position") {
+                        label(it.toString())
+                    }.first().measure(Constraints()).width.toFloat()
+                }.orZero
+            }
 
             HorizontalLabelPosition.Inside -> 0f
         }
 
-    private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
-        label?.let { label ->
+    private fun MeasureContext.getDrawLabelCount(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
+        availableHeight: Int
+    ): Int {
 
-            val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesManager.getChartValues(position)
 
-            fun getLabelHeight(value: Float): Float =
-                label.getHeight(
-                    extras = this,
-                    density = Density(density),
-                    // TODO Fix
-                    text = value.roundToInt()
-                        .toString(), //  valueFormatter.formatValue(value, chartValues),
-                    rotationDegrees = labelRotationDegrees,
-                )
+        fun getLabelHeight(value: Float): Float =
+            subcomposeMeasureScope.subcompose("getDrawLabelCount-$value-$position") { label(value.roundToInt().toString())}.first().measure(
+                Constraints()
+            ).height.toFloat()
 
-            val avgHeight = arrayOf(
-                getLabelHeight(chartValues.minY),
-                getLabelHeight((chartValues.maxY + chartValues.minY) / 2),
-                getLabelHeight(chartValues.maxY),
-            ).maxOrNull().orZero
+        val avgHeight = arrayOf(
+            getLabelHeight(chartValues.minY),
+            getLabelHeight((chartValues.maxY + chartValues.minY) / 2),
+            getLabelHeight(chartValues.maxY),
+        ).maxOrNull().orZero
 
-            return (availableHeight / avgHeight + 1).toInt().coerceAtMost(maxLabelCount)
-        }
-        return maxLabelCount
+        return (availableHeight / avgHeight + 1).toInt().coerceAtMost(maxLabelCount)
     }
 
     override fun getInsets(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         density: Density,
         context: MeasureContext,
         outInsets: Insets,
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
-        val labelHeight = label?.getHeight(extras = context, density = density).orZero
+        val labelHeight = subcomposeMeasureScope.subcompose("getInsets-$position") {
+            label("0")
+        }.first().measure(Constraints()).height.toFloat()
         val lineThickness = maxOf(density.axisThickness, density.tickThickness)
         when (verticalLabelPosition) {
             VerticalLabelPosition.Center -> outInsets.set(
@@ -242,13 +247,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val chartValues = measureContext.chartValuesManager.getChartValues(position)
 
         val minSpace = subcompose("min-label-$position") {
-            labelLayout(IntFormatter.format(chartValues.minY))
+            label(IntFormatter.format(chartValues.minY))
         }.first().measure(Constraints())
         val middleSpace = subcompose("middle-label-$position") {
-            labelLayout(IntFormatter.format((chartValues.maxY + chartValues.minY) / 2))
+            label(IntFormatter.format((chartValues.maxY + chartValues.minY) / 2))
         }.first().measure(Constraints())
         val maxSpace = subcompose("max-label-$position") {
-            labelLayout(IntFormatter.format(chartValues.maxY))
+            label(IntFormatter.format(chartValues.maxY))
         }.first().measure(Constraints())
 
         val avgSpace = when (position) {

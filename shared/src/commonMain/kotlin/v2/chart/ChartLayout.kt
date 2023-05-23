@@ -272,6 +272,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
         val segmentProperties = chart.getSegmentProperties(this, model)
 
         val chartBounds = virtualLayout.setBounds(
+            subcomposeMeasureScope = this,
             density = this,
             layoutDirection = this.layoutDirection,
             context = measureContext,
@@ -296,14 +297,14 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         val startAxisPlaceables = startAxis?.run {
             val line = getAxisLinePlaceable(constraints)
-            val labels = getAxisPlaceables(constraints, measureContext, labelLayout)
+            val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
             AxisPlaceables(line, labels, ticks)
         }
 
         val endAxisPlaceables = endAxis?.run {
             val line = getAxisLinePlaceable(constraints)
-            val labels = getAxisPlaceables(constraints, measureContext, labelLayout)
+            val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
             AxisPlaceables(line, labels, ticks)
         }

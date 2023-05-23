@@ -25,6 +25,7 @@ public open class VirtualLayout(
     private val tempInsets: Insets = Insets()
 
     public open fun <Model : ChartEntryModel> setBounds(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         density: Density,
         layoutDirection: LayoutDirection,
         context: MeasureContext,
@@ -46,14 +47,14 @@ public open class VirtualLayout(
         tempInsetters.add(chart)
 
         tempInsetters.forEach { insetter ->
-            insetter.getInsets(density, context, tempInsets, segmentProperties)
+            insetter.getInsets(subcomposeMeasureScope, density, context, tempInsets, segmentProperties)
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height - finalInsets.vertical - legendHeight
 
         tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(context, availableHeight, tempInsets)
+            insetter.getHorizontalInsets(subcomposeMeasureScope, context, availableHeight, tempInsets)
             finalInsets.setValuesIfGreater(tempInsets)
         }
 

@@ -22,7 +22,7 @@ import com.patrykandpatrick.vico.core.extension.half
 
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public override val position: Position,
-    public val labelLayout: @Composable (label: String) -> Unit,
+    public override val label: @Composable (label: String) -> Unit,
 ) : Axis<Position>() {
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,

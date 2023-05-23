@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -340,6 +341,7 @@ public open class LineChart(
     }
 
     override fun getInsets(
+        subcomposeMeasureScope: SubcomposeMeasureScope,
         density: Density,
         context: MeasureContext,
         outInsets: Insets,
