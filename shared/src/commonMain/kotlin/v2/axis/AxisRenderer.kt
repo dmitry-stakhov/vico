@@ -19,9 +19,11 @@ package v2.axis
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.context.MeasureContext
 import v2.chart.Chart
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import v2.chart.insets.ChartInsetter
@@ -35,6 +37,11 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      * Defines the position of the axis relative to the [Chart].
      */
     public val position: Position
+
+    public fun getPlaceables(
+        measureScope: SubcomposeMeasureScope,
+        measureContext: MeasureContext
+    ) : AxisPlaceables
 
     public fun Placeable.PlacementScope.placeAxis(
         axisLine: Placeable,

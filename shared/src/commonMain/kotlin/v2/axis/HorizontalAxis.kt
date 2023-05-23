@@ -45,6 +45,19 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
+    override fun getPlaceables(
+        measureScope: SubcomposeMeasureScope,
+        measureContext: MeasureContext
+    ): AxisPlaceables {
+        return with(measureScope) {
+            val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
+            val line = getAxisLinePlaceable(constraints)
+            val labels = getAxisPlaceables(constraints, measureContext, label)
+            val ticks = getTickPlaceables(labels.size)
+            AxisPlaceables(line, labels, ticks)
+        }
+    }
+
     override fun Placeable.PlacementScope.placeAxis(
         axisLine: Placeable,
         axisOffset: Int,

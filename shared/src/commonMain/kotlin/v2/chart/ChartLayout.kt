@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
 import com.patrykandpatrick.vico.compose.chart.ChartBox
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
@@ -243,13 +245,13 @@ public fun <Model : ChartEntryModel> ChartImpl(
         chartBounds = chart.bounds,
     )
 
-//    LaunchedEffect(key1 = model.id) {
-//        chartScrollSpec.performAutoScroll(
-//            model = model,
-//            oldModel = oldModel,
-//            chartScrollState = chartScrollState,
-//        )
-//    }
+    LaunchedEffect(key1 = model.id) {
+        chartScrollSpec.performAutoScroll(
+            model = model,
+            oldModel = oldModel,
+            chartScrollState = chartScrollState,
+        )
+    }
 
     SubcomposeLayout(modifier = Modifier
         .fillMaxSize()
@@ -295,19 +297,9 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val startAxisPlaceables = startAxis?.run {
-            val line = getAxisLinePlaceable(constraints)
-            val labels = getAxisPlaceables(constraints, measureContext, label)
-            val ticks = getTickPlaceables(labels.size)
-            AxisPlaceables(line, labels, ticks)
-        }
+        val startAxisPlaceables = axisManager.startAxis?.getPlaceables(this, measureContext)
 
-        val endAxisPlaceables = endAxis?.run {
-            val line = getAxisLinePlaceable(constraints)
-            val labels = getAxisPlaceables(constraints, measureContext, label)
-            val ticks = getTickPlaceables(labels.size)
-            AxisPlaceables(line, labels, ticks)
-        }
+        val endAxisPlaceables = axisManager.endAxis?.getPlaceables(this, measureContext)
 
         val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize().background(Color.Red.copy(alpha = 0.5f))) }).map {
             val startOffset = startAxisPlaceables?.labels?.maxOf { it.width }.orZero
@@ -317,11 +309,10 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             startAxisPlaceables?.run {
-                val axisWidth = startAxisPlaceables.labels.maxOf { it.width }
-                with(startAxis) {
+                startAxis?.run {
                     placeAxis(
                         axisLine = startAxisPlaceables.axis,
-                        axisOffset = axisWidth,
+                        axisOffset = axisManager.startAxis.bounds.width.toInt(),
                         axisLabelPlaceables = startAxisPlaceables.labels,
                         tickPlaceables = startAxisPlaceables.ticks,
                         constraints = constraints,
@@ -329,11 +320,10 @@ public fun <Model : ChartEntryModel> ChartImpl(
                 }
             }
             endAxisPlaceables?.run {
-                val axisWidth = endAxisPlaceables.labels.maxOf { it.width }
-                with(endAxis) {
+                endAxis?.run {
                     placeAxis(
                         axisLine = endAxisPlaceables.axis,
-                        axisOffset = axisWidth,
+                        axisOffset =  axisManager.endAxis.bounds.width.toInt(),
                         axisLabelPlaceables = endAxisPlaceables.labels,
                         tickPlaceables = endAxisPlaceables.ticks,
                         constraints = constraints
@@ -341,8 +331,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
                 }
             }
 
-            val chartOffset = startAxisPlaceables?.labels?.maxOf { it.width }.orZero
-            chartPlaceable.place(chartOffset, 0)
+            chartPlaceable.place(chart.bounds.topLeft.round())
         }
     }
 }

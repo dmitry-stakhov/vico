@@ -174,6 +174,16 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
+    override fun getPlaceables(measureScope: SubcomposeMeasureScope, measureContext: MeasureContext) : AxisPlaceables {
+        return with(measureScope) {
+            val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
+            val line = getAxisLinePlaceable(constraints)
+            val labels = getAxisPlaceables(constraints, measureContext, label)
+            val ticks = getTickPlaceables(labels.size)
+            AxisPlaceables(line, labels, ticks)
+        }
+    }
+
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
     ): Placeable {
@@ -302,7 +312,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 }
 
-internal data class AxisPlaceables(
+public data class AxisPlaceables(
     val axis: Placeable,
     val labels: List<Placeable>,
     val ticks: List<Placeable>
