@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -59,6 +60,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun Placeable.PlacementScope.placeAxis(
+        layoutDirection: LayoutDirection,
         axisLine: Placeable,
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,

@@ -302,15 +302,14 @@ public fun <Model : ChartEntryModel> ChartImpl(
         val endAxisPlaceables = axisManager.endAxis?.getPlaceables(this, measureContext)
 
         val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize().background(Color.Red.copy(alpha = 0.5f))) }).map {
-            val startOffset = startAxisPlaceables?.labels?.maxOf { it.width }.orZero
-            val endOffset = endAxisPlaceables?.labels?.maxOf { it.width }.orZero
-            it.measure(constraints.copy(maxWidth = constraints.maxWidth - startOffset - endOffset, minWidth = 0))
+            it.measure(constraints.copy(maxWidth = chart.bounds.width.toInt(), maxHeight = chart.bounds.height.toInt(), minWidth = 0, minHeight = 0))
         }.first()
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             startAxisPlaceables?.run {
                 startAxis?.run {
                     placeAxis(
+                        layoutDirection = this@SubcomposeLayout.layoutDirection,
                         axisLine = startAxisPlaceables.axis,
                         axisOffset = axisManager.startAxis.bounds.width.toInt(),
                         axisLabelPlaceables = startAxisPlaceables.labels,
@@ -322,6 +321,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
             endAxisPlaceables?.run {
                 endAxis?.run {
                     placeAxis(
+                        layoutDirection = this@SubcomposeLayout.layoutDirection,
                         axisLine = endAxisPlaceables.axis,
                         axisOffset =  axisManager.endAxis.bounds.width.toInt(),
                         axisLabelPlaceables = endAxisPlaceables.labels,

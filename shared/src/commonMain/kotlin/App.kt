@@ -57,22 +57,22 @@ public fun App() {
                 )
             ),
             model = chartEntryModel,
-            legend = VerticalLegend(
-                items = listOf(
-                    VerticalLegend.Item(
-                        icon = ShapeComponent(color = myColor.toArgb()),
-                        label = textComponent(color = myColor),
-                        labelText = "Dmitry"
-                    ),
-                    VerticalLegend.Item(
-                        icon = ShapeComponent(color = opColor.toArgb()),
-                        label = textComponent(color = opColor),
-                        labelText = "Morroni"
-                    )
-                ),
-                iconSize = 10.dp,
-                iconPadding = 10.dp,
-            ),
+//            legend = VerticalLegend(
+//                items = listOf(
+//                    VerticalLegend.Item(
+//                        icon = ShapeComponent(color = myColor.toArgb()),
+//                        label = textComponent(color = myColor),
+//                        labelText = "Dmitry"
+//                    ),
+//                    VerticalLegend.Item(
+//                        icon = ShapeComponent(color = opColor.toArgb()),
+//                        label = textComponent(color = opColor),
+//                        labelText = "Morroni"
+//                    )
+//                ),
+//                iconSize = 10.dp,
+//                iconPadding = 10.dp,
+//            ),
             startAxis = startAxis(
                 label = { Text(it) }
             ),

@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -187,7 +188,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
     ): Placeable {
-        return subcompose("line-$position") { Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black)) }.first().measure(constraints)
+        return subcompose("line-$position") { Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black)) }.first().measure(
+            Constraints(maxHeight = bounds.height.toInt())
+        )
     }
 
     internal fun SubcomposeMeasureScope.getAxisPlaceables(
@@ -204,32 +207,36 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun Placeable.PlacementScope.placeAxis(
+        layoutDirection: LayoutDirection,
         axisLine: Placeable,
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
         constraints: Constraints,
     ) {
-        val axisLineOffset = if (position.isLeft(true)) {
-            axisOffset - axisLine.width
-        } else {
-            constraints.maxWidth - (axisOffset - axisLine.width)
-        }
-        axisLine.place(axisLineOffset, 0)
+        val drawLabelCount = axisLabelPlaceables.count()
 
-        val axisStep = constraints.maxHeight / (axisLabelPlaceables.size - 1)
-        var y = constraints.maxHeight
+        val axisStep = bounds.height / (drawLabelCount - 1)
+
+        val axisLineOffset = if (position.isLeft(layoutDirection.isLtr)) {
+            bounds.right - axisLine.width
+        } else {
+            bounds.left - axisLine.width
+        }
+        axisLine.place(axisLineOffset.roundToInt(), bounds.top.roundToInt())
+
+        var y = constraints.maxHeight.toFloat()
         axisLabelPlaceables.forEach {
             val x = if (position.isLeft(true)) {
                 0
             } else {
                 constraints.maxWidth - it.width
             }
-            it.place(x, y - it.height, 2f)
+            it.place(x, y.toInt() - it.height, 2f)
             y -= axisStep
         }
 
-        var y2 = constraints.maxHeight
+        var y2 = constraints.maxHeight.toFloat()
         val axisOffset = axisLabelPlaceables.maxOf { it.width }
         tickPlaceables.forEach {
             val x = if (position.isLeft(true)) {
@@ -237,7 +244,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             } else {
                 constraints.maxWidth - axisOffset - it.width.half
             }
-            it.place(x, y2 - it.height, 2f)
+            it.place(x, y2.toInt() - it.height, 2f)
             y2 -= axisStep
         }
     }

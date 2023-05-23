@@ -147,6 +147,7 @@ public open class AxisManager(
     }
 
     public fun placeAxis(
+        layoutDirection: LayoutDirection,
         scope: Placeable.PlacementScope,
         axisLine: Placeable,
         axisOffset: Int,
@@ -158,6 +159,7 @@ public open class AxisManager(
             if (axis != null) {
                 with(axis) {
                     scope.placeAxis(
+                        layoutDirection = layoutDirection,
                         axisLine = axisLine,
                         axisOffset = axisOffset,
                         axisLabelPlaceables = axisLabelPlaceables,
