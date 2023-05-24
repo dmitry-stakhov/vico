@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -41,7 +42,8 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
 
     public fun getPlaceables(
         measureScope: SubcomposeMeasureScope,
-        measureContext: MeasureContext
+        measureContext: MeasureContext,
+        chartSize: IntSize,
     ) : AxisPlaceables
 
     public fun Placeable.PlacementScope.placeAxis(
@@ -50,6 +52,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
+        guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
     )
 

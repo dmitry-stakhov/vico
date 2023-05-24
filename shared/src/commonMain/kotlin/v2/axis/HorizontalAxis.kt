@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -48,16 +49,20 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
+    override val guideline: @Composable () -> Unit
+        get() = { Box(Modifier) }
+
     override fun getPlaceables(
         measureScope: SubcomposeMeasureScope,
-        measureContext: MeasureContext
+        measureContext: MeasureContext,
+        chartSize: IntSize
     ): AxisPlaceables {
         return with(measureScope) {
             val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
             val line = getAxisLinePlaceable(constraints)
             val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
-            AxisPlaceables(line, labels, ticks)
+            AxisPlaceables(line, labels, ticks, emptyList())
         }
     }
 
@@ -67,6 +72,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
+        guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
     ) {
         axisLine.place(axisOffset - axisLine.width, 0, 1f)

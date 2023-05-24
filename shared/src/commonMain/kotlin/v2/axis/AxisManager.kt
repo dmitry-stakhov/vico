@@ -153,6 +153,7 @@ public open class AxisManager(
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
+        guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
     ) {
         axisCache.forEach { axis ->
@@ -164,6 +165,7 @@ public open class AxisManager(
                         axisOffset = axisOffset,
                         axisLabelPlaceables = axisLabelPlaceables,
                         tickPlaceables = tickPlaceables,
+                        guidelinePlaceables = guidelinePlaceables,
                         constraints = constraints,
                     )
                 }

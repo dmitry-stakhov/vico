@@ -3,6 +3,7 @@ package v2.axis
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,6 +19,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +48,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public override val label: @Composable (label: String) -> Unit,
     override val tick: @Composable () -> Unit,
     override val axisLine: @Composable () -> Unit,
+    override val guideline: @Composable () -> Unit,
 ): Axis<Position>() {
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -180,13 +183,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    override fun getPlaceables(measureScope: SubcomposeMeasureScope, measureContext: MeasureContext) : AxisPlaceables {
+    override fun getPlaceables(measureScope: SubcomposeMeasureScope, measureContext: MeasureContext, chartSize: IntSize) : AxisPlaceables {
         return with(measureScope) {
             val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
             val line = getAxisLinePlaceable()
             val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
-            AxisPlaceables(line, labels, ticks)
+            val guidelines = getGuidelinePlaceables(labels.size, chartSize.width)
+            AxisPlaceables(line, labels, ticks, guidelines)
         }
     }
 
@@ -215,6 +219,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
+        guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
     ) {
         val drawLabelCount = axisLabelPlaceables.count()
@@ -262,11 +267,31 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             item.place(x, tickCenterY.toInt() - item.height, 2f)
             y2 -= axisStep
         }
+
+        var y3 = constraints.maxHeight.toFloat()
+        guidelinePlaceables.forEachIndexed { index, item ->
+            tickCenterY =
+                bounds.bottom - bounds.height / (labelCount - 1) * index + 0 // drawScope.tickThickness.half
+
+            val x = if (position.isLeft(true)) {
+                axisOffset
+            } else {
+                constraints.maxWidth - axisOffset
+            }
+            item.place(x, tickCenterY.toInt() - item.height, 0f)
+            y3 -= axisStep
+        }
     }
 
     internal fun SubcomposeMeasureScope.getTickPlaceables(count: Int): List<Placeable> {
         return subcompose("Tick-$position") { repeat(count)  { tick() } }.map {
             it.measure(Constraints())
+        }
+    }
+
+    internal fun SubcomposeMeasureScope.getGuidelinePlaceables(count: Int, chartWidth: Int): List<Placeable> {
+        return subcompose("Guideline-$position") { repeat(count)  { guideline() } }.map {
+            it.measure(Constraints(maxWidth = chartWidth))
         }
     }
 
@@ -335,7 +360,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 public data class AxisPlaceables(
     val axis: Placeable,
     val labels: List<Placeable>,
-    val ticks: List<Placeable>
+    val ticks: List<Placeable>,
+    val guidelines: List<Placeable>,
 )
 
 @Composable
@@ -356,9 +382,10 @@ public fun startAxis(
     },
     axisLine: @Composable () -> Unit = {
         Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
-    }
+    },
+    guideline: @Composable () -> Unit = { Divider(thickness = 1.dp, color = Color.Black) }
 ): VerticalAxis<AxisPosition.Vertical.Start> = remember(label, tick) {
-    VerticalAxis(AxisPosition.Vertical.Start, label, tick, axisLine)
+    VerticalAxis(AxisPosition.Vertical.Start, label, tick, axisLine, guideline)
 }
 
 @Composable
@@ -379,9 +406,10 @@ public fun endAxis(
     },
     axisLine: @Composable () -> Unit = {
         Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
-    }
+    },
+    guideline: @Composable () -> Unit = { Box(Modifier) }
 ): VerticalAxis<AxisPosition.Vertical.End> = remember(label, tick) {
-    VerticalAxis(AxisPosition.Vertical.End, label, tick, axisLine)
+    VerticalAxis(AxisPosition.Vertical.End, label, tick, axisLine, guideline)
 }
 
 internal const val maxLabelCount = 100

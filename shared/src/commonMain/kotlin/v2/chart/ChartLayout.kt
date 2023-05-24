@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toSize
 import com.patrykandpatrick.vico.compose.chart.ChartBox
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
@@ -297,11 +298,11 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val startAxisPlaceables = axisManager.startAxis?.getPlaceables(this, measureContext)
+        val startAxisPlaceables = axisManager.startAxis?.getPlaceables(this, measureContext, chart.bounds.roundToIntRect().size)
 
-        val endAxisPlaceables = axisManager.endAxis?.getPlaceables(this, measureContext)
+        val endAxisPlaceables = axisManager.endAxis?.getPlaceables(this, measureContext, chart.bounds.roundToIntRect().size)
 
-        val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize().background(Color.Red.copy(alpha = 0.5f))) }).map {
+        val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize()) }).map {
             it.measure(constraints.copy(maxWidth = chart.bounds.width.toInt(), maxHeight = chart.bounds.height.toInt(), minWidth = 0, minHeight = 0))
         }.first()
 
@@ -314,6 +315,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
                         axisOffset = axisManager.startAxis.bounds.width.toInt(),
                         axisLabelPlaceables = startAxisPlaceables.labels,
                         tickPlaceables = startAxisPlaceables.ticks,
+                        guidelinePlaceables = startAxisPlaceables.guidelines,
                         constraints = constraints,
                     )
                 }
@@ -326,6 +328,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
                         axisOffset =  axisManager.endAxis.bounds.width.toInt(),
                         axisLabelPlaceables = endAxisPlaceables.labels,
                         tickPlaceables = endAxisPlaceables.ticks,
+                        guidelinePlaceables = endAxisPlaceables.guidelines,
                         constraints = constraints
                     )
                 }

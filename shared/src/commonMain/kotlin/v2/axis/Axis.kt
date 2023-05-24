@@ -54,7 +54,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         get() = 0f
 
     protected val Density.guidelineThickness: Float
-        get() = guideline?.thickness?.toPx().orZero
+        get() = 0f
 
     protected val Density.tickLengthPx: Float
         get() = if (tick != null) tickLength.toPx() else 0f
@@ -77,7 +77,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [LineComponent] to use for guidelines.
      */
-    public var guideline: LineComponent? = null
+    public abstract val guideline: @Composable () -> Unit
 
     /**
      * The tick length (in dp).
