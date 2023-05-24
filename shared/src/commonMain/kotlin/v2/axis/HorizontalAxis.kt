@@ -1,12 +1,7 @@
 package v2.axis
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -18,7 +13,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 
@@ -27,11 +21,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public override val label: @Composable (label: String) -> Unit,
     override val tick: @Composable () -> Unit,
     override val axisLine: @Composable () -> Unit,
+    override val guideline: @Composable () -> Unit
 ) : Axis<Position>() {
     internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
         constraints: Constraints,
     ): Placeable {
-        return subcompose("line") { Box(Modifier.fillMaxWidth().height(1.dp).background(Color.Black)) }.first().measure(constraints)
+        return subcompose("line", axisLine).first().measure(constraints)
     }
 
     internal fun SubcomposeMeasureScope.getAxisPlaceables(
@@ -48,9 +43,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             it.measure(Constraints())
         }
     }
-
-    override val guideline: @Composable () -> Unit
-        get() = { Box(Modifier) }
 
     override fun getPlaceables(
         measureScope: SubcomposeMeasureScope,
@@ -120,18 +112,20 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
 @Composable
 public fun topAxis(
-    label: @Composable (label: String) -> Unit = { Text(it) },
-    tick: @Composable () -> Unit = {},
-    axisLine: @Composable () -> Unit = {},
-): HorizontalAxis<AxisPosition.Horizontal.Top> = remember(label) {
-    HorizontalAxis(AxisPosition.Horizontal.Top, label, tick, axisLine)
+    label: @Composable (label: String) -> Unit = { AxisLabel(it) },
+    tick: @Composable () -> Unit = { HorizontalAxisTick() },
+    axisLine: @Composable () -> Unit = { HorizontalAxisLine() },
+    guideline: @Composable () -> Unit = { HorizontalAxisGuideline() },
+): HorizontalAxis<AxisPosition.Horizontal.Top> = remember(label, tick, axisLine, guideline) {
+    HorizontalAxis(AxisPosition.Horizontal.Top, label, tick, axisLine, guideline)
 }
 
 @Composable
 public fun bottomAxis(
-    label: @Composable (label: String) -> Unit = { Text(it) },
-    tick: @Composable () -> Unit = {},
-    axisLine: @Composable () -> Unit = {},
-): HorizontalAxis<AxisPosition.Horizontal.Bottom> = remember(label) {
-    HorizontalAxis(AxisPosition.Horizontal.Bottom, label, tick, axisLine)
+    label: @Composable (label: String) -> Unit = { AxisLabel(it) },
+    tick: @Composable () -> Unit = { HorizontalAxisTick() },
+    axisLine: @Composable () -> Unit = { HorizontalAxisLine() },
+    guideline: @Composable () -> Unit = { HorizontalAxisGuideline() },
+): HorizontalAxis<AxisPosition.Horizontal.Bottom> = remember(label, tick, axisLine, guideline) {
+    HorizontalAxis(AxisPosition.Horizontal.Bottom, label, tick, axisLine, guideline)
 }

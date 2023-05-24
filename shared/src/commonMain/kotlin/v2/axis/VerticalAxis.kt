@@ -3,9 +3,7 @@ package v2.axis
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -14,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
@@ -25,15 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
-import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.extension.getEnd
-import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import extension.isLtr
@@ -366,48 +358,20 @@ public data class AxisPlaceables(
 
 @Composable
 public fun startAxis(
-    label: @Composable (label: String) -> Unit = {
-        Text(
-            text = it,
-            fontSize = DefaultDimens.AXIS_LABEL_SIZE.sp,
-            maxLines = DefaultDimens.AXIS_LABEL_MAX_LINES,
-            modifier = Modifier.padding(
-                horizontal = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-                vertical = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp
-            )
-        )
-    },
-    tick: @Composable () -> Unit = {
-        Divider(Modifier.width(4.dp), color = Color.Black)
-    },
-    axisLine: @Composable () -> Unit = {
-        Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
-    },
-    guideline: @Composable () -> Unit = { Divider(thickness = 1.dp, color = Color.Black) }
-): VerticalAxis<AxisPosition.Vertical.Start> = remember(label, tick) {
+    label: @Composable (label: String) -> Unit = { AxisLabel(it) },
+    tick: @Composable () -> Unit = { VerticalAxisTick() },
+    axisLine: @Composable () -> Unit = { VerticalAxisLine() },
+    guideline: @Composable () -> Unit = { VerticalAxisGuideline() },
+): VerticalAxis<AxisPosition.Vertical.Start> = remember(label, tick, axisLine, guideline) {
     VerticalAxis(AxisPosition.Vertical.Start, label, tick, axisLine, guideline)
 }
 
 @Composable
 public fun endAxis(
-    label: @Composable (label: String) -> Unit = {
-        Text(
-            text = it,
-            fontSize = DefaultDimens.AXIS_LABEL_SIZE.sp,
-            maxLines = DefaultDimens.AXIS_LABEL_MAX_LINES,
-            modifier = Modifier.padding(
-                horizontal = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-                vertical = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp
-            )
-        )
-    },
-    tick: @Composable () -> Unit = {
-        Divider(Modifier.width(4.dp), color = Color.Black)
-    },
-    axisLine: @Composable () -> Unit = {
-        Box(Modifier.fillMaxHeight().width(1.dp).background(Color.Black))
-    },
-    guideline: @Composable () -> Unit = { Box(Modifier) }
+    label: @Composable (label: String) -> Unit = { AxisLabel(it) },
+    tick: @Composable () -> Unit = { VerticalAxisTick() },
+    axisLine: @Composable () -> Unit = { VerticalAxisLine() },
+    guideline: @Composable () -> Unit = { VerticalAxisGuideline() },
 ): VerticalAxis<AxisPosition.Vertical.End> = remember(label, tick) {
     VerticalAxis(AxisPosition.Vertical.End, label, tick, axisLine, guideline)
 }
