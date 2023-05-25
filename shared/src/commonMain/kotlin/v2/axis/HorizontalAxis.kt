@@ -17,15 +17,13 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
-    public override val position: Position,
-    public override val label: @Composable (label: String) -> Unit,
+    override val position: Position,
+    override val label: @Composable (label: String) -> Unit,
     override val tick: @Composable () -> Unit,
     override val axisLine: @Composable () -> Unit,
     override val guideline: @Composable () -> Unit
 ) : Axis<Position>() {
-    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(
-        constraints: Constraints,
-    ): Placeable {
+    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(constraints: Constraints): Placeable {
         return subcompose("line", axisLine).first().measure(constraints)
     }
 

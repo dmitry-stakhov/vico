@@ -127,7 +127,7 @@ public open class ShapeComponent(
         }
 
         drawShape(paint)
-        if (strokeWidthPx > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+//        if (strokeWidthPx > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
 
         DebugHelper.drawDebugBounds(
             context = this,

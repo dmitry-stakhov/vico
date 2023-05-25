@@ -1,26 +1,14 @@
 package v2.axis
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -36,8 +24,8 @@ private const val LABELS_KEY = "labels"
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 public class VerticalAxis<Position : AxisPosition.Vertical>(
-    public override val position: Position,
-    public override val label: @Composable (label: String) -> Unit,
+    override val position: Position,
+    override val label: @Composable (label: String) -> Unit,
     override val tick: @Composable () -> Unit,
     override val axisLine: @Composable () -> Unit,
     override val guideline: @Composable () -> Unit,
