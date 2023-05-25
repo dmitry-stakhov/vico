@@ -100,7 +100,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(
+    private fun getMaxLabelWidth(
         subcomposeMeasureScope: SubcomposeMeasureScope,
         labels: List<CharSequence>
     ): Float =
@@ -261,12 +261,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return subcompose("Guideline-$position") { repeat(count)  { guideline() } }.map {
             it.measure(Constraints(maxWidth = chartWidth))
         }
-    }
-
-    private fun SubcomposeMeasureScope.getGuidelineHeight(): Int {
-        return subcompose("Guideline-width-$position") { guideline() }.map {
-            it.measure(Constraints())
-        }.first().height
     }
 
     private fun SubcomposeMeasureScope.getDrawLabelCount(
