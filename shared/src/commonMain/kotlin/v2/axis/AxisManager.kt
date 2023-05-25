@@ -150,11 +150,9 @@ public open class AxisManager(
         layoutDirection: LayoutDirection,
         scope: Placeable.PlacementScope,
         axisLine: Placeable,
-        axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
-        constraints: Constraints,
         chartBounds: Rect,
     ) {
         axisCache.forEach { axis ->
@@ -163,11 +161,9 @@ public open class AxisManager(
                     scope.placeAxis(
                         layoutDirection = layoutDirection,
                         axisLine = axisLine,
-                        axisOffset = axisOffset,
                         axisLabelPlaceables = axisLabelPlaceables,
                         tickPlaceables = tickPlaceables,
                         guidelinePlaceables = guidelinePlaceables,
-                        constraints = constraints,
                         chartBounds = chartBounds,
                     )
                 }

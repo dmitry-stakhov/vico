@@ -302,21 +302,20 @@ public fun <Model : ChartEntryModel> ChartImpl(
 
         val endAxisPlaceables = axisManager.endAxis?.getPlaceables(this, measureContext, chart.bounds.roundToIntRect().size)
 
-        val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize()) }).map {
+        val chartPlaceable = subcompose("chart", { Box(Modifier.fillMaxSize().background(Color.Red.copy(alpha = 0.5f))) }).map {
             it.measure(constraints.copy(maxWidth = chart.bounds.width.toInt(), maxHeight = chart.bounds.height.toInt(), minWidth = 0, minHeight = 0))
         }.first()
 
         layout(constraints.maxWidth, constraints.maxHeight) {
+
             startAxisPlaceables?.run {
                 startAxis?.run {
                     placeAxis(
                         layoutDirection = this@SubcomposeLayout.layoutDirection,
                         axisLine = startAxisPlaceables.axis,
-                        axisOffset = axisManager.startAxis.bounds.width.toInt(),
                         axisLabelPlaceables = startAxisPlaceables.labels,
                         tickPlaceables = startAxisPlaceables.ticks,
                         guidelinePlaceables = startAxisPlaceables.guidelines,
-                        constraints = constraints,
                         chartBounds = chartBounds,
                     )
                 }
@@ -326,11 +325,9 @@ public fun <Model : ChartEntryModel> ChartImpl(
                     placeAxis(
                         layoutDirection = this@SubcomposeLayout.layoutDirection,
                         axisLine = endAxisPlaceables.axis,
-                        axisOffset =  axisManager.endAxis.bounds.width.toInt(),
                         axisLabelPlaceables = endAxisPlaceables.labels,
                         tickPlaceables = endAxisPlaceables.ticks,
                         guidelinePlaceables = endAxisPlaceables.guidelines,
-                        constraints = constraints,
                         chartBounds = chartBounds,
                     )
                 }

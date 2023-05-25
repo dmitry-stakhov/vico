@@ -60,28 +60,26 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun Placeable.PlacementScope.placeAxis(
         layoutDirection: LayoutDirection,
         axisLine: Placeable,
-        axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
-        constraints: Constraints,
         chartBounds: Rect,
     ) {
-        axisLine.place(axisOffset - axisLine.width, 0, 1f)
+        axisLine.place(bounds.width.toInt() - axisLine.width, 0, 1f)
 
-        val axisStep = constraints.maxHeight / (axisLabelPlaceables.size - 1)
-        var y = constraints.maxHeight
-        axisLabelPlaceables.forEach {
-            it.place(0, y - it.height, 1f)
-            y -= axisStep
-        }
-
-        var y2 = constraints.maxHeight
-        val axisOffset = axisLabelPlaceables.maxOf { it.width }
-        tickPlaceables.forEach {
-            it.place(axisOffset - it.width.half, y2 - it.height, 2f)
-            y2 -= axisStep
-        }
+//        val axisStep = constraints.maxHeight / (axisLabelPlaceables.size - 1)
+//        var y = constraints.maxHeight
+//        axisLabelPlaceables.forEach {
+//            it.place(0, y - it.height, 1f)
+//            y -= axisStep
+//        }
+//
+//        var y2 = constraints.maxHeight
+//        val axisOffset = axisLabelPlaceables.maxOf { it.width }
+//        tickPlaceables.forEach {
+//            it.place(axisOffset - it.width.half, y2 - it.height, 2f)
+//            y2 -= axisStep
+//        }
     }
 
     internal fun SubcomposeMeasureScope.getTickPlaceables(count: Int): List<Placeable> {

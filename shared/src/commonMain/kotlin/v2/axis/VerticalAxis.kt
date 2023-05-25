@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
@@ -17,6 +18,7 @@ import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
+import com.patrykandpatrick.vico.core.extension.orZeroInt
 import extension.isLtr
 import v2.formatter.IntFormatter
 import kotlin.math.roundToInt
@@ -167,17 +169,18 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getPlaceables(measureScope: SubcomposeMeasureScope, measureContext: MeasureContext, chartSize: IntSize) : AxisPlaceables {
         return with(measureScope) {
             val constraints = Constraints(maxWidth = bounds.width.toInt(), maxHeight = bounds.height.toInt())
-            val line = getAxisLinePlaceable()
             val labels = getAxisPlaceables(constraints, measureContext, label)
             val ticks = getTickPlaceables(labels.size)
             val guidelines = getGuidelinePlaceables(labels.size, chartSize.width)
+            val line = getAxisLinePlaceable(ticks.firstOrNull()?.height.orZeroInt, guidelines.firstOrNull()?.height.orZeroInt)
             AxisPlaceables(line, labels, ticks, guidelines)
         }
     }
 
-    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(): Placeable {
+    internal fun SubcomposeMeasureScope.getAxisLinePlaceable(tickHeight: Int, guidelineHeight: Int): Placeable {
+        val correction = maxOf(tickHeight, guidelineHeight)
         return subcompose("line-$position", axisLine).first().measure(
-            Constraints(maxHeight = bounds.height.toInt())
+            Constraints(maxHeight = bounds.height.toInt() + correction)
         )
     }
 
@@ -197,61 +200,56 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun Placeable.PlacementScope.placeAxis(
         layoutDirection: LayoutDirection,
         axisLine: Placeable,
-        axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
-        constraints: Constraints,
         chartBounds: Rect,
     ) {
-        val drawLabelCount = axisLabelPlaceables.count()
+        val axisStep = bounds.height / (axisLabelPlaceables.count() - 1)
 
-        val axisStep = bounds.height / (drawLabelCount - 1)
+        var guidelineY: Float
+        guidelinePlaceables.forEachIndexed { index, item ->
+            guidelineY = bounds.bottom - axisStep * index - item.height.half
 
-        val axisLineOffset = if (position.isLeft(layoutDirection.isLtr)) {
-            bounds.right - axisLine.width
-        } else {
-            bounds.left - axisLine.width
+            item.place(chartBounds.left.roundToInt(), guidelineY.roundToInt())
         }
-        axisLine.place(axisLineOffset.roundToInt(), bounds.top.roundToInt())
 
-        val labelCount = axisLabelPlaceables.size
+        val axisLineX = if (position.isLeft(layoutDirection.isLtr)) {
+            bounds.right - axisLine.width.half
+        } else {
+            bounds.left - axisLine.width.half
+        }
+        val axisY = bounds.top.roundToInt() - guidelinePlaceables.first().height.half
+        axisLine.place(axisLineX.roundToInt(), axisY)
 
         var tickCenterY: Float
-
-        var y = constraints.maxHeight.toFloat()
-        axisLabelPlaceables.forEach {
-            val x = if (position.isLeft(true)) {
-                0
-            } else {
-                constraints.maxWidth - it.width
-            }
-            it.place(x, y.toInt() - it.height, 2f)
-            y -= axisStep
-        }
-
-        var y2 = constraints.maxHeight.toFloat()
-        val axisOffset = axisLabelPlaceables.maxOf { it.width }
         tickPlaceables.forEachIndexed { index, item ->
-            tickCenterY =
-                bounds.bottom - bounds.height / (labelCount - 1) * index + 0 // drawScope.tickThickness.half
+            tickCenterY = bounds.bottom - bounds.height / (axisLabelPlaceables.size - 1) * index
 
-            val x = if (position.isLeft(true)) {
-                axisOffset - item.width.half
+            val x = if (position.isLeft(layoutDirection.isLtr)) {
+                bounds.width - item.width.half
             } else {
-                constraints.maxWidth - axisOffset - item.width.half
+                chartBounds.right - item.width.half
             }
-            item.place(x, tickCenterY.toInt() - item.height, 2f)
-            y2 -= axisStep
-        }
+            item.place(x.toInt(), tickCenterY.toInt() - item.height.half, 2f)
 
-        guidelinePlaceables.forEachIndexed { index, item ->
-            tickCenterY =
-                bounds.bottom - bounds.height / (labelCount - 1) * index + 0 // drawScope.tickThickness.half
-
-            item.place(chartBounds.left.roundToInt(), tickCenterY.toInt() - item.height, 0f)
+            val labelX = getTickLeftX(layoutDirection, axisLine.width, item.width)
+            with(axisLabelPlaceables[index]) {
+                place(labelX, tickCenterY.toInt() - height.half, 2f)
+            }
         }
     }
+
+    private fun getTickLeftX(layoutDirection: LayoutDirection, axisWidth: Int, tickLength: Int): Int {
+        val onLeft = position.isLeft(isLtr = layoutDirection.isLtr)
+        val base = if (onLeft) bounds.right else bounds.left
+        return if (onLeft == (horizontalLabelPosition == HorizontalLabelPosition.Outside)) {
+            base.toInt() - axisWidth.half - tickLength
+        } else {
+            base.toInt()
+        }
+    }
+
 
     internal fun SubcomposeMeasureScope.getTickPlaceables(count: Int): List<Placeable> {
         return subcompose("Tick-$position") { repeat(count)  { tick() } }.map {
@@ -263,6 +261,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return subcompose("Guideline-$position") { repeat(count)  { guideline() } }.map {
             it.measure(Constraints(maxWidth = chartWidth))
         }
+    }
+
+    private fun SubcomposeMeasureScope.getGuidelineHeight(): Int {
+        return subcompose("Guideline-width-$position") { guideline() }.map {
+            it.measure(Constraints())
+        }.first().height
     }
 
     private fun SubcomposeMeasureScope.getDrawLabelCount(

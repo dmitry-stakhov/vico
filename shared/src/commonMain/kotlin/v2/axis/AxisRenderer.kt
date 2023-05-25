@@ -49,11 +49,9 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     public fun Placeable.PlacementScope.placeAxis(
         layoutDirection: LayoutDirection,
         axisLine: Placeable,
-        axisOffset: Int,
         axisLabelPlaceables: List<Placeable>,
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
-        constraints: Constraints,
         chartBounds: Rect,
     )
 
