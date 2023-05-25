@@ -54,6 +54,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
+        chartBounds: Rect,
     )
 
     /**

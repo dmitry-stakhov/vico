@@ -5,6 +5,7 @@ import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
@@ -64,6 +65,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
+        chartBounds: Rect,
     ) {
         axisLine.place(axisOffset - axisLine.width, 0, 1f)
 

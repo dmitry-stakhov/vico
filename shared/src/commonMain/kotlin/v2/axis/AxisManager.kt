@@ -155,6 +155,7 @@ public open class AxisManager(
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
+        chartBounds: Rect,
     ) {
         axisCache.forEach { axis ->
             if (axis != null) {
@@ -167,6 +168,7 @@ public open class AxisManager(
                         tickPlaceables = tickPlaceables,
                         guidelinePlaceables = guidelinePlaceables,
                         constraints = constraints,
+                        chartBounds = chartBounds,
                     )
                 }
             }

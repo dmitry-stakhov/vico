@@ -317,6 +317,7 @@ public fun <Model : ChartEntryModel> ChartImpl(
                         tickPlaceables = startAxisPlaceables.ticks,
                         guidelinePlaceables = startAxisPlaceables.guidelines,
                         constraints = constraints,
+                        chartBounds = chartBounds,
                     )
                 }
             }
@@ -329,7 +330,8 @@ public fun <Model : ChartEntryModel> ChartImpl(
                         axisLabelPlaceables = endAxisPlaceables.labels,
                         tickPlaceables = endAxisPlaceables.ticks,
                         guidelinePlaceables = endAxisPlaceables.guidelines,
-                        constraints = constraints
+                        constraints = constraints,
+                        chartBounds = chartBounds,
                     )
                 }
             }

@@ -12,6 +12,7 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.debug.DebugHelper
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryModelOf
+import v2.axis.endAxis
 import v2.axis.startAxis
 import v2.chart.Chart
 import v2.chart.line.lineChart
@@ -66,7 +67,8 @@ public fun App() {
 //                iconSize = 10.dp,
 //                iconPadding = 10.dp,
 //            ),
-            startAxis = startAxis(),
+//            startAxis = startAxis(),
+            endAxis = endAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false)
         )
     }

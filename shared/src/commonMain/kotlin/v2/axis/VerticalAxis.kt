@@ -3,6 +3,7 @@ package v2.axis
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.unit.Constraints
@@ -201,6 +202,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         tickPlaceables: List<Placeable>,
         guidelinePlaceables: List<Placeable>,
         constraints: Constraints,
+        chartBounds: Rect,
     ) {
         val drawLabelCount = axisLabelPlaceables.count()
 
@@ -213,12 +215,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
         axisLine.place(axisLineOffset.roundToInt(), bounds.top.roundToInt())
 
-        val label = label
         val labelCount = axisLabelPlaceables.size
-
-        val labels = axisLabelPlaceables
-
-        val tickLeftX = tickPlaceables.first().width
 
         var tickCenterY: Float
 
@@ -248,18 +245,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             y2 -= axisStep
         }
 
-        var y3 = constraints.maxHeight.toFloat()
         guidelinePlaceables.forEachIndexed { index, item ->
             tickCenterY =
                 bounds.bottom - bounds.height / (labelCount - 1) * index + 0 // drawScope.tickThickness.half
 
-            val x = if (position.isLeft(true)) {
-                axisOffset
-            } else {
-                constraints.maxWidth - axisOffset
-            }
-            item.place(x, tickCenterY.toInt() - item.height, 0f)
-            y3 -= axisStep
+            item.place(chartBounds.left.roundToInt(), tickCenterY.toInt() - item.height, 0f)
         }
     }
 
